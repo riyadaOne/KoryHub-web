@@ -8,6 +8,7 @@
     $base = route('modules.show', ['author' => $module->author->handle, 'module' => $module->name]);
     $tabs = [
         'readme' => [__('modules.tabs.readme'), $base],
+        'architecture' => [__('modules.tabs.architecture'), route('modules.architecture', ['author' => $module->author->handle, 'module' => $module->name])],
         'files' => [__('modules.tabs.files').($filesCount !== null ? ' · '.$filesCount : ''), route('modules.files', ['author' => $module->author->handle, 'module' => $module->name])],
         'versions' => [__('modules.tabs.versions').($versionsCount !== null ? ' · '.$versionsCount : ''), route('modules.versions', ['author' => $module->author->handle, 'module' => $module->name])],
     ];

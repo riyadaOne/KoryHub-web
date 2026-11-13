@@ -85,6 +85,24 @@ class ModuleVersion extends Model
         return $this->hasMany(VersionFile::class, 'version_id');
     }
 
+    /** @return HasMany<VersionComponent, $this> */
+    public function components(): HasMany
+    {
+        return $this->hasMany(VersionComponent::class, 'version_id')->orderBy('position');
+    }
+
+    /** @return HasMany<VersionComponentLink, $this> */
+    public function links(): HasMany
+    {
+        return $this->hasMany(VersionComponentLink::class, 'version_id');
+    }
+
+    /** @return HasMany<VersionRequirement, $this> */
+    public function requirements(): HasMany
+    {
+        return $this->hasMany(VersionRequirement::class, 'version_id')->orderBy('ecosystem')->orderBy('name');
+    }
+
     public function isPrerelease(): bool
     {
         return $this->prerelease !== null;

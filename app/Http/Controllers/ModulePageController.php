@@ -6,6 +6,7 @@ use App\Models\Module;
 use App\Models\ModuleVersion;
 use App\Services\Modules\ModuleFinder;
 use App\Services\Modules\VersionFiles;
+use App\Support\ArchitectureDiagram;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -25,6 +26,19 @@ class ModulePageController extends Controller
         $version = $this->finder->current($found);
 
         return view('modules.show', $this->common($request, $found, $version));
+    }
+
+    /** S-14 : architecture de la version affichée (diagramme et liste équivalente). */
+    public function architecture(Request $request, string $author, string $module): View
+    {
+        $found = $this->finder->find($author, $module, $request->user());
+        $version = $this->finder->current($found);
+
+        return view('modules.architecture', [
+            ...$this->common($request, $found, $version),
+            'diagram' => $version ? ArchitectureDiagram::build($version) : null,
+            'componentsCount' => $version?->components()->count() ?? 0,
+        ]);
     }
 
     /** S-05 : détail d'une version. */

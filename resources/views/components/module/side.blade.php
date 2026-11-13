@@ -19,6 +19,16 @@
                     <dd class="m-0 break-all font-mono" dir="ltr" title="{{ $version->archive_sha256 }}">{{ substr($version->archive_sha256, 0, 12) }}…{{ substr($version->archive_sha256, -4) }}</dd>
                 </div>
             @endif
+            @if ($version && $version->requirements->isNotEmpty())
+                <div class="grid gap-0.5">
+                    <dt class="text-xs text-zinc-500 dark:text-zinc-400">{{ __('modules.side.requirements') }}</dt>
+                    <dd class="m-0 grid gap-0.5 font-mono text-[13px]" dir="ltr" data-test="requirements">
+                        @foreach ($version->requirements as $requirement)
+                            <span>{{ $requirement->ecosystem ? $requirement->ecosystem.' · ' : '' }}{{ $requirement->name }}{{ $requirement->version_constraint ? ' '.$requirement->version_constraint : '' }}</span>
+                        @endforeach
+                    </dd>
+                </div>
+            @endif
             @if ($module->category)
                 <div class="grid gap-0.5">
                     <dt class="text-xs text-zinc-500 dark:text-zinc-400">{{ __('modules.side.category') }}</dt>

@@ -2,21 +2,34 @@
 
 namespace App\Services\Modules;
 
+use App\Enums\ComponentKind;
 use App\Enums\License;
+use App\Enums\LinkKind;
 use App\Support\SemVer;
 
 /**
- * kory.json publié (F-REG-01, TRD §18, §22) : normalisé par le CLI, sans chemin local.
- * Champs lus en W03 bloc A : name, version, description, license, language, tags, files.
- * « requires » et « architecture » sont contrôlés et enregistrés au bloc C.
+ * kory.json publié (F-REG-01, F-REG-22, F-REG-27, TRD §18, §22) : normalisé par le CLI, sans
+ * chemin local. Champs : name, version, description, license, language, tags, files, requires
+ * (prérequis, 50 au plus) et architecture (50 composants, 150 liens au plus, facultative).
  */
 final readonly class Manifest
 {
     public const MAX_TAGS = 10;
 
+    public const MAX_COMPONENTS = 50;
+
+    public const MAX_LINKS = 150;
+
+    public const MAX_REQUIREMENTS = 50;
+
+    /** Identifiant d'un composant : lettres, chiffres, « _ », « . », « - » (TRD §22). */
+    public const COMPONENT_ID = '/^[A-Za-z0-9_.-]{1,64}$/';
+
     /**
      * @param  list<string>  $tags
      * @param  list<string>  $files
+     * @param  mixed  $requires  brut, contrôlé par validate()
+     * @param  mixed  $architecture  brut, contrôlé par validate()
      */
     private function __construct(
         public string $name,
@@ -26,6 +39,8 @@ final readonly class Manifest
         public ?string $language,
         public array $tags,
         public array $files,
+        public mixed $requires = null,
+        public mixed $architecture = null,
     ) {}
 
     /**
@@ -52,7 +67,101 @@ final readonly class Manifest
             language: is_string($data['language'] ?? null) ? $data['language'] : null,
             tags: self::strings($data['tags'] ?? []),
             files: self::strings($data['files'] ?? null) ?? [],
+            requires: $data['requires'] ?? null,
+            architecture: $data['architecture'] ?? null,
         );
+    }
+
+    /**
+     * Prérequis validés (F-REG-27).
+     *
+     * @return list<array{ecosystem: ?string, name: string, version: ?string}>
+     */
+    public function requirements(): array
+    {
+        if ($this->requires === null) {
+            return [];
+        }
+        if (! is_array($this->requires) || ! array_is_list($this->requires) || count($this->requires) > self::MAX_REQUIREMENTS) {
+            throw new PublicationError('manifest_invalid', ['field' => 'requires']);
+        }
+
+        $seen = [];
+        $out = [];
+        foreach ($this->requires as $i => $item) {
+            $name = is_array($item) ? ($item['name'] ?? null) : null;
+            $ecosystem = is_array($item) ? ($item['ecosystem'] ?? null) : null;
+            $version = is_array($item) ? ($item['version'] ?? null) : null;
+
+            if (! is_string($name) || $name === '' || mb_strlen($name) > 255
+                || ($ecosystem !== null && (! is_string($ecosystem) || ! preg_match('/^[a-z0-9.+-]{1,64}$/', $ecosystem)))
+                || ($version !== null && (! is_string($version) || mb_strlen($version) > 64))) {
+                throw new PublicationError('manifest_invalid', ['field' => "requires.{$i}"]);
+            }
+
+            $key = ($ecosystem ?? '').'|'.$name;
+            if (isset($seen[$key])) {
+                throw new PublicationError('manifest_invalid', ['field' => "requires.{$i}"]);
+            }
+            $seen[$key] = true;
+            $out[] = ['ecosystem' => $ecosystem, 'name' => $name, 'version' => $version];
+        }
+
+        return $out;
+    }
+
+    /**
+     * Architecture validée (F-REG-22, F-REG-24, TRD §22) : chaque composant pointe vers un fichier
+     * du kory, chaque lien relie deux composants déclarés, jamais un composant à lui-même.
+     *
+     * @param  list<string>  $archiveFiles
+     * @return array{components: list<array{id: string, kind: ComponentKind, file: string}>, links: list<array{from: string, to: string, kind: LinkKind}>}
+     */
+    public function architecture(array $archiveFiles): array
+    {
+        if ($this->architecture === null) {
+            return ['components' => [], 'links' => []];
+        }
+
+        $components = is_array($this->architecture) ? ($this->architecture['components'] ?? []) : null;
+        $links = is_array($this->architecture) ? ($this->architecture['links'] ?? []) : null;
+        if (! is_array($components) || ! array_is_list($components) || count($components) > self::MAX_COMPONENTS) {
+            throw new PublicationError('manifest_invalid', ['field' => 'architecture.components']);
+        }
+        if (! is_array($links) || ! array_is_list($links) || count($links) > self::MAX_LINKS) {
+            throw new PublicationError('manifest_invalid', ['field' => 'architecture.links']);
+        }
+
+        $files = array_flip($archiveFiles);
+        $ids = [];
+        $outComponents = [];
+        foreach ($components as $i => $component) {
+            $id = is_array($component) ? ($component['id'] ?? null) : null;
+            $file = is_array($component) ? ($component['file'] ?? null) : null;
+            $kind = is_array($component) && is_string($component['kind'] ?? null) ? ComponentKind::tryFrom($component['kind']) : null;
+
+            if (! is_string($id) || ! preg_match(self::COMPONENT_ID, $id) || isset($ids[$id]) || ! is_string($file) || ! isset($files[$file]) || $kind === null) {
+                throw new PublicationError('manifest_invalid', ['field' => "architecture.components.{$i}"]);
+            }
+            $ids[$id] = true;
+            $outComponents[] = ['id' => $id, 'kind' => $kind, 'file' => $file];
+        }
+
+        $seen = [];
+        $outLinks = [];
+        foreach ($links as $i => $link) {
+            $from = is_array($link) ? ($link['from'] ?? null) : null;
+            $to = is_array($link) ? ($link['to'] ?? null) : null;
+            $kind = is_array($link) && is_string($link['kind'] ?? null) ? LinkKind::tryFrom($link['kind']) : null;
+
+            if (! is_string($from) || ! is_string($to) || ! isset($ids[$from], $ids[$to]) || $from === $to || $kind === null || isset($seen["{$from}|{$to}|{$kind->value}"])) {
+                throw new PublicationError('manifest_invalid', ['field' => "architecture.links.{$i}"]);
+            }
+            $seen["{$from}|{$to}|{$kind->value}"] = true;
+            $outLinks[] = ['from' => $from, 'to' => $to, 'kind' => $kind];
+        }
+
+        return ['components' => $outComponents, 'links' => $outLinks];
     }
 
     /**

@@ -40,3 +40,12 @@ document.addEventListener('livewire:navigated', () => formatRelativeDates());
 document.addEventListener('livewire:init', () => {
     window.Livewire.hook('morphed', ({ el }) => formatRelativeDates(el));
 });
+
+// Architecture (S-14) : Mermaid chargé à la demande, seulement sur une page qui a un diagramme.
+const loadArchitecture = () => {
+    if (document.querySelector('[data-architecture]')) {
+        import('./architecture.js').then(({ renderArchitecture }) => renderArchitecture());
+    }
+};
+document.addEventListener('DOMContentLoaded', loadArchitecture);
+document.addEventListener('livewire:navigated', loadArchitecture);

@@ -24,6 +24,7 @@ return [
         'readme' => 'README',
         'files' => 'Ficheiros',
         'versions' => 'Versões',
+        'architecture' => 'Arquitetura',
     ],
     'banners' => [
         'archived' => 'Módulo arquivado.',
@@ -37,6 +38,7 @@ return [
         'category' => 'Categoria',
         'tags' => 'Etiquetas',
         'author' => 'Autor',
+        'requirements' => 'Pré-requisitos',
     ],
     'version' => [
         'resend' => 'Corrija-a e volte a enviar a versão :version com kory push.',
@@ -104,5 +106,26 @@ return [
         'version_not_deletable' => 'Esta versão já não pode ser eliminada: passaram mais de 72 horas desde a publicação.',
         'cannot_make_private' => 'Este módulo foi descarregado: já não pode tornar-se privado.',
         'public_not_deletable' => 'Um módulo público não pode ser eliminado. Arquive-o em vez disso.',
+    ],
+    'architecture' => [
+        'none' => 'Arquitetura não declarada',
+        'none_text' => 'O autor pode propô-la com kory graph.',
+        'summary' => ':components componentes, :links ligações. Clique num componente para abrir o seu ficheiro.',
+        'list' => 'As mesmas ligações, em lista',
+        'legend' => 'Retângulo: classe · Hexágono: interface · Paralelogramo: enum · Arredondado: trait · Moldura dupla: módulo. Linha contínua: usa · Pontilhada: implementa ou estende · Grossa: chama.',
+        'kinds' => [
+            'class' => 'classe',
+            'interface' => 'interface',
+            'trait' => 'trait',
+            'enum' => 'enum',
+            'function' => 'função',
+            'module' => 'módulo',
+        ],
+        'links' => [
+            'uses' => 'usa',
+            'implements' => 'implementa',
+            'extends' => 'estende',
+            'calls' => 'chama',
+        ],
     ],
 ];

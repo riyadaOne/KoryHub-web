@@ -27,6 +27,7 @@ Route::prefix('@{author}/{module}')->group(function () {
     Route::get('v/{number}', [ModulePageController::class, 'version'])->name('modules.version');
     Route::get('v/{number}/raw/{path}', [ModulePageController::class, 'raw'])->where('path', '.*')->name('modules.raw');
     Route::get('files', [ModulePageController::class, 'files'])->name('modules.files');
+    Route::get('architecture', [ModulePageController::class, 'architecture'])->name('modules.architecture');
 });
 
 require __DIR__.'/settings.php';

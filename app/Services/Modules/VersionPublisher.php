@@ -150,6 +150,8 @@ class VersionPublisher
     {
         $files = array_values(array_diff(array_keys($entries), ['kory.json', 'README.md']));
         $license = $manifest->validate($fullName, $files);
+        $manifest->requirements();
+        $manifest->architecture($files);
 
         foreach ($entries as $path => $entry) {
             if ($entry['svg']) {
@@ -195,15 +197,18 @@ class VersionPublisher
                     'readme' => (string) file_get_contents($workdir.'/README.md'),
                 ])->save();
 
+                $fileIds = [];
                 foreach ($entries as $path => $entry) {
-                    $version->files()->create([
+                    $fileIds[$path] = $version->files()->create([
                         'path' => $path,
                         'path_hash' => hash('sha256', $path),
                         'size' => $entry['size'],
                         'sha256' => $entry['sha256'],
                         'is_image' => $entry['is_image'],
-                    ]);
+                    ])->id;
                 }
+
+                $this->storeArchitecture($version, $manifest, $fileIds);
 
                 $stored = "modules/{$module->id}/{$version->id}.tar.gz";
                 $disk->putFileAs(dirname($stored), $archive, basename($stored));
@@ -305,6 +310,40 @@ class VersionPublisher
             'published_by' => $user->id,
             'submitted_at' => now(),
         ]);
+    }
+
+    /**
+     * Copie l'architecture et les prérequis du manifeste (déjà validés) dans leurs tables.
+     *
+     * @param  array<string, string>  $fileIds  chemin => id de version_files
+     */
+    private function storeArchitecture(ModuleVersion $version, Manifest $manifest, array $fileIds): void
+    {
+        foreach ($manifest->requirements() as $requirement) {
+            $version->requirements()->create([
+                'ecosystem' => $requirement['ecosystem'],
+                'name' => $requirement['name'],
+                'version_constraint' => $requirement['version'],
+            ]);
+        }
+
+        $architecture = $manifest->architecture(array_keys($fileIds));
+        $componentIds = [];
+        foreach ($architecture['components'] as $position => $component) {
+            $componentIds[$component['id']] = $version->components()->create([
+                'key' => $component['id'],
+                'kind' => $component['kind'],
+                'file_id' => $fileIds[$component['file']],
+                'position' => $position,
+            ])->id;
+        }
+        foreach ($architecture['links'] as $link) {
+            $version->links()->create([
+                'from_component_id' => $componentIds[$link['from']],
+                'to_component_id' => $componentIds[$link['to']],
+                'kind' => $link['kind'],
+            ]);
+        }
     }
 
     /** @param  list<string>  $names */

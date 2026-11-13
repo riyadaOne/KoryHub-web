@@ -32,8 +32,11 @@ const TABLES_WITHOUT_SOFT_DELETES = [
     'personal_access_tokens',
     // Codes de connexion du CLI : table technique, lignes effacées 7 jours après expiration (TRD §7.3).
     'cli_device_codes',
-    // Fichiers d'une version : jamais modifiés (TRD §13).
+    // Fichiers, architecture et prérequis d'une version : copiés à la publication, jamais modifiés (TRD §13).
     'version_files',
+    'version_components',
+    'version_component_links',
+    'version_requirements',
     // Préférences de notification : réglage, pas une donnée historisée.
     'notification_preferences',
 ];

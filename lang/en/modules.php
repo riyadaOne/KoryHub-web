@@ -24,6 +24,7 @@ return [
         'readme' => 'README',
         'files' => 'Files',
         'versions' => 'Versions',
+        'architecture' => 'Architecture',
     ],
     'banners' => [
         'archived' => 'Archived module.',
@@ -37,6 +38,7 @@ return [
         'category' => 'Category',
         'tags' => 'Tags',
         'author' => 'Author',
+        'requirements' => 'Requirements',
     ],
     'version' => [
         'resend' => 'Fix it, then send version :version again with kory push.',
@@ -104,5 +106,26 @@ return [
         'version_not_deletable' => 'This version can no longer be deleted: more than 72 hours have passed since it was published.',
         'cannot_make_private' => 'This module has been downloaded: it can no longer become private.',
         'public_not_deletable' => 'A public module cannot be deleted. Archive it instead.',
+    ],
+    'architecture' => [
+        'none' => 'Architecture not declared',
+        'none_text' => 'The author can propose it with kory graph.',
+        'summary' => ':components components, :links links. Click a component to open its file.',
+        'list' => 'The same links, as a list',
+        'legend' => 'Rectangle: class · Hexagon: interface · Parallelogram: enum · Rounded: trait · Double frame: module. Solid line: uses · Dotted: implements or extends · Thick: calls.',
+        'kinds' => [
+            'class' => 'class',
+            'interface' => 'interface',
+            'trait' => 'trait',
+            'enum' => 'enum',
+            'function' => 'function',
+            'module' => 'module',
+        ],
+        'links' => [
+            'uses' => 'uses',
+            'implements' => 'implements',
+            'extends' => 'extends',
+            'calls' => 'calls',
+        ],
     ],
 ];
