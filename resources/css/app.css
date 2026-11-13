@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Tokens de KoryHub (UXUI-DESIGN §4) : neutres zinc de Tailwind, accent sarcelle,
+ * IBM Plex (latin, arabe, code). Aucune couleur ni police écrite dans un écran.
+ */
+@theme {
+    --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+    --color-accent: var(--color-teal-700);
+    --color-accent-content: var(--color-teal-700);
+    --color-accent-foreground: var(--color-white);
+}
+
+@layer theme {
+    .dark {
+        --color-accent: var(--color-teal-400);
+        --color-accent-content: var(--color-teal-400);
+        --color-accent-foreground: var(--color-teal-950);
+    }
+}
+
+/* Arabe : interligne plus haut (UXUI §4.3). Code, commandes et empreintes restent de gauche à droite (UXUI §9). */
+[dir='rtl'] body {
+    line-height: 1.7;
+}
+
+code,
+kbd,
+pre,
+samp,
+.font-mono {
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+[data-flux-field]:not(ui-radio, ui-checkbox) {
+    @apply grid gap-2;
+}
+
+[data-flux-label] {
+    @apply  !mb-0 !leading-tight;
+}
+
+input:focus[data-flux-control],
+textarea:focus[data-flux-control],
+select:focus[data-flux-control] {
+    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+/* \[:where(&)\]:size-4 {
+    @apply size-4;
+} */
