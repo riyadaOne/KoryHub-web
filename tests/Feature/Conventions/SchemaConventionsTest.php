@@ -42,6 +42,9 @@ const TABLES_WITHOUT_SOFT_DELETES = [
     // Téléchargements : lien privé effacé avec le compte, compteur anonyme par jour (BACKEND-SCHEMA §4.3).
     'module_downloads',
     'download_stats',
+    // Favoris et abonnements : préférences (BACKEND-SCHEMA §4.3).
+    'stars',
+    'watches',
 ];
 
 /** Tables de liaison : clé primaire composée (BACKEND-SCHEMA §4.2), sans colonne id ni suppression logique. */

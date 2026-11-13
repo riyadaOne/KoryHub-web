@@ -5,7 +5,9 @@ namespace App\Services\Modules;
 use App\Enums\VersionStatus;
 use App\Exceptions\ApiError;
 use App\Models\ModuleVersion;
+use App\Models\Review;
 use App\Models\User;
+use App\Services\Community\ReviewService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
@@ -36,6 +38,11 @@ class DownloadService
 
         $this->throttle($user, $ip);
         $this->record($version, $user);
+
+        // Premier téléchargement d'un compte qui a déjà noté le module : sa note devient vérifiée (F-RCH-17).
+        if ($user !== null && Review::query()->where('module_id', $version->module_id)->where('user_id', $user->id)->exists()) {
+            app(ReviewService::class)->refreshRating($version->module);
+        }
 
         return Storage::disk(config('koryhub.publication.archives_disk'))
             ->temporaryUrl($version->archive_path, now()->addMinutes(config('koryhub.downloads.link_minutes')));

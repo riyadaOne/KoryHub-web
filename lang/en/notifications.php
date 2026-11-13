@@ -55,7 +55,19 @@ return [
         'mail' => 'A version you installed is deprecated by its author. Nothing changes in your projects without you.',
         'action' => 'See the version',
     ],
+    'new_version_watched' => [
+        'title' => 'New version: :module :version',
+        'mail' => 'A module you watch published a new version.',
+        'action' => 'See the version',
+    ],
+    'module_archived' => [
+        'title' => ':module archived',
+        'mail' => 'A module you watch is archived: it stays downloadable but gets no new version.',
+        'action' => 'See my watched modules',
+    ],
     'types' => [
+        'new_version_watched' => 'New version of a watched module',
+        'module_archived' => 'Watched module archived',
         'update_available' => 'Update available',
         'version_deprecated' => 'Version deprecated',
         'version_published' => 'Version published',
@@ -74,6 +86,7 @@ return [
         'database' => 'Bell',
         'group_modules' => 'My kory',
         'group_installed' => 'Installed kory',
+        'group_watched' => 'Watched modules',
         'group_security' => 'Security',
         'always' => 'always sent',
         'security_row' => 'New CLI login, tokens, password',

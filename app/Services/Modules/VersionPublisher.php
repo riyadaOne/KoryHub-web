@@ -13,6 +13,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Notifications\ModuleNotification;
 use App\Services\Audit\AuditLogger;
+use App\Services\Community\ModuleAudience;
 use App\Services\Modules\Secrets\SecretScanFailed;
 use App\Services\Modules\Secrets\SecretScanner;
 use App\Support\SemVer;
@@ -39,7 +40,7 @@ class VersionPublisher
         private SecretScanner $scanner,
         private AuditLogger $audit,
         private ModuleLifecycle $lifecycle,
-        private DownloaderNotifier $downloaders,
+        private ModuleAudience $audience,
     ) {}
 
     /**
@@ -249,7 +250,7 @@ class VersionPublisher
             'module' => $version->module->fullName(),
             'version' => $version->version,
         ]));
-        $this->downloaders->versionPublished($version);
+        $this->audience->versionPublished($version);
 
         return $version;
     }

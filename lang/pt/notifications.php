@@ -55,7 +55,19 @@ return [
         'mail' => 'Uma versão que instalou foi marcada como obsoleta pelo autor. Nada muda nos seus projetos sem si.',
         'action' => 'Ver a versão',
     ],
+    'new_version_watched' => [
+        'title' => 'Nova versão: :module :version',
+        'mail' => 'Um módulo que segue publicou uma nova versão.',
+        'action' => 'Ver a versão',
+    ],
+    'module_archived' => [
+        'title' => ':module arquivado',
+        'mail' => 'Um módulo que segue foi arquivado: continua disponível mas já não recebe novas versões.',
+        'action' => 'Ver os módulos seguidos',
+    ],
     'types' => [
+        'new_version_watched' => 'Nova versão de um módulo seguido',
+        'module_archived' => 'Módulo seguido arquivado',
         'update_available' => 'Atualização disponível',
         'version_deprecated' => 'Versão obsoleta',
         'version_published' => 'Versão publicada',
@@ -74,6 +86,7 @@ return [
         'database' => 'Sino',
         'group_modules' => 'Os meus kory',
         'group_installed' => 'Kory instalados',
+        'group_watched' => 'Módulos seguidos',
         'group_security' => 'Segurança',
         'always' => 'sempre enviadas',
         'security_row' => 'Nova ligação do CLI, tokens, palavra-passe',

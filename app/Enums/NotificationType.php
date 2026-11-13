@@ -13,6 +13,8 @@ enum NotificationType: string
     case VersionRejected = 'version_rejected';
     case UpdateAvailable = 'update_available';
     case VersionDeprecated = 'version_deprecated';
+    case NewVersionWatched = 'new_version_watched';
+    case ModuleArchived = 'module_archived';
     case CliLogin = 'cli_login';
     case TokenCreated = 'token_created';
     case TokenRevoked = 'token_revoked';
@@ -30,10 +32,18 @@ enum NotificationType: string
         return array_values(array_filter(self::cases(), fn (self $type) => ! $type->isSecurity()));
     }
 
-    /** Kory installés : envoyées aux comptes qui ont téléchargé le module (F-INT-06), groupe à part sur S-43. */
-    public function isForDownloaders(): bool
+    /**
+     * Groupe sur S-43 : mine (mes kory), installed (kory téléchargés, F-INT-06), watched (modules
+     * suivis, F-RCH-09), security (toujours envoyées).
+     */
+    public function group(): string
     {
-        return in_array($this, [self::UpdateAvailable, self::VersionDeprecated], true);
+        return match (true) {
+            $this->isSecurity() => 'security',
+            in_array($this, [self::UpdateAvailable, self::VersionDeprecated], true) => 'installed',
+            in_array($this, [self::NewVersionWatched, self::ModuleArchived], true) => 'watched',
+            default => 'mine',
+        };
     }
 
     /** Canal actif quand le compte n'a rien réglé : « mise à jour disponible » seulement dans la cloche. */

@@ -28,10 +28,13 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $archived_at
  * @property string|null $latest_version_id
  * @property int $download_count
+ * @property bool $reviews_hidden
+ * @property float|null $rating_avg
+ * @property int $rating_count
  * @property Carbon|null $third_party_downloaded_at
  * @property-read User $author
  */
-#[Fillable(['author_id', 'name', 'visibility', 'status', 'description', 'category_id', 'language', 'archived_at', 'latest_version_id'])]
+#[Fillable(['author_id', 'name', 'visibility', 'status', 'description', 'category_id', 'language', 'reviews_hidden', 'archived_at', 'latest_version_id'])]
 class Module extends Model
 {
     use HasUuids, SoftDeletes;
@@ -47,6 +50,9 @@ class Module extends Model
             'status' => ModuleStatus::class,
             'archived_at' => 'datetime',
             'download_count' => 'integer',
+            'reviews_hidden' => 'boolean',
+            'rating_avg' => 'float',
+            'rating_count' => 'integer',
             'third_party_downloaded_at' => 'datetime',
         ];
     }
@@ -67,6 +73,24 @@ class Module extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    /** @return HasMany<Review, $this> */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /** @return HasMany<Star, $this> */
+    public function stars(): HasMany
+    {
+        return $this->hasMany(Star::class);
+    }
+
+    /** @return HasMany<Watch, $this> */
+    public function watches(): HasMany
+    {
+        return $this->hasMany(Watch::class);
     }
 
     /** @return HasMany<ModuleVersion, $this> */

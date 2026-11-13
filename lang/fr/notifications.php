@@ -55,7 +55,19 @@ return [
         'mail' => 'Une version que vous avez installée est dépréciée par son auteur. Rien ne change dans vos projets sans vous.',
         'action' => 'Voir la version',
     ],
+    'new_version_watched' => [
+        'title' => 'Nouvelle version : :module :version',
+        'mail' => 'Un module que vous suivez a publié une nouvelle version.',
+        'action' => 'Voir la version',
+    ],
+    'module_archived' => [
+        'title' => ':module archivé',
+        'mail' => 'Un module que vous suivez est archivé : il reste téléchargeable mais ne reçoit plus de nouvelle version.',
+        'action' => 'Voir mes modules suivis',
+    ],
     'types' => [
+        'new_version_watched' => 'Nouvelle version d\'un module suivi',
+        'module_archived' => 'Module suivi archivé',
         'update_available' => 'Mise à jour disponible',
         'version_deprecated' => 'Version dépréciée',
         'version_published' => 'Version publiée',
@@ -74,6 +86,7 @@ return [
         'database' => 'Cloche',
         'group_modules' => 'Mes kory',
         'group_installed' => 'Kory installés',
+        'group_watched' => 'Modules suivis',
         'group_security' => 'Sécurité',
         'always' => 'toujours envoyées',
         'security_row' => 'Nouvelle connexion du CLI, jetons, mot de passe',

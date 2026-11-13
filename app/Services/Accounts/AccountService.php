@@ -8,6 +8,7 @@ use App\Exceptions\InvalidTransition;
 use App\Models\Module;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
+use App\Services\Community\ReviewService;
 use App\Services\Modules\ModuleLifecycle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -43,6 +44,10 @@ class AccountService
             $user->tokens()->usable()->update(['revoked_at' => now(), 'revoked_by' => ($actor ?? $user)->getKey()]);
             $user->securityEvents()->delete();
             $user->moduleDownloads()->delete();
+            $user->stars()->delete();
+            $user->watches()->delete();
+            // Ses avis restent (le nom @auteur est gardé) mais ne sont plus vérifiés : notes recalculées.
+            $user->reviews()->with('module')->get()->each(fn ($review) => app(ReviewService::class)->refreshRating($review->module));
             $user->passkeys()->delete();
             DB::table('sessions')->where('user_id', $user->id)->delete();
 

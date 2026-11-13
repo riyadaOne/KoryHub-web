@@ -55,7 +55,19 @@ return [
         'mail' => 'أهمل المؤلف إصدارًا قمت بتثبيته. لا يتغير شيء في مشاريعك دون موافقتك.',
         'action' => 'عرض الإصدار',
     ],
+    'new_version_watched' => [
+        'title' => 'إصدار جديد: :module :version',
+        'mail' => 'نشرت وحدة تتابعها إصدارًا جديدًا.',
+        'action' => 'عرض الإصدار',
+    ],
+    'module_archived' => [
+        'title' => 'أُرشفت :module',
+        'mail' => 'أُرشفت وحدة تتابعها: تبقى قابلة للتنزيل لكنها لن تتلقى إصدارات جديدة.',
+        'action' => 'عرض الوحدات المتابَعة',
+    ],
     'types' => [
+        'new_version_watched' => 'إصدار جديد لوحدة متابَعة',
+        'module_archived' => 'أرشفة وحدة متابَعة',
         'update_available' => 'تحديث متاح',
         'version_deprecated' => 'إصدار مُهمل',
         'version_published' => 'إصدار منشور',
@@ -74,6 +86,7 @@ return [
         'database' => 'الجرس',
         'group_modules' => 'وحداتي',
         'group_installed' => 'وحدات kory المثبتة',
+        'group_watched' => 'الوحدات المتابَعة',
         'group_security' => 'الأمان',
         'always' => 'تُرسل دائمًا',
         'security_row' => 'تسجيل دخول جديد عبر CLI، الرموز، كلمة المرور',

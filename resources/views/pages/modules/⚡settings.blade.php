@@ -36,6 +36,8 @@ new #[Title('modules.settings')] class extends Component {
 
     public string $visibility = 'private';
 
+    public bool $reviewsHidden = false;
+
     public ?string $notice = null;
 
     public bool $noticeIsError = false;
@@ -50,6 +52,7 @@ new #[Title('modules.settings')] class extends Component {
         $this->category = (string) $this->module->category_id;
         $this->tags = $this->module->tags->pluck('name')->implode(', ');
         $this->visibility = $this->module->visibility->value;
+        $this->reviewsHidden = $this->module->reviews_hidden;
     }
 
     #[Computed]
@@ -93,6 +96,7 @@ new #[Title('modules.settings')] class extends Component {
                 'category_id' => $this->category === '' ? null : $this->category,
                 'tags' => $tags->all(),
                 'visibility' => Visibility::from($this->visibility),
+                'reviews_hidden' => $this->reviewsHidden,
             ], Auth::user());
             [$this->notice, $this->noticeIsError] = [__('modules.form.saved'), false];
         } catch (ModuleRuleViolation $exception) {
@@ -166,6 +170,12 @@ new #[Title('modules.settings')] class extends Component {
             <flux:radio value="public">{{ __('modules.visibility.public') }}</flux:radio>
         </flux:radio.group>
         <flux:text class="-mt-3" data-test="visibility-hint">{{ $this->privateLocked ? __('modules.form.private_locked') : __('modules.form.private_hint') }}</flux:text>
+
+        <flux:field variant="inline">
+            <flux:switch wire:model="reviewsHidden" data-test="reviews-hidden" />
+            <flux:label>{{ __('community.reviews.hide') }}</flux:label>
+            <flux:description>{{ __('community.reviews.hide_text') }}</flux:description>
+        </flux:field>
 
         <div>
             <flux:button variant="primary" type="submit" data-test="save-module">{{ __('modules.form.save') }}</flux:button>

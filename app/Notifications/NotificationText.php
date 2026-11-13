@@ -40,7 +40,7 @@ final class NotificationText
      */
     public static function url(string $kind, array $params = []): string
     {
-        if (in_array($kind, ['version_published', 'version_rejected', 'update_available', 'version_deprecated'], true)
+        if (in_array($kind, ['version_published', 'version_rejected', 'update_available', 'version_deprecated', 'new_version_watched'], true)
             && preg_match('#^@([a-z0-9-]+)/([a-z0-9-]+)$#', (string) ($params['module'] ?? ''), $m)
             && is_string($params['version'] ?? null)) {
             return route('modules.version', ['author' => $m[1], 'module' => $m[2], 'number' => $params['version']]);
@@ -50,6 +50,7 @@ final class NotificationText
             'password_changed' => route('security.edit'),
             'version_published', 'version_rejected' => route('modules.mine'),
             'update_available', 'version_deprecated' => route('downloads.index'),
+            'new_version_watched', 'module_archived' => route('watching.index'),
             default => route('tokens.index'),
         };
     }

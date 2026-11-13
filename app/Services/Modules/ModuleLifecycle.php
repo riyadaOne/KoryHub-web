@@ -12,6 +12,7 @@ use App\Models\ModuleVersion;
 use App\Models\Tag;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
+use App\Services\Community\ModuleAudience;
 use App\Support\SemVer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -56,7 +57,7 @@ class ModuleLifecycle
             'deprecated_at' => now(),
             'deprecation_message' => mb_substr(trim($message), 0, 255),
         ], $actor);
-        app(DownloaderNotifier::class)->versionDeprecated($version);
+        app(ModuleAudience::class)->versionDeprecated($version);
     }
 
     /** Annule la dépréciation : la version redevient publiée. */
@@ -96,7 +97,7 @@ class ModuleLifecycle
      * Réglages de la fiche (F-REG-13, F-REG-14, F-REG-18) : description, catégorie, étiquettes,
      * visibilité ; chaque champ changé est noté dans l'audit.
      *
-     * @param  array{description: ?string, category_id: ?string, tags: list<string>, visibility: Visibility}  $settings
+     * @param  array{description: ?string, category_id: ?string, tags: list<string>, visibility: Visibility, reviews_hidden?: bool}  $settings
      */
     public function updateSettings(Module $module, array $settings, User $actor): void
     {
@@ -109,10 +110,12 @@ class ModuleLifecycle
                 'description' => $module->description,
                 'category' => $module->category?->slug,
                 'visibility' => $module->visibility,
+                'reviews_hidden' => $module->reviews_hidden,
                 'tags' => $module->tags->pluck('name')->sort()->implode(', '),
             ];
 
             $module->forceFill([
+                'reviews_hidden' => $settings['reviews_hidden'] ?? $module->reviews_hidden,
                 'description' => $settings['description'],
                 'category_id' => $settings['category_id'],
                 'visibility' => $settings['visibility'],
@@ -126,6 +129,7 @@ class ModuleLifecycle
                 'description' => $module->description,
                 'category' => $module->category_id ? Category::find($module->category_id)?->slug : null,
                 'visibility' => $module->visibility,
+                'reviews_hidden' => $module->reviews_hidden,
                 'tags' => $module->tags->pluck('name')->sort()->implode(', '),
             ];
 
@@ -152,6 +156,7 @@ class ModuleLifecycle
     public function archive(Module $module, User $actor): void
     {
         $this->moduleTransition($module, ModuleStatus::Archived, ['archived_at' => now()], $actor);
+        app(ModuleAudience::class)->moduleArchived($module);
     }
 
     public function unarchive(Module $module, User $actor): void

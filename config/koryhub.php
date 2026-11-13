@@ -95,6 +95,8 @@ return [
         'redacted_fields' => [
             'name', 'email', 'password', 'remember_token',
             'two_factor_secret', 'two_factor_recovery_codes',
+            // Commentaire d'un avis : texte libre, peut contenir des données personnelles (W05).
+            'comment',
         ],
     ],
 

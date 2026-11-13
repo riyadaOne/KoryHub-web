@@ -2,7 +2,7 @@
     En-tête de la fiche d'un kory (S-03 à S-06, maquette exemple-kory.html et maquettes W03) :
     catégorie et auteur, nom, description, badges, actions de l'auteur, bandeaux, onglets.
 --}}
-@props(['module', 'tab', 'version' => null, 'isAuthor' => false, 'filesCount' => null, 'versionsCount' => null])
+@props(['module', 'tab', 'version' => null, 'isAuthor' => false, 'filesCount' => null, 'versionsCount' => null, 'reviewsCount' => null])
 
 @php
     $base = route('modules.show', ['author' => $module->author->handle, 'module' => $module->name]);
@@ -12,6 +12,9 @@
         'files' => [__('modules.tabs.files').($filesCount !== null ? ' · '.$filesCount : ''), route('modules.files', ['author' => $module->author->handle, 'module' => $module->name])],
         'versions' => [__('modules.tabs.versions').($versionsCount !== null ? ' · '.$versionsCount : ''), route('modules.versions', ['author' => $module->author->handle, 'module' => $module->name])],
     ];
+    // Avis (W05) : nombre affiché sauf si l'auteur les a masqués.
+    $reviewsCount ??= $module->reviews_hidden ? null : $module->reviews()->count();
+    $tabs['reviews'] = [__('community.reviews.tab').($reviewsCount !== null ? ' · '.$reviewsCount : ''), route('modules.reviews', ['author' => $module->author->handle, 'module' => $module->name])];
 @endphp
 
 <section class="grid gap-2.5 pb-2">
@@ -46,11 +49,12 @@
         @endif
     </div>
 
-    @if ($isAuthor)
-        <div>
+    <div class="flex flex-wrap gap-2">
+        <livewire:module-actions :module-id="$module->id" :key="'actions-'.$module->id" />
+        @if ($isAuthor)
             <flux:button size="sm" icon="cog-6-tooth" :href="route('modules.settings', ['author' => $module->author->handle, 'module' => $module->name])" wire:navigate data-test="module-settings-link">{{ __('modules.settings') }}</flux:button>
-        </div>
-    @endif
+        @endif
+    </div>
 </section>
 
 @if ($module->status === \App\Enums\ModuleStatus::Archived)

@@ -118,6 +118,24 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
         return $preference === null ? $type->enabledByDefault($channel) : (bool) $preference->{$channel};
     }
 
+    /** @return HasMany<Review, $this> */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /** @return HasMany<Star, $this> */
+    public function stars(): HasMany
+    {
+        return $this->hasMany(Star::class);
+    }
+
+    /** @return HasMany<Watch, $this> */
+    public function watches(): HasMany
+    {
+        return $this->hasMany(Watch::class);
+    }
+
     /** @return HasMany<ModuleDownload, $this> */
     public function moduleDownloads(): HasMany
     {
