@@ -63,6 +63,20 @@ return [
     ],
 
     /*
+     * Publication des kory (TRD §13, §16, §22). Archives : disque « local » (privé, liens
+     * temporaires) en développement, R2 (disque compatible S3) en production.
+     */
+    'publication' => [
+        'archives_disk' => env('KORYHUB_ARCHIVES_DISK', 'local'),
+        'max_archive_kb' => 10240,
+        'max_uncompressed_mb' => 50,
+        'max_files' => 1000,
+        'gitleaks_binary' => env('KORYHUB_GITLEAKS_BINARY', 'gitleaks'),
+        'scan_timeout_seconds' => 60,
+        'per_hour' => 30,
+    ],
+
+    /*
      * Journal d'audit (TRD §21) : champs notés comme modifiés, sans leur valeur,
      * pour qu'aucune donnée personnelle ni aucun secret n'y entre.
      */

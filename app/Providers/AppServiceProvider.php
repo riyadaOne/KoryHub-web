@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\PersonalAccessToken;
+use App\Services\Modules\Secrets\GitleaksScanner;
+use App\Services\Modules\Secrets\SecretScanner;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
@@ -20,7 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Recherche de secrets à la publication (TRD §16) : gitleaks ; faux scanner dans les tests.
+        $this->app->bind(SecretScanner::class, fn () => GitleaksScanner::fromConfig());
     }
 
     /**

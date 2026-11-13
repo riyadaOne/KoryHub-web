@@ -1,0 +1,11 @@
+# Recherche de secrets de KoryHub (TRD §22) : règles par défaut de gitleaks, plus les jetons du CLI.
+title = "KoryHub"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "koryhub-cli-token"
+description = "Jeton du CLI KoryHub"
+regex = '''kory_[A-Za-z0-9]{40}[0-9a-f]{8}'''
+keywords = ["kory_"]

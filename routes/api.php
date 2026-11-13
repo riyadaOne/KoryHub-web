@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Api\V1\DeviceAuthorizationController;
 use App\Http\Controllers\Api\V1\MetaController;
+use App\Http\Controllers\Api\V1\ModuleController;
 use App\Http\Controllers\Api\V1\TokenController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\VersionController;
 use App\Http\Middleware\EnsureApiAccountActive;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +34,10 @@ Route::post('auth/device/token', [DeviceAuthorizationController::class, 'token']
 Route::middleware(['auth:sanctum', EnsureApiAccountActive::class, 'throttle:120,1'])->group(function () {
     Route::get('user', [UserController::class, 'show'])->name('user');
     Route::delete('auth/token', [TokenController::class, 'destroy'])->name('auth.token.destroy');
+
+    // Publication (W03) : kory list et kory push.
+    Route::get('modules/{author}/{module}', [ModuleController::class, 'show'])->name('modules.show');
+    Route::post('modules/{author}/{module}/versions', [VersionController::class, 'store'])
+        ->middleware('throttle:'.config('koryhub.publication.per_hour').',60')
+        ->name('modules.versions.store');
 });

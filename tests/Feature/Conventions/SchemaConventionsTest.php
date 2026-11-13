@@ -32,14 +32,21 @@ const TABLES_WITHOUT_SOFT_DELETES = [
     'personal_access_tokens',
     // Codes de connexion du CLI : table technique, lignes effacées 7 jours après expiration (TRD §7.3).
     'cli_device_codes',
+    // Fichiers d'une version : jamais modifiés (TRD §13).
+    'version_files',
+    // Préférences de notification : réglage, pas une donnée historisée.
+    'notification_preferences',
 ];
+
+/** Tables de liaison : clé primaire composée (BACKEND-SCHEMA §4.2), sans colonne id ni suppression logique. */
+const PIVOT_TABLES = ['module_tag'];
 
 /** @return list<string> */
 function businessTables(): array
 {
     return collect(Schema::getTables(DB::connection()->getDatabaseName()))
         ->pluck('name')
-        ->reject(fn (string $table) => in_array($table, FRAMEWORK_TABLES, true))
+        ->reject(fn (string $table) => in_array($table, FRAMEWORK_TABLES, true) || in_array($table, PIVOT_TABLES, true))
         ->values()
         ->all();
 }

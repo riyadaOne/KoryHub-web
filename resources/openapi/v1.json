@@ -214,6 +214,83 @@
                 "security": []
             }
         },
+        "/modules/{author}/{module}": {
+            "get": {
+                "operationId": "v1.modules.show",
+                "summary": "Un module et sa derni\u00e8re version",
+                "tags": [
+                    "Module"
+                ],
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "module",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Nom complet @auteur/nom."
+                                        },
+                                        "visibility": {
+                                            "type": "string",
+                                            "description": "public ou private.",
+                                            "enum": [
+                                                "public",
+                                                "private"
+                                            ]
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "description": "active ou archived.",
+                                            "enum": [
+                                                "active",
+                                                "archived"
+                                            ]
+                                        },
+                                        "latest_version": {
+                                            "type": "string",
+                                            "description": "Derni\u00e8re version stable publi\u00e9e, ou null."
+                                        }
+                                    },
+                                    "required": [
+                                        "name",
+                                        "visibility",
+                                        "status",
+                                        "latest_version"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/auth/token": {
             "delete": {
                 "operationId": "v1.auth.token.destroy",
@@ -267,17 +344,150 @@
                                                 "null"
                                             ],
                                             "description": "Expiration du jeton (ISO 8601, UTC), ou null pour un jeton sans expiration."
+                                        },
+                                        "publication_terms_accepted": {
+                                            "type": "boolean",
+                                            "description": "Droits certifi\u00e9s et message de prudence lus (premier kory push fait)."
                                         }
                                     },
                                     "required": [
                                         "handle",
                                         "name",
                                         "token_name",
-                                        "token_expires_at"
+                                        "token_expires_at",
+                                        "publication_terms_accepted"
                                     ]
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/modules/{author}/{module}/versions": {
+            "post": {
+                "operationId": "v1.modules.versions.store",
+                "description": "Archive .tar.gz (10 Mo au plus) et son empreinte SHA-256. Premier envoi du compte :\n`rights_certified` et `notice_accepted`. Nouveau module : `visibility` (priv\u00e9 par d\u00e9faut).\nRefus : `{message, code}` avec, entre autres, `secret_detected`, `version_exists`,\n`version_not_higher`, `binary_forbidden`, `svg_forbidden`, `terms_required`, `email_unverified`.",
+                "summary": "Publier une version",
+                "tags": [
+                    "Version"
+                ],
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "module",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "archive": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "contentMediaType": "application/octet-stream"
+                                    },
+                                    "sha256": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-fA-F]{64}$"
+                                    },
+                                    "visibility": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "enum": [
+                                            "public",
+                                            "private",
+                                            null
+                                        ]
+                                    },
+                                    "rights_certified": {
+                                        "type": [
+                                            "boolean",
+                                            "null"
+                                        ]
+                                    },
+                                    "notice_accepted": {
+                                        "type": [
+                                            "boolean",
+                                            "null"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "archive",
+                                    "sha256"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Nom complet @auteur/nom."
+                                        },
+                                        "version": {
+                                            "type": "string",
+                                            "description": "Num\u00e9ro publi\u00e9."
+                                        },
+                                        "sha256": {
+                                            "type": "string",
+                                            "description": "Empreinte SHA-256 de l'archive."
+                                        },
+                                        "files_count": {
+                                            "type": "integer",
+                                            "description": "Nombre de fichiers du kory (hors kory.json et README.md)."
+                                        },
+                                        "size": {
+                                            "type": "integer",
+                                            "description": "Taille de l'archive en octets."
+                                        },
+                                        "url": {
+                                            "type": "string",
+                                            "description": "Adresse de la fiche."
+                                        }
+                                    },
+                                    "required": [
+                                        "name",
+                                        "version",
+                                        "sha256",
+                                        "files_count",
+                                        "size",
+                                        "url"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
@@ -320,6 +530,25 @@
             },
             "AuthenticationException": {
                 "description": "Unauthenticated",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
+                            ]
+                        }
+                    }
+                }
+            },
+            "ModelNotFoundException": {
+                "description": "Not found",
                 "content": {
                     "application/json": {
                         "schema": {

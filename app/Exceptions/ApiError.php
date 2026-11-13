@@ -23,9 +23,13 @@ class ApiError extends RuntimeException
         parent::__construct($message);
     }
 
-    public static function make(int $status, string $errorCode, array $errors = []): self
+    /**
+     * @param  array<string, list<string>>  $errors  erreurs par champ
+     * @param  array<string, string|int>  $replace  valeurs du message (fichier, ligne, version…)
+     */
+    public static function make(int $status, string $errorCode, array $errors = [], array $replace = []): self
     {
-        return new self($status, $errorCode, __("api.errors.{$errorCode}"), $errors);
+        return new self($status, $errorCode, __("api.errors.{$errorCode}", $replace), $errors);
     }
 
     public static function upgradeRequired(): self

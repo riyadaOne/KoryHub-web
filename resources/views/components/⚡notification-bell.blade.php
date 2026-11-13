@@ -1,6 +1,6 @@
 <?php
 
-use App\Notifications\SecurityNotification;
+use App\Notifications\NotificationText;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -34,7 +34,7 @@ new class extends Component {
         $notification = Auth::user()->notifications()->findOrFail($id);
         $notification->markAsRead();
 
-        $this->redirect(SecurityNotification::url($notification->data['kind'] ?? ''), navigate: true);
+        $this->redirect(NotificationText::url($notification->data['kind'] ?? ''), navigate: true);
     }
 }; ?>
 
@@ -56,7 +56,7 @@ new class extends Component {
 
             @forelse ($this->latest as $notification)
                 @php($kind = $notification->data['kind'] ?? '')
-                @php($replace = SecurityNotification::replacements($notification->data['params'] ?? []))
+                @php($replace = NotificationText::replacements($notification->data['params'] ?? []))
                 <button type="button" wire:click="open('{{ $notification->id }}')" wire:key="notification-{{ $notification->id }}"
                     class="grid w-full grid-cols-[10px_minmax(0,1fr)] gap-2.5 border-b border-zinc-200 px-4 py-2.5 text-start text-sm last:border-b-0 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800">
                     <span @class(['mt-1.5 size-2 rounded-full', 'bg-accent' => $notification->read_at === null])></span>

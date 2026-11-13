@@ -34,6 +34,7 @@ test('GET /v1/user renvoie le compte et le jeton, et note sa dernière utilisati
             'name' => 'Moussa',
             'token_name' => 'kory · Windows',
             'token_expires_at' => $token->expires_at->toIso8601ZuluString(),
+            'publication_terms_accepted' => false,
         ]);
 
     expect($token->fresh()->last_used_at)->not->toBeNull();

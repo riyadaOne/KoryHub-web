@@ -3,25 +3,28 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Carbon;
 
 /**
  * Notification de sécurité (TRD §19, T-32), par e-mail et dans la cloche, dans la langue
- * du compte. Jamais désactivable. Types : cli_login, token_created, token_revoked,
- * token_expiring, password_changed. Seuls le type et ses paramètres sont enregistrés :
- * la cloche traduit à l'affichage (lang/*\/notifications.php).
+ * du compte, envoyée en file. Jamais désactivable. Types : cli_login, token_created,
+ * token_revoked, token_expiring, password_changed. Seuls le type et ses paramètres sont
+ * enregistrés : la cloche traduit à l'affichage (NotificationText).
  */
-class SecurityNotification extends Notification
+class SecurityNotification extends Notification implements ShouldQueue
 {
+    use Queueable;
+
     /** @param  array{token?: string|null, ip?: string|null, expires_at?: string|null}  $params */
     public function __construct(public string $kind, public array $params = []) {}
 
     /** @return list<string> */
     public function via(User $notifiable): array
     {
-        return ['mail', 'database'];
+        return $notifiable->email === null ? ['database'] : ['mail', 'database'];
     }
 
     public function databaseType(User $notifiable): string
@@ -37,7 +40,7 @@ class SecurityNotification extends Notification
 
     public function toMail(User $notifiable): MailMessage
     {
-        $replace = self::replacements($this->params);
+        $replace = NotificationText::replacements($this->params);
         $message = (new MailMessage)
             ->subject(__("notifications.{$this->kind}.title", $replace))
             ->line(__("notifications.{$this->kind}.mail", $replace));
@@ -53,30 +56,7 @@ class SecurityNotification extends Notification
         }
 
         return $message
-            ->action(__("notifications.{$this->kind}.action"), self::url($this->kind))
+            ->action(__("notifications.{$this->kind}.action"), NotificationText::url($this->kind))
             ->line(__('notifications.not_you'));
-    }
-
-    /** Page vers laquelle mènent l'e-mail et la ligne de la cloche. */
-    public static function url(string $kind): string
-    {
-        return $kind === 'password_changed' ? route('security.edit') : route('tokens.index');
-    }
-
-    /**
-     * @param  array<string, string|null>  $params
-     * @return array<string, string>
-     */
-    public static function replacements(array $params): array
-    {
-        $expires = $params['expires_at'] ?? null;
-
-        return [
-            'token' => (string) ($params['token'] ?? ''),
-            'ip' => (string) ($params['ip'] ?? ''),
-            'expires' => $expires === null
-                ? __('tokens.never')
-                : Carbon::parse($expires)->locale(app()->getLocale())->isoFormat('LL'),
-        ];
     }
 }

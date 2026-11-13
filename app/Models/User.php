@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AccountStatus;
+use App\Enums\NotificationType;
 use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -40,6 +41,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $locale
  * @property string|null $country
  * @property string|null $avatar_path
+ * @property Carbon|null $rights_certified_at
+ * @property Carbon|null $publication_notice_accepted_at
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -80,7 +83,39 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'status' => AccountStatus::class,
             'suspended_at' => 'datetime',
             'erased_at' => 'datetime',
+            'rights_certified_at' => 'datetime',
+            'publication_notice_accepted_at' => 'datetime',
         ];
+    }
+
+    /** @return HasMany<Module, $this> */
+    public function modules(): HasMany
+    {
+        return $this->hasMany(Module::class, 'author_id');
+    }
+
+    /** @return HasMany<NotificationPreference, $this> */
+    public function notificationPreferences(): HasMany
+    {
+        return $this->hasMany(NotificationPreference::class);
+    }
+
+    /** Certification des droits et message de prudence acceptés au premier kory push (F-REG-12, F-REG-33). */
+    public function hasAcceptedPublicationTerms(): bool
+    {
+        return $this->rights_certified_at !== null && $this->publication_notice_accepted_at !== null;
+    }
+
+    /** Canaux d'un type de notification réglable ; sans préférence, les deux sont actifs (S-43). */
+    public function wantsNotification(NotificationType $type, string $channel): bool
+    {
+        if ($type->isSecurity()) {
+            return true;
+        }
+
+        $preference = $this->notificationPreferences->firstWhere('type', $type);
+
+        return $preference === null || (bool) $preference->{$channel};
     }
 
     /** @return HasMany<SecurityEvent, $this> */

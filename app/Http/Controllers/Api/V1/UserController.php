@@ -30,6 +30,8 @@ class UserController extends Controller
             'token_name' => $token->name,
             /** Expiration du jeton (ISO 8601, UTC), ou null pour un jeton sans expiration. */
             'token_expires_at' => $token->expires_at?->toIso8601ZuluString(),
+            /** Droits certifiés et message de prudence lus (premier kory push fait). */
+            'publication_terms_accepted' => $user->hasAcceptedPublicationTerms(),
         ]);
     }
 }

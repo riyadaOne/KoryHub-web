@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\License;
+use App\Enums\VersionStatus;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+
+/**
+ * Version d'un module (BACKEND-SCHEMA §4.2) : les champs du manifeste sont copiés à la
+ * publication et jamais réécrits (F-REG-10) ; seules les colonnes de statut changent ensuite.
+ * Écrite par App\Services\Modules\VersionPublisher, puis par VersionService.
+ *
+ * @property string $id
+ * @property string $module_id
+ * @property string $version
+ * @property int $major
+ * @property int $minor
+ * @property int $patch
+ * @property string|null $prerelease
+ * @property VersionStatus $status
+ * @property string|null $version_key
+ * @property string|null $description
+ * @property License $license
+ * @property string|null $language
+ * @property string|null $readme
+ * @property string|null $archive_path
+ * @property string $archive_sha256
+ * @property int $archive_size
+ * @property int $files_count
+ * @property string $published_by
+ * @property Carbon $submitted_at
+ * @property Carbon|null $published_at
+ * @property string|null $rejection_code
+ * @property string|null $rejection_reason
+ * @property Carbon|null $deprecated_at
+ * @property string|null $deprecation_message
+ * @property-read Module $module
+ */
+#[Fillable([
+    'module_id', 'version', 'major', 'minor', 'patch', 'prerelease', 'status', 'description', 'license',
+    'language', 'readme', 'archive_path', 'archive_sha256', 'archive_size', 'files_count', 'published_by',
+    'submitted_at', 'published_at', 'rejection_code', 'rejection_reason', 'deprecated_at', 'deprecation_message',
+])]
+class ModuleVersion extends Model
+{
+    use HasUuids, SoftDeletes;
+
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return [
+            'status' => VersionStatus::class,
+            'license' => License::class,
+            'major' => 'integer',
+            'minor' => 'integer',
+            'patch' => 'integer',
+            'submitted_at' => 'datetime',
+            'published_at' => 'datetime',
+            'deprecated_at' => 'datetime',
+        ];
+    }
+
+    /** @return BelongsTo<Module, $this> */
+    public function module(): BelongsTo
+    {
+        return $this->belongsTo(Module::class);
+    }
+
+    /** @return BelongsTo<User, $this> */
+    public function publisher(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'published_by');
+    }
+
+    /** @return HasMany<VersionFile, $this> */
+    public function files(): HasMany
+    {
+        return $this->hasMany(VersionFile::class, 'version_id');
+    }
+
+    public function isPrerelease(): bool
+    {
+        return $this->prerelease !== null;
+    }
+}
