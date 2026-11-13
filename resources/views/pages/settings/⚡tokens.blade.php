@@ -95,7 +95,7 @@ new #[Title('tokens.title')] class extends Component {
                         @foreach ($this->tokens as $token)
                             @php($status = $token->status())
                             <tr wire:key="token-{{ $token->id }}" @class(['border-t border-zinc-200 dark:border-zinc-700', 'text-zinc-500 dark:text-zinc-400' => ! $status->isUsable()])>
-                                <td class="px-3 py-2 font-semibold">{{ $token->name }}</td>
+                                <td class="whitespace-nowrap px-3 py-2 font-semibold">{{ $token->name }}</td>
                                 <td class="whitespace-nowrap px-3 py-2">{{ $token->origin->label() }}</td>
                                 <td class="whitespace-nowrap px-3 py-2"><x-relative-date :at="$token->created_at" /></td>
                                 <td class="whitespace-nowrap px-3 py-2">

@@ -35,3 +35,8 @@ function formatRelativeDates(root = document) {
 
 document.addEventListener('DOMContentLoaded', () => formatRelativeDates());
 document.addEventListener('livewire:navigated', () => formatRelativeDates());
+
+// Après chaque mise à jour d'un composant Livewire, ses dates reviennent du serveur en UTC.
+document.addEventListener('livewire:init', () => {
+    window.Livewire.hook('morphed', ({ el }) => formatRelativeDates(el));
+});
