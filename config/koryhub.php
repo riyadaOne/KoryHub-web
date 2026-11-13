@@ -88,6 +88,27 @@ return [
     ],
 
     /*
+     * Score de classement (TRD §14, décision W05 2a) : poids réglables sans changer le code.
+     * Note : moyenne bayésienne avec prior_count notes fictives à prior_mean sur 5.
+     */
+    'score' => [
+        'downloads' => 1.0,
+        'rating' => 1.0,
+        'recency' => 0.5,
+        'certification' => 0.5,
+        'prior_count' => 5,
+        'prior_mean' => 3.5,
+        'half_life_days' => 90,
+    ],
+
+    // Recherche (W05) : résultats par page sur le site et dans l'API.
+    'search' => [
+        'per_page' => [20, 50],
+        'api_max' => 100,
+        'max_query' => 100,
+    ],
+
+    /*
      * Journal d'audit (TRD §21) : champs notés comme modifiés, sans leur valeur,
      * pour qu'aucune donnée personnelle ni aucun secret n'y entre.
      */

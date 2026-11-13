@@ -13,3 +13,4 @@ Artisan::command('inspire', function () {
  */
 Schedule::command('koryhub:tokens-remind')->dailyAt('08:00');
 Schedule::command('koryhub:device-codes-prune')->everyFifteenMinutes();
+Schedule::command('koryhub:scores')->hourly();

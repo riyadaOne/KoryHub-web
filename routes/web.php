@@ -8,6 +8,9 @@ Route::view('/', 'public.home')->name('home');
 
 Route::post('locale/{locale}', LocaleController::class)->name('locale.update');
 
+// Recherche (S-02, W05) : publique.
+Route::livewire('search', 'pages::search')->name('search');
+
 // Tableau de bord : accessible avant la vérification de l'e-mail, qui ne bloque que publier et signaler (F-AUT-23).
 Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

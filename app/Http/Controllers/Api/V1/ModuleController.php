@@ -48,6 +48,12 @@ class ModuleController extends Controller
             'certified' => false,
             /** Téléchargements, toutes versions. */
             'download_count' => $found->download_count,
+            /** Auteur : nom @auteur et pays (code ISO), s'il est renseigné. */
+            'author' => ['handle' => $found->author->handle, 'country' => $found->author->country],
+            'category' => $found->category?->slug,
+            /** Note vérifiée moyenne, ou null (avis masqués : null). */
+            'rating_avg' => $found->reviews_hidden ? null : $found->rating_avg,
+            'rating_count' => $found->reviews_hidden ? 0 : $found->rating_count,
             'versions' => $versions->map(fn (ModuleVersion $v) => [
                 'version' => $v->version,
                 /** published, deprecated ou removed. */
@@ -71,7 +77,7 @@ class ModuleController extends Controller
 
         /** @var ModuleVersion|null $v */
         $v = $found->versions()->where('version', $version)->whereIn('status', self::LISTED)
-            ->with(['requirements', 'files'])->first();
+            ->with(['requirements', 'files', 'components.file', 'links'])->first();
         abort_if($v === null, 404);
 
         return response()->json([
@@ -92,6 +98,11 @@ class ModuleController extends Controller
                 'name' => $r->name,
                 'version' => $r->version_constraint,
             ])->values()->all(),
+            /** Architecture déclarée (F-RCH-18) : composants et liens ; listes vides si absente. */
+            'architecture' => [
+                'components' => $v->components->sortBy('position')->map(fn ($c) => ['id' => $c->key, 'kind' => $c->kind->value, 'file' => $c->file?->path])->values()->all(),
+                'links' => $v->links->map(fn ($l) => ['from' => $v->components->firstWhere('id', $l->from_component_id)?->key, 'to' => $v->components->firstWhere('id', $l->to_component_id)?->key, 'kind' => $l->kind->value])->values()->all(),
+            ],
             'files' => $v->files->sortBy('path')->map(fn ($f) => [
                 'path' => $f->path,
                 'size' => $f->size,
@@ -105,7 +116,7 @@ class ModuleController extends Controller
         $found = Module::query()
             ->whereHas('author', fn ($q) => $q->where('handle', $author))
             ->where('name', $module)
-            ->with(['author', 'latestVersion'])
+            ->with(['author', 'latestVersion', 'category'])
             ->first();
 
         /** @var User|null $user */

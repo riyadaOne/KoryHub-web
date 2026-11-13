@@ -46,7 +46,7 @@ class TarBuilder
      * @param  array<string, string>  $files
      * @param  array<string, mixed>  $manifest  champs remplacés
      */
-    public static function kory(string $name, string $version = '1.0.0', array $files = ['src/PaymentService.php' => "<?php\n\nfinal class PaymentService {}\r\n"], array $manifest = []): self
+    public static function kory(string $name, string $version = '1.0.0', array $files = ['src/PaymentService.php' => "<?php\n\nfinal class PaymentService {}\r\n"], array $manifest = [], ?string $readme = null): self
     {
         $json = json_encode(array_merge([
             'name' => $name,
@@ -58,7 +58,7 @@ class TarBuilder
             'files' => array_keys($files),
         ], $manifest), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
-        $builder = (new self)->file('kory.json', $json)->file('README.md', "# Paiement\n\n## Problème résolu\n");
+        $builder = (new self)->file('kory.json', $json)->file('README.md', $readme ?? "# Paiement\n\n## Problème résolu\n");
         foreach ($files as $path => $content) {
             $builder->file($path, $content);
         }

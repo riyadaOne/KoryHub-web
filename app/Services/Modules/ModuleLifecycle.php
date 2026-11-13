@@ -13,6 +13,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
 use App\Services\Community\ModuleAudience;
+use App\Services\Search\SearchText;
 use App\Support\SemVer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -48,6 +49,7 @@ class ModuleLifecycle
             });
 
         $module->forceFill(['latest_version_id' => $latest?->id])->save();
+        app(SearchText::class)->refresh($module->unsetRelation('latestVersion'));
     }
 
     /** Déprécie une version publiée, avec un message montré aux utilisateurs (F-REG-15). */
@@ -144,6 +146,8 @@ class ModuleLifecycle
                 $this->audit->record('module.updated', $module, $changes, actor: $actor);
             }
         });
+
+        app(SearchText::class)->refresh($module);
     }
 
     /** Passage en privé interdit une fois le module téléchargé par un autre compte ou sans compte (BACKEND-SCHEMA §8). */

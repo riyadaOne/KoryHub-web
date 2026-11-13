@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\DeviceAuthorizationController;
 use App\Http\Controllers\Api\V1\DownloadController;
 use App\Http\Controllers\Api\V1\MetaController;
 use App\Http\Controllers\Api\V1\ModuleController;
+use App\Http\Controllers\Api\V1\SearchController;
 use App\Http\Controllers\Api\V1\TokenController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\VersionController;
@@ -53,4 +54,5 @@ Route::middleware([AuthenticateIfToken::class, EnsureApiAccountActive::class, 't
     Route::get('modules/{author}/{module}/versions/{version}', [ModuleController::class, 'version'])->name('modules.versions.show');
     Route::get('modules/{author}/{module}/versions/{version}/download', DownloadController::class)->name('modules.versions.download');
     Route::post('audit', AuditController::class)->middleware('throttle:30,1')->name('audit');
+    Route::get('search', SearchController::class)->middleware('throttle:60,1')->name('search');
 });

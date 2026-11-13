@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Laravel\Scout\Attributes\SearchUsingFullText;
+use Laravel\Scout\Searchable;
 
 /**
  * Module, ou kory (BACKEND-SCHEMA §4.2) : @auteur/nom, jamais réattribué.
@@ -31,13 +33,32 @@ use Illuminate\Support\Carbon;
  * @property bool $reviews_hidden
  * @property float|null $rating_avg
  * @property int $rating_count
+ * @property float $score
+ * @property Carbon|null $score_computed_at
+ * @property string|null $search_text
  * @property Carbon|null $third_party_downloaded_at
  * @property-read User $author
  */
 #[Fillable(['author_id', 'name', 'visibility', 'status', 'description', 'category_id', 'language', 'reviews_hidden', 'archived_at', 'latest_version_id'])]
 class Module extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasUuids, Searchable, SoftDeletes;
+
+    /**
+     * Données cherchées (W05, F-RCH-01, F-RCH-02) : le nom par LIKE (mots courts, préfixes), la
+     * description et le texte dénormalisé (README, étiquettes, catégorie) par l'index plein texte.
+     *
+     * @return array<string, mixed>
+     */
+    #[SearchUsingFullText(['description', 'search_text'])]
+    public function toSearchableArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'description' => $this->description,
+            'search_text' => $this->search_text,
+        ];
+    }
 
     /** @var array<string, string> */
     protected $attributes = ['visibility' => 'private', 'status' => 'active'];
@@ -53,6 +74,8 @@ class Module extends Model
             'reviews_hidden' => 'boolean',
             'rating_avg' => 'float',
             'rating_count' => 'integer',
+            'score' => 'float',
+            'score_computed_at' => 'datetime',
             'third_party_downloaded_at' => 'datetime',
         ];
     }

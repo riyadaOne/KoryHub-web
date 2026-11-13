@@ -3,6 +3,7 @@
 use App\Models\ModuleVersion;
 use App\Models\User;
 use App\Services\Modules\VersionPublisher;
+use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\Support\TarBuilder;
@@ -22,6 +23,12 @@ use Tests\TestCase;
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
+
+// Recherche plein texte (W05) : InnoDB ne voit pas les lignes d'une transaction non validée dans
+// un index FULLTEXT ; ces tests vident donc les tables au lieu d'utiliser une transaction.
+pest()->extend(TestCase::class)
+    ->use(DatabaseTruncation::class)
+    ->in('Search');
 
 /*
 |--------------------------------------------------------------------------
