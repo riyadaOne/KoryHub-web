@@ -45,7 +45,19 @@ return [
         'mail' => 'La version :version de :module n\'a pas été publiée. Corrigez-la puis renvoyez-la avec kory push : le même numéro reste disponible.',
         'action' => 'Ouvrir mon tableau de bord',
     ],
+    'update_available' => [
+        'title' => 'Mise à jour disponible : :module :version',
+        'mail' => 'Une nouvelle version d\'un kory que vous avez installé est publiée. Votre version : :installed.',
+        'action' => 'Voir la version',
+    ],
+    'version_deprecated' => [
+        'title' => ':module :version dépréciée',
+        'mail' => 'Une version que vous avez installée est dépréciée par son auteur. Rien ne change dans vos projets sans vous.',
+        'action' => 'Voir la version',
+    ],
     'types' => [
+        'update_available' => 'Mise à jour disponible',
+        'version_deprecated' => 'Version dépréciée',
         'version_published' => 'Version publiée',
         'version_rejected' => 'Version rejetée',
         'cli_login' => 'Nouvelle connexion du CLI',
@@ -61,6 +73,7 @@ return [
         'mail' => 'E-mail',
         'database' => 'Cloche',
         'group_modules' => 'Mes kory',
+        'group_installed' => 'Kory installés',
         'group_security' => 'Sécurité',
         'always' => 'toujours envoyées',
         'security_row' => 'Nouvelle connexion du CLI, jetons, mot de passe',

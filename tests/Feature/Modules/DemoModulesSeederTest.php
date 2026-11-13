@@ -26,7 +26,10 @@ test('les kory de démonstration sont publiés avec leur architecture, des versi
         ->and($mobileMoney->latestVersion->links()->count())->toBe(9)
         ->and($mobileMoney->versions()->where('status', VersionStatus::Deprecated)->count())->toBe(2)
         ->and(Module::where('name', 'recu-qr')->sole()->visibility)->toBe(Visibility::Private)
-        ->and(Module::where('name', 'sms-ussd-fallback')->sole()->status)->toBe(ModuleStatus::Archived);
+        ->and(Module::where('name', 'sms-ussd-fallback')->sole()->status)->toBe(ModuleStatus::Archived)
+        ->and($mobileMoney->fresh()->download_count)->toBe(9)
+        ->and($mobileMoney->fresh()->third_party_downloaded_at)->not->toBeNull()
+        ->and(User::where('handle', 'hassan-djibrine')->sole()->moduleDownloads()->count())->toBe(2);
 
     $this->get('/@moussa/mobile-money-resilient/architecture')->assertOk()->assertSee('RetryPendingPayments');
 });

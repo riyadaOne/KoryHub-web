@@ -38,5 +38,8 @@ return [
         'svg_forbidden' => 'صورة SVG مرفوضة: :path.',
         'secret_detected' => 'تم اكتشاف سر: :file السطر :line (:rule).',
         'scan_failed' => 'تعذّر إكمال البحث عن الأسرار. أعد المحاولة لاحقًا.',
+        'version_removed' => 'سُحب الإصدار :version لسبب قانوني.',
+        'download_limit_guest' => 'بلغتَ حد :limit تنزيل في الساعة لعنوانك.',
+        'download_limit_user' => 'بلغتَ حد :limit تنزيل في الساعة لحسابك.',
     ],
 ];

@@ -209,7 +209,7 @@ test('GET /v1/modules : dernière version, et 404 pour le module privé d\'un au
     $api = 'http://'.config('koryhub.domains.api').'/v1/modules/moussa/paiement';
 
     $this->withToken($this->token)->getJson($api)
-        ->assertOk()->assertExactJson(['name' => '@moussa/paiement', 'visibility' => 'private', 'status' => 'active', 'latest_version' => '1.0.0']);
+        ->assertOk()->assertJson(['name' => '@moussa/paiement', 'visibility' => 'private', 'status' => 'active', 'latest_version' => '1.0.0']);
 
     [$otherToken] = app(CliTokenService::class)->create(User::factory()->create(), 'autre', 90, TokenOrigin::CliLogin);
     $this->app['auth']->forgetGuards();

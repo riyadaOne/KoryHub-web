@@ -115,7 +115,13 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
 
         $preference = $this->notificationPreferences->firstWhere('type', $type);
 
-        return $preference === null || (bool) $preference->{$channel};
+        return $preference === null ? $type->enabledByDefault($channel) : (bool) $preference->{$channel};
+    }
+
+    /** @return HasMany<ModuleDownload, $this> */
+    public function moduleDownloads(): HasMany
+    {
+        return $this->hasMany(ModuleDownload::class);
     }
 
     /** @return HasMany<SecurityEvent, $this> */

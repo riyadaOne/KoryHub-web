@@ -38,5 +38,8 @@ return [
         'svg_forbidden' => 'Imagem SVG recusada: :path.',
         'secret_detected' => 'Segredo detetado: :file linha :line (:rule).',
         'scan_failed' => 'A pesquisa de segredos não pôde ser concluída. Tente mais tarde.',
+        'version_removed' => 'A versão :version foi retirada por razões legais.',
+        'download_limit_guest' => 'Limite de :limit transferências por hora atingido para o seu endereço.',
+        'download_limit_user' => 'Limite de :limit transferências por hora atingido para a sua conta.',
     ],
 ];

@@ -10,6 +10,8 @@ Route::middleware(['auth'])->group(function () {
     // Jetons du CLI (S-41, S-42) : comme S-26, accessibles avant la vérification de l'e-mail.
     Route::livewire('settings/tokens', 'pages::settings.tokens')->name('tokens.index');
     Route::livewire('settings/notifications', 'pages::settings.notifications')->name('notifications.edit');
+    // Mes téléchargements (S-46, F-RCH-14) : visibles par l'intéressé seul.
+    Route::livewire('settings/downloads', 'pages::settings.downloads')->name('downloads.index');
     Route::livewire('settings/tokens/create', 'pages::settings.token-create')
         ->middleware('password.confirm')
         ->name('tokens.create');

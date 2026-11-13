@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuditController;
 use App\Http\Controllers\Api\V1\DeviceAuthorizationController;
+use App\Http\Controllers\Api\V1\DownloadController;
 use App\Http\Controllers\Api\V1\MetaController;
 use App\Http\Controllers\Api\V1\ModuleController;
 use App\Http\Controllers\Api\V1\TokenController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\VersionController;
+use App\Http\Middleware\AuthenticateIfToken;
 use App\Http\Middleware\EnsureApiAccountActive;
 use Illuminate\Support\Facades\Route;
 
@@ -35,9 +38,19 @@ Route::middleware(['auth:sanctum', EnsureApiAccountActive::class, 'throttle:120,
     Route::get('user', [UserController::class, 'show'])->name('user');
     Route::delete('auth/token', [TokenController::class, 'destroy'])->name('auth.token.destroy');
 
-    // Publication (W03) : kory list et kory push.
-    Route::get('modules/{author}/{module}', [ModuleController::class, 'show'])->name('modules.show');
+    // Publication (W03) : kory push.
     Route::post('modules/{author}/{module}/versions', [VersionController::class, 'store'])
         ->middleware('throttle:'.config('koryhub.publication.per_hour').',60')
         ->name('modules.versions.store');
+});
+
+/*
+ * Téléchargement et intégration (W04) : ouverts sans compte (F-RCH-15) ; un jeton, s'il est
+ * envoyé, doit être valable. La limite des téléchargements est appliquée par DownloadService.
+ */
+Route::middleware([AuthenticateIfToken::class, EnsureApiAccountActive::class, 'throttle:120,1'])->group(function () {
+    Route::get('modules/{author}/{module}', [ModuleController::class, 'show'])->name('modules.show');
+    Route::get('modules/{author}/{module}/versions/{version}', [ModuleController::class, 'version'])->name('modules.versions.show');
+    Route::get('modules/{author}/{module}/versions/{version}/download', DownloadController::class)->name('modules.versions.download');
+    Route::post('audit', AuditController::class)->middleware('throttle:30,1')->name('audit');
 });

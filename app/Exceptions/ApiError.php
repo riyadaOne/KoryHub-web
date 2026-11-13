@@ -11,6 +11,12 @@ use RuntimeException;
  */
 class ApiError extends RuntimeException
 {
+    /** @var array<string, mixed> champs ajoutés au corps (heure de reprise…) */
+    private array $extra = [];
+
+    /** @var array<string, string> */
+    private array $headers = [];
+
     /**
      * @param  array<string, list<string>>  $errors  erreurs par champ
      */
@@ -37,14 +43,30 @@ class ApiError extends RuntimeException
         return self::make(426, 'upgrade_required');
     }
 
+    /** @param  array<string, mixed>  $extra */
+    public function withExtra(array $extra): self
+    {
+        $this->extra = $extra + $this->extra;
+
+        return $this;
+    }
+
+    /** @param  array<string, string>  $headers */
+    public function withHeaders(array $headers): self
+    {
+        $this->headers = $headers + $this->headers;
+
+        return $this;
+    }
+
     public function render(): JsonResponse
     {
-        $body = ['message' => $this->getMessage(), 'code' => $this->errorCode];
+        $body = ['message' => $this->getMessage(), 'code' => $this->errorCode] + $this->extra;
 
         if ($this->errors !== []) {
             $body['errors'] = $this->errors;
         }
 
-        return response()->json($body, $this->status);
+        return response()->json($body, $this->status, $this->headers);
     }
 }

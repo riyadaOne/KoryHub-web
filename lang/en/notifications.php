@@ -45,7 +45,19 @@ return [
         'mail' => 'Your version :version of :module was not published. Fix it, then send it again with kory push: the same version number stays available.',
         'action' => 'Open my dashboard',
     ],
+    'update_available' => [
+        'title' => 'Update available: :module :version',
+        'mail' => 'A new version of a kory you installed is published. Your version: :installed.',
+        'action' => 'See the version',
+    ],
+    'version_deprecated' => [
+        'title' => ':module :version deprecated',
+        'mail' => 'A version you installed is deprecated by its author. Nothing changes in your projects without you.',
+        'action' => 'See the version',
+    ],
     'types' => [
+        'update_available' => 'Update available',
+        'version_deprecated' => 'Version deprecated',
         'version_published' => 'Version published',
         'version_rejected' => 'Version rejected',
         'cli_login' => 'New CLI login',
@@ -61,6 +73,7 @@ return [
         'mail' => 'Email',
         'database' => 'Bell',
         'group_modules' => 'My kory',
+        'group_installed' => 'Installed kory',
         'group_security' => 'Security',
         'always' => 'always sent',
         'security_row' => 'New CLI login, tokens, password',

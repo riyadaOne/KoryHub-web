@@ -59,15 +59,17 @@ new #[Title('notifications.preferences.title')] class extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50">
-                        <td colspan="3" class="px-3 py-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">{{ __('notifications.preferences.group_modules') }}</td>
-                    </tr>
-                    @foreach (\App\Enums\NotificationType::adjustable() as $type)
-                        <tr class="border-t border-zinc-200 dark:border-zinc-700" wire:key="pref-{{ $type->value }}">
-                            <td class="px-3 py-2">{{ $type->label() }}</td>
-                            <td class="px-3 py-2"><flux:switch wire:model.live="preferences.{{ $type->value }}.mail" :aria-label="$type->label().' · '.__('notifications.preferences.mail')" data-test="pref-{{ $type->value }}-mail" /></td>
-                            <td class="px-3 py-2"><flux:switch wire:model.live="preferences.{{ $type->value }}.database" :aria-label="$type->label().' · '.__('notifications.preferences.database')" data-test="pref-{{ $type->value }}-database" /></td>
+                    @foreach ([[__('notifications.preferences.group_modules'), false], [__('notifications.preferences.group_installed'), true]] as [$groupLabel, $forDownloaders])
+                        <tr class="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50">
+                            <td colspan="3" class="px-3 py-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">{{ $groupLabel }}</td>
                         </tr>
+                        @foreach (array_filter(\App\Enums\NotificationType::adjustable(), fn ($type) => $type->isForDownloaders() === $forDownloaders) as $type)
+                            <tr class="border-t border-zinc-200 dark:border-zinc-700" wire:key="pref-{{ $type->value }}">
+                                <td class="px-3 py-2">{{ $type->label() }}</td>
+                                <td class="px-3 py-2"><flux:switch wire:model.live="preferences.{{ $type->value }}.mail" :aria-label="$type->label().' · '.__('notifications.preferences.mail')" data-test="pref-{{ $type->value }}-mail" /></td>
+                                <td class="px-3 py-2"><flux:switch wire:model.live="preferences.{{ $type->value }}.database" :aria-label="$type->label().' · '.__('notifications.preferences.database')" data-test="pref-{{ $type->value }}-database" /></td>
+                            </tr>
+                        @endforeach
                     @endforeach
                     <tr class="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50">
                         <td colspan="3" class="px-3 py-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">

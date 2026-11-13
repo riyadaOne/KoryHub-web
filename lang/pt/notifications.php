@@ -45,7 +45,19 @@ return [
         'mail' => 'A versão :version de :module não foi publicada. Corrija-a e volte a enviá-la com kory push: o mesmo número continua disponível.',
         'action' => 'Abrir o meu painel',
     ],
+    'update_available' => [
+        'title' => 'Atualização disponível: :module :version',
+        'mail' => 'Foi publicada uma nova versão de um kory que instalou. A sua versão: :installed.',
+        'action' => 'Ver a versão',
+    ],
+    'version_deprecated' => [
+        'title' => ':module :version obsoleta',
+        'mail' => 'Uma versão que instalou foi marcada como obsoleta pelo autor. Nada muda nos seus projetos sem si.',
+        'action' => 'Ver a versão',
+    ],
     'types' => [
+        'update_available' => 'Atualização disponível',
+        'version_deprecated' => 'Versão obsoleta',
         'version_published' => 'Versão publicada',
         'version_rejected' => 'Versão rejeitada',
         'cli_login' => 'Nova ligação do CLI',
@@ -61,6 +73,7 @@ return [
         'mail' => 'E-mail',
         'database' => 'Sino',
         'group_modules' => 'Os meus kory',
+        'group_installed' => 'Kory instalados',
         'group_security' => 'Segurança',
         'always' => 'sempre enviadas',
         'security_row' => 'Nova ligação do CLI, tokens, palavra-passe',

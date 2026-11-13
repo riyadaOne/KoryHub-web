@@ -30,7 +30,7 @@ final class NotificationText
             ? __('tokens.never')
             : Carbon::parse($expires)->locale(app()->getLocale())->isoFormat('LL');
 
-        return $replace + ['token' => '', 'ip' => '', 'module' => '', 'version' => '', 'reason' => ''];
+        return $replace + ['token' => '', 'ip' => '', 'module' => '', 'version' => '', 'reason' => '', 'installed' => ''];
     }
 
     /**
@@ -40,7 +40,7 @@ final class NotificationText
      */
     public static function url(string $kind, array $params = []): string
     {
-        if (in_array($kind, ['version_published', 'version_rejected'], true)
+        if (in_array($kind, ['version_published', 'version_rejected', 'update_available', 'version_deprecated'], true)
             && preg_match('#^@([a-z0-9-]+)/([a-z0-9-]+)$#', (string) ($params['module'] ?? ''), $m)
             && is_string($params['version'] ?? null)) {
             return route('modules.version', ['author' => $m[1], 'module' => $m[2], 'number' => $params['version']]);
@@ -49,6 +49,7 @@ final class NotificationText
         return match ($kind) {
             'password_changed' => route('security.edit'),
             'version_published', 'version_rejected' => route('modules.mine'),
+            'update_available', 'version_deprecated' => route('downloads.index'),
             default => route('tokens.index'),
         };
     }

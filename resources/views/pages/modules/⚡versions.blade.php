@@ -129,6 +129,7 @@ new #[Title('modules.tabs.versions')] class extends Component {
                         <th class="px-3.5 py-2.5 text-start font-semibold">{{ __('modules.versions.status') }}</th>
                         <th class="px-3.5 py-2.5 text-start font-semibold">{{ __('modules.versions.published') }}</th>
                         <th class="px-3.5 py-2.5 text-start font-semibold">{{ __('modules.side.checksum') }}</th>
+                        <th class="px-3.5 py-2.5 text-end font-semibold">{{ __('modules.versions.downloads') }}</th>
                         @if ($this->isAuthor)
                             <th class="px-3.5 py-2.5"></th>
                         @endif
@@ -155,6 +156,7 @@ new #[Title('modules.tabs.versions')] class extends Component {
                             </td>
                             <td class="whitespace-nowrap px-3.5 py-2.5"><x-relative-date :at="$v->published_at ?? $v->submitted_at" /></td>
                             <td class="whitespace-nowrap px-3.5 py-2.5 font-mono text-[13px] text-zinc-500" dir="ltr">{{ $v->archive_path ? substr($v->archive_sha256, 0, 6).'…'.substr($v->archive_sha256, -4) : '—' }}</td>
+                            <td class="whitespace-nowrap px-3.5 py-2.5 text-end tabular-nums" data-test="downloads-{{ $v->version }}">{{ \Illuminate\Support\Number::format($v->download_count) }}</td>
                             @if ($this->isAuthor)
                                 <td class="px-3.5 py-2.5">
                                     <div class="flex flex-wrap justify-end gap-1.5">

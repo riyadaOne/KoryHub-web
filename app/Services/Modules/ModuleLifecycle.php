@@ -56,6 +56,7 @@ class ModuleLifecycle
             'deprecated_at' => now(),
             'deprecation_message' => mb_substr(trim($message), 0, 255),
         ], $actor);
+        app(DownloaderNotifier::class)->versionDeprecated($version);
     }
 
     /** Annule la dépréciation : la version redevient publiée. */
@@ -65,14 +66,15 @@ class ModuleLifecycle
     }
 
     /**
-     * Une version publiée se supprime dans les 72 h (F-REG-17) ; la condition « jamais
-     * téléchargée » s'ajoute en W04. Son numéro reste pris (la ligne est supprimée logiquement).
+     * Une version publiée se supprime dans les 72 h et seulement si personne, auteur compris, ne l'a
+     * téléchargée (F-REG-17, BACKEND-SCHEMA §8). Son numéro reste pris (suppression logique).
      */
     public function canDeleteVersion(ModuleVersion $version): bool
     {
         return in_array($version->status, [VersionStatus::Published, VersionStatus::Deprecated], true)
             && $version->published_at !== null
-            && $version->published_at->gt(now()->subHours(self::DELETION_WINDOW_HOURS));
+            && $version->published_at->gt(now()->subHours(self::DELETION_WINDOW_HOURS))
+            && $version->first_downloaded_at === null;
     }
 
     public function deleteVersion(ModuleVersion $version, User $actor): void
@@ -140,10 +142,10 @@ class ModuleLifecycle
         });
     }
 
-    /** Passage en privé interdit une fois le module téléchargé par un autre compte (W04, BACKEND-SCHEMA §8). */
+    /** Passage en privé interdit une fois le module téléchargé par un autre compte ou sans compte (BACKEND-SCHEMA §8). */
     public function canMakePrivate(Module $module): bool
     {
-        return true;
+        return $module->third_party_downloaded_at === null;
     }
 
     /** Archive un module : plus de nouvelle version, toujours visible et téléchargeable (F-REG-16). */

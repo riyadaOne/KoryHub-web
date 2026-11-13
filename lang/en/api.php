@@ -38,5 +38,8 @@ return [
         'svg_forbidden' => 'SVG image refused: :path.',
         'secret_detected' => 'Secret detected: :file line :line (:rule).',
         'scan_failed' => 'The secret scan could not be completed. Try again later.',
+        'version_removed' => 'Version :version was removed for legal reasons.',
+        'download_limit_guest' => 'Limit of :limit downloads per hour reached for your address.',
+        'download_limit_user' => 'Limit of :limit downloads per hour reached for your account.',
     ],
 ];

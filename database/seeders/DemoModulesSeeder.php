@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Module;
 use App\Models\User;
+use App\Services\Modules\DownloadService;
 use App\Services\Modules\ModuleLifecycle;
 use App\Services\Modules\Secrets\SecretScanner;
 use App\Services\Modules\VersionPublisher;
@@ -12,6 +13,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use PharData;
 use RuntimeException;
@@ -54,6 +56,33 @@ class DemoModulesSeeder extends Seeder
                 Module::query()->where('name', $module)->update(['category_id' => $category->id]);
             }
         }
+
+        $this->downloads($hassan);
+    }
+
+    /**
+     * Téléchargements (W04) par le vrai service : Hassan a installé mobile-money-resilient 1.0.1
+     * (dépréciée) puis 1.1.0 (1.2.0 disponible), visibles sur S-46 ; quelques téléchargements sans
+     * compte. Le module devient « téléchargé par un tiers » : il ne repasse plus en Privé.
+     */
+    private function downloads(User $hassan): void
+    {
+        $downloads = app(DownloadService::class);
+        $module = Module::query()->where('name', 'mobile-money-resilient')->sole();
+        $version = fn (string $number) => $module->versions()->where('version', $number)->sole();
+
+        RateLimiter::clear('downloads:user:'.$hassan->id);
+        RateLimiter::clear('downloads:ip:demo');
+
+        $downloads->download($version('1.0.1'), $hassan, 'demo');
+        foreach (range(1, 3) as $i) {
+            $downloads->download($version('1.1.0'), $hassan, 'demo');
+        }
+        foreach (range(1, 5) as $i) {
+            $downloads->download($version('1.2.0'), null, 'demo');
+        }
+        $offline = Module::query()->where('name', 'offline-sync')->sole()->versions()->sole();
+        $downloads->download($offline, null, 'demo');
     }
 
     /** @moussa/mobile-money-resilient : la maquette de référence, avec son architecture et des versions dépréciées. */

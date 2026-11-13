@@ -39,6 +39,7 @@ class VersionPublisher
         private SecretScanner $scanner,
         private AuditLogger $audit,
         private ModuleLifecycle $lifecycle,
+        private DownloaderNotifier $downloaders,
     ) {}
 
     /**
@@ -248,6 +249,7 @@ class VersionPublisher
             'module' => $version->module->fullName(),
             'version' => $version->version,
         ]));
+        $this->downloaders->versionPublished($version);
 
         return $version;
     }

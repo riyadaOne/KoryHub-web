@@ -27,6 +27,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $language
  * @property Carbon|null $archived_at
  * @property string|null $latest_version_id
+ * @property int $download_count
+ * @property Carbon|null $third_party_downloaded_at
  * @property-read User $author
  */
 #[Fillable(['author_id', 'name', 'visibility', 'status', 'description', 'category_id', 'language', 'archived_at', 'latest_version_id'])]
@@ -44,6 +46,8 @@ class Module extends Model
             'visibility' => Visibility::class,
             'status' => ModuleStatus::class,
             'archived_at' => 'datetime',
+            'download_count' => 'integer',
+            'third_party_downloaded_at' => 'datetime',
         ];
     }
 

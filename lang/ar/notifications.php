@@ -45,7 +45,19 @@ return [
         'mail' => 'لم يُنشر الإصدار :version من :module. صحّحه ثم أعد إرساله عبر kory push: يبقى رقم الإصدار نفسه متاحًا.',
         'action' => 'فتح لوحة التحكم',
     ],
+    'update_available' => [
+        'title' => 'تحديث متاح: :module :version',
+        'mail' => 'نُشر إصدار جديد من kory قمت بتثبيته. إصدارك: :installed.',
+        'action' => 'عرض الإصدار',
+    ],
+    'version_deprecated' => [
+        'title' => 'أُهمل :module :version',
+        'mail' => 'أهمل المؤلف إصدارًا قمت بتثبيته. لا يتغير شيء في مشاريعك دون موافقتك.',
+        'action' => 'عرض الإصدار',
+    ],
     'types' => [
+        'update_available' => 'تحديث متاح',
+        'version_deprecated' => 'إصدار مُهمل',
         'version_published' => 'إصدار منشور',
         'version_rejected' => 'إصدار مرفوض',
         'cli_login' => 'تسجيل دخول جديد عبر CLI',
@@ -61,6 +73,7 @@ return [
         'mail' => 'البريد الإلكتروني',
         'database' => 'الجرس',
         'group_modules' => 'وحداتي',
+        'group_installed' => 'وحدات kory المثبتة',
         'group_security' => 'الأمان',
         'always' => 'تُرسل دائمًا',
         'security_row' => 'تسجيل دخول جديد عبر CLI، الرموز، كلمة المرور',

@@ -41,6 +41,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $rejection_reason
  * @property Carbon|null $deprecated_at
  * @property string|null $deprecation_message
+ * @property int $download_count
+ * @property Carbon|null $first_downloaded_at
  * @property-read Module $module
  */
 #[Fillable([
@@ -64,6 +66,8 @@ class ModuleVersion extends Model
             'submitted_at' => 'datetime',
             'published_at' => 'datetime',
             'deprecated_at' => 'datetime',
+            'download_count' => 'integer',
+            'first_downloaded_at' => 'datetime',
         ];
     }
 

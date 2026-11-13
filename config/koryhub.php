@@ -77,6 +77,17 @@ return [
     ],
 
     /*
+     * Téléchargements (F-RCH-15, TRD §17) : limites par heure, sans compte (par adresse IP réelle)
+     * et par compte connecté ; durée du lien signé vers l'archive.
+     */
+    'downloads' => [
+        'guest_per_hour' => (int) env('KORYHUB_DOWNLOADS_GUEST_PER_HOUR', 60),
+        'user_per_hour' => (int) env('KORYHUB_DOWNLOADS_USER_PER_HOUR', 5000),
+        'link_minutes' => 5,
+        'audit_max_modules' => 200,
+    ],
+
+    /*
      * Journal d'audit (TRD §21) : champs notés comme modifiés, sans leur valeur,
      * pour qu'aucune donnée personnelle ni aucun secret n'y entre.
      */

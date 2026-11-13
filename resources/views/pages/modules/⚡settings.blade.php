@@ -58,6 +58,13 @@ new #[Title('modules.settings')] class extends Component {
         return app(ModuleFinder::class)->find($this->author, $this->moduleName, Auth::user());
     }
 
+    /** Module public déjà téléchargé par un autre : il ne redevient plus privé (BACKEND-SCHEMA §8). */
+    #[Computed]
+    public function privateLocked(): bool
+    {
+        return $this->module->visibility === Visibility::Public && ! app(ModuleLifecycle::class)->canMakePrivate($this->module);
+    }
+
     #[Computed]
     public function categories()
     {
@@ -155,10 +162,10 @@ new #[Title('modules.settings')] class extends Component {
         <flux:input wire:model="tags" :label="__('modules.form.tags')" :description="__('modules.form.tags_hint', ['max' => \App\Services\Modules\Manifest::MAX_TAGS])" dir="ltr" data-test="module-tags" />
 
         <flux:radio.group wire:model="visibility" :label="__('modules.form.visibility')" variant="segmented" data-test="module-visibility">
-            <flux:radio value="private">{{ __('modules.visibility.private') }}</flux:radio>
+            <flux:radio value="private" :disabled="$this->privateLocked">{{ __('modules.visibility.private') }}</flux:radio>
             <flux:radio value="public">{{ __('modules.visibility.public') }}</flux:radio>
         </flux:radio.group>
-        <flux:text class="-mt-3">{{ __('modules.form.private_hint') }}</flux:text>
+        <flux:text class="-mt-3" data-test="visibility-hint">{{ $this->privateLocked ? __('modules.form.private_locked') : __('modules.form.private_hint') }}</flux:text>
 
         <div>
             <flux:button variant="primary" type="submit" data-test="save-module">{{ __('modules.form.save') }}</flux:button>

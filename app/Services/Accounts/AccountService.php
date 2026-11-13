@@ -42,6 +42,7 @@ class AccountService
             // Jetons du CLI révoqués sans être supprimés (historique, TRD §7.2).
             $user->tokens()->usable()->update(['revoked_at' => now(), 'revoked_by' => ($actor ?? $user)->getKey()]);
             $user->securityEvents()->delete();
+            $user->moduleDownloads()->delete();
             $user->passkeys()->delete();
             DB::table('sessions')->where('user_id', $user->id)->delete();
 
