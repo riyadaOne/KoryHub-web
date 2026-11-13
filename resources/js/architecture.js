@@ -4,9 +4,13 @@
  * Les clics ne passent pas par Mermaid : notre script relie chaque nœud au fichier du composant.
  */
 let mermaidModule = null;
+let renderCount = 0;
 
 export async function renderArchitecture(root = document) {
-    const containers = root.querySelectorAll('[data-architecture]');
+    // Un diagramme n'est dessiné qu'une fois : le chargement de la page et la navigation Livewire
+    // appellent tous deux ce rendu, et deux rendus simultanés du même identifiant se vident l'un l'autre.
+    const containers = [...root.querySelectorAll('[data-architecture]:not([data-rendered])')];
+    containers.forEach((container) => container.setAttribute('data-rendered', ''));
     if (containers.length === 0) {
         return;
     }
@@ -15,14 +19,14 @@ export async function renderArchitecture(root = document) {
     const dark = document.documentElement.classList.contains('dark');
     mermaidModule.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral' });
 
-    for (const [index, container] of [...containers].entries()) {
+    for (const container of containers) {
         const source = container.querySelector('[data-mermaid-source]')?.textContent ?? '';
         const target = container.querySelector('[data-mermaid-target]');
         if (! target || source === '') {
             continue;
         }
 
-        const { svg } = await mermaidModule.render(`kory-architecture-${index}`, source);
+        const { svg } = await mermaidModule.render(`kory-architecture-${++renderCount}`, source);
         target.innerHTML = svg;
 
         const files = JSON.parse(container.dataset.files ?? '{}');

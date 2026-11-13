@@ -6,15 +6,15 @@
 <x-layouts::app :title="'@'.$module->author->handle.'/'.$module->name">
     <x-module.header :module="$module" tab="architecture" :version="$version" :is-author="$isAuthor" :files-count="$filesCount" :versions-count="$versionsCount" />
 
-    <div class="grid gap-4 py-6">
+    <div class="grid min-w-0 gap-4 py-6">
         @if (! $diagram || $componentsCount === 0)
             <x-empty-state icon="share" :title="__('modules.architecture.none')" :description="__('modules.architecture.none_text')" data-test="no-architecture" />
         @else
             @php($filesUrl = route('modules.files', ['author' => $module->author->handle, 'module' => $module->name]))
             <p class="m-0 text-sm text-zinc-500 dark:text-zinc-400">{{ __('modules.architecture.summary', ['components' => $componentsCount, 'links' => count($diagram['lines'])]) }}</p>
 
-            <div class="flex flex-col gap-4">
-                <div class="order-2 overflow-x-auto rounded-lg border border-zinc-200 bg-white p-3 max-sm:order-2 sm:order-1 dark:border-zinc-700 dark:bg-zinc-900" dir="ltr"
+            <div class="flex min-w-0 flex-col gap-4">
+                <div class="order-2 min-w-0 overflow-x-auto rounded-lg border border-zinc-200 bg-white p-3 max-sm:order-2 sm:order-1 dark:border-zinc-700 dark:bg-zinc-900" dir="ltr"
                      data-architecture
                      data-files="{{ json_encode($diagram['files']) }}"
                      data-files-url="{{ $filesUrl }}"
