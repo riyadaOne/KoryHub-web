@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategoriesSeeder::class,
             DemoUsersSeeder::class,
+            DemoModulesSeeder::class,
         ]);
     }
 }
