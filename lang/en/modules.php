@@ -112,7 +112,7 @@ return [
         'none_text' => 'The author can propose it with kory graph.',
         'summary' => ':components components, :links links. Click a component to open its file.',
         'list' => 'The same links, as a list',
-        'legend' => 'Rectangle: class · Hexagon: interface · Parallelogram: enum · Rounded: trait · Double frame: module. Solid line: uses · Dotted: implements or extends · Thick: calls.',
+        'legend' => 'Rectangle: class · Hexagon: interface · Parallelogram: enum · Pill: trait · Rounded corners: function · Double frame: module. Solid line: uses · Dotted: implements or extends · Thick: calls.',
         'kinds' => [
             'class' => 'class',
             'interface' => 'interface',

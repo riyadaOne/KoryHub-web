@@ -112,7 +112,7 @@ return [
         'none_text' => 'L\'auteur peut la proposer avec kory graph.',
         'summary' => ':components composants, :links liens. Cliquez sur un composant pour ouvrir son fichier.',
         'list' => 'Les mêmes liens, en liste',
-        'legend' => 'Rectangle : classe · Hexagone : interface · Parallélogramme : enum · Arrondi : trait · Double cadre : module. Trait plein : utilise · Pointillé : implémente ou étend · Épais : appelle.',
+        'legend' => 'Rectangle : classe · Hexagone : interface · Parallélogramme : enum · Pilule : trait · Coins arrondis : fonction · Double cadre : module. Trait plein : utilise · Pointillé : implémente ou étend · Épais : appelle.',
         'kinds' => [
             'class' => 'classe',
             'interface' => 'interface',

@@ -112,7 +112,7 @@ return [
         'none_text' => 'O autor pode propô-la com kory graph.',
         'summary' => ':components componentes, :links ligações. Clique num componente para abrir o seu ficheiro.',
         'list' => 'As mesmas ligações, em lista',
-        'legend' => 'Retângulo: classe · Hexágono: interface · Paralelogramo: enum · Arredondado: trait · Moldura dupla: módulo. Linha contínua: usa · Pontilhada: implementa ou estende · Grossa: chama.',
+        'legend' => 'Retângulo: classe · Hexágono: interface · Paralelogramo: enum · Cápsula: trait · Cantos arredondados: função · Moldura dupla: módulo. Linha contínua: usa · Pontilhada: implementa ou estende · Grossa: chama.',
         'kinds' => [
             'class' => 'classe',
             'interface' => 'interface',
