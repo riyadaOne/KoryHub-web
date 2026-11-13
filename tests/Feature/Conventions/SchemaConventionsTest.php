@@ -26,6 +26,8 @@ const TABLES_WITHOUT_SOFT_DELETES = [
     // Journal d'audit : ajout seul, rien ne se supprime (TRD §21).
     'audit_events',
     'audit_event_changes',
+    // Journal de sécurité : ajout seul, effacé avec le compte (TRD §21).
+    'security_events',
 ];
 
 /** @return list<string> */

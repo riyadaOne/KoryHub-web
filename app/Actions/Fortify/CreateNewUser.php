@@ -6,6 +6,7 @@ use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
 class CreateNewUser implements CreatesNewUsers
@@ -19,15 +20,21 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+        // Le nom @auteur est enregistré en minuscules (« Moussa » devient « moussa »).
+        $input['handle'] = Str::lower(trim($input['handle'] ?? ''));
+
         Validator::make($input, [
+            'handle' => $this->handleRules(),
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
         ])->validate();
 
         return User::create([
+            'handle' => $input['handle'],
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
+            'locale' => app()->getLocale(),
         ]);
     }
 }

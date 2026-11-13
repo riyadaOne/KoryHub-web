@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Choisit la langue de la requête (TRD §20) : choix du compte (ajouté en W01),
+ * Choisit la langue de la requête (TRD §20) : choix du compte connecté,
  * puis cookie « locale », puis en-tête Accept-Language, puis anglais.
  */
 class SetLocale
@@ -25,6 +25,13 @@ class SetLocale
     /** Langue retenue pour une requête (utilisée aussi pour traduire les erreurs de routage). */
     public static function resolve(Request $request): Locale
     {
+        // Choix enregistré sur le compte (W01) ; sans session (API), pas de compte connecté ici.
+        $fromAccount = $request->hasSession() ? Locale::tryFrom((string) $request->user()?->locale) : null;
+
+        if ($fromAccount !== null) {
+            return $fromAccount;
+        }
+
         $fromCookie = Locale::tryFrom((string) $request->cookie(self::COOKIE));
 
         if ($fromCookie !== null) {

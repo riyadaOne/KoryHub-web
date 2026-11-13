@@ -1,6 +1,8 @@
 <?php
 
 use App\Concerns\PasswordValidationRules;
+use App\Enums\SecurityEventType;
+use App\Services\Accounts\SecurityLog;
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -13,7 +15,7 @@ use Laravel\Passkeys\Actions\DeletePasskey;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
-new #[Title('Security settings')] class extends Component {
+new #[Title('kit.security_settings')] class extends Component {
     use PasswordValidationRules;
 
     public string $current_password = '';
@@ -83,9 +85,11 @@ new #[Title('Security settings')] class extends Component {
             'password' => $validated['password'],
         ]);
 
+        app(SecurityLog::class)->record(Auth::user(), SecurityEventType::PasswordChanged);
+
         $this->reset('current_password', 'password', 'password_confirmation');
 
-        Flux::toast(variant: 'success', text: __('Password updated.'));
+        Flux::toast(variant: 'success', text: __('kit.password_updated'));
     }
 
     /**
@@ -169,13 +173,13 @@ new #[Title('Security settings')] class extends Component {
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <flux:heading level="2" class="sr-only">{{ __('Security settings') }}</flux:heading>
+    <flux:heading level="2" class="sr-only">{{ __('kit.security_settings') }}</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
+    <x-pages::settings.layout :heading="__('kit.update_password')" :subheading="__('kit.ensure_your_account_is_using_a')">
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
             <flux:input
                 wire:model="current_password"
-                :label="__('Current password')"
+                :label="__('kit.current_password')"
                 type="password"
                 required
                 autocomplete="current-password"
@@ -183,7 +187,7 @@ new #[Title('Security settings')] class extends Component {
             />
             <flux:input
                 wire:model="password"
-                :label="__('New password')"
+                :label="__('kit.new_password')"
                 type="password"
                 required
                 autocomplete="new-password"
@@ -192,7 +196,7 @@ new #[Title('Security settings')] class extends Component {
             />
             <flux:input
                 wire:model="password_confirmation"
-                :label="__('Confirm password')"
+                :label="__('kit.confirm_password')"
                 type="password"
                 required
                 autocomplete="new-password"
@@ -202,21 +206,21 @@ new #[Title('Security settings')] class extends Component {
 
             <div class="flex items-center gap-4">
                 <flux:button variant="primary" type="submit" data-test="update-password-button">
-                    {{ __('Save') }}
+                    {{ __('kit.save') }}
                 </flux:button>
             </div>
         </form>
 
         @if ($canManageTwoFactor)
             <section class="mt-12">
-                <flux:heading>{{ __('Two-factor authentication') }}</flux:heading>
-                <flux:subheading>{{ __('Manage your two-factor authentication settings') }}</flux:subheading>
+                <flux:heading>{{ __('kit.two_factor_authentication') }}</flux:heading>
+                <flux:subheading>{{ __('kit.manage_your_two_factor_authentication_settings') }}</flux:subheading>
 
                 <div class="flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
                     @if ($twoFactorEnabled)
                         <div class="space-y-4">
                             <flux:text>
-                                {{ __('You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.') }}
+                                {{ __('kit.you_will_be_prompted_for_a') }}
                             </flux:text>
 
                             <div class="flex justify-start">
@@ -224,7 +228,7 @@ new #[Title('Security settings')] class extends Component {
                                     variant="danger"
                                     wire:click="disable"
                                 >
-                                    {{ __('Disable 2FA') }}
+                                    {{ __('kit.disable_2fa') }}
                                 </flux:button>
                             </div>
 
@@ -233,7 +237,7 @@ new #[Title('Security settings')] class extends Component {
                     @else
                         <div class="space-y-4">
                             <flux:text variant="subtle">
-                                {{ __('When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.') }}
+                                {{ __('kit.when_you_enable_two_factor_authentication') }}
                             </flux:text>
 
                             <flux:modal.trigger name="two-factor-setup-modal">
@@ -241,7 +245,7 @@ new #[Title('Security settings')] class extends Component {
                                     variant="primary"
                                     wire:click="$dispatch('start-two-factor-setup')"
                                 >
-                                    {{ __('Enable 2FA') }}
+                                    {{ __('kit.enable_2fa') }}
                                 </flux:button>
                             </flux:modal.trigger>
 
@@ -254,8 +258,8 @@ new #[Title('Security settings')] class extends Component {
 
         @if ($canManagePasskeys)
             <section class="mt-12">
-                <flux:heading>{{ __('Passkeys') }}</flux:heading>
-                <flux:subheading>{{ __('Manage your passkeys for passwordless sign-in') }}</flux:subheading>
+                <flux:heading>{{ __('kit.passkeys') }}</flux:heading>
+                <flux:subheading>{{ __('kit.manage_your_passkeys_for_passwordless_sign') }}</flux:subheading>
 
                 <div class="mt-6 flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
                     <div class="border rounded-lg border-zinc-200 dark:border-zinc-700 overflow-hidden">
@@ -273,10 +277,10 @@ new #[Title('Security settings')] class extends Component {
                                             @endif
                                         </div>
                                         <p class="text-zinc-500 dark:text-zinc-400 text-xs">
-                                            {{ __('Added :time', ['time' => $passkey['created_at_diff']]) }}
+                                            {{ __('kit.added', ['time' => $passkey['created_at_diff']]) }}
                                             @if ($passkey['last_used_at_diff'])
                                                 <span class="opacity-50 mx-1">/</span>
-                                                {{ __('Last used :time', ['time' => $passkey['last_used_at_diff']]) }}
+                                                {{ __('kit.last_used', ['time' => $passkey['last_used_at_diff']]) }}
                                             @endif
                                         </p>
                                     </div>
@@ -296,8 +300,8 @@ new #[Title('Security settings')] class extends Component {
                                 <div class="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800">
                                     <flux:icon.key class="size-7 text-zinc-400 dark:text-zinc-500" />
                                 </div>
-                                <p class="font-medium">{{ __('No passkeys yet') }}</p>
-                                <flux:text class="mt-1">{{ __('Add a passkey to sign in without a password') }}</flux:text>
+                                <p class="font-medium">{{ __('kit.no_passkeys_yet') }}</p>
+                                <flux:text class="mt-1">{{ __('kit.add_a_passkey_to_sign_in') }}</flux:text>
                             </div>
                         @endforelse
                     </div>
@@ -316,9 +320,9 @@ new #[Title('Security settings')] class extends Component {
     >
         <div class="space-y-6">
             <div class="space-y-2">
-                <flux:heading size="lg">{{ __('Remove passkey') }}</flux:heading>
+                <flux:heading size="lg">{{ __('kit.remove_passkey') }}</flux:heading>
                 <flux:text>
-                    {{ __('Are you sure you want to remove the passkey ":name"? You will no longer be able to use it to sign in.', ['name' => $deletingPasskeyName]) }}
+                    {{ __('kit.are_you_sure_you_want_to', ['name' => $deletingPasskeyName]) }}
                 </flux:text>
             </div>
 
@@ -327,13 +331,13 @@ new #[Title('Security settings')] class extends Component {
                     variant="outline"
                     wire:click="closeDeleteModal"
                 >
-                    {{ __('Cancel') }}
+                    {{ __('kit.cancel') }}
                 </flux:button>
                 <flux:button
                     variant="danger"
                     wire:click="deletePasskey"
                 >
-                    {{ __('Remove passkey') }}
+                    {{ __('kit.remove_passkey') }}
                 </flux:button>
             </div>
         </div>

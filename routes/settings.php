@@ -11,6 +11,9 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('settings/appearance', 'pages::settings.appearance')->name('appearance.edit');
 
+    // Journal de sécurité (S-40, F-AUT-19) : visible par l'intéressé seul.
+    Route::livewire('settings/security-log', 'pages::settings.security-log')->name('security-log.index');
+
     Route::livewire('settings/security', 'pages::settings.security')
         ->middleware([
             'password.confirm',

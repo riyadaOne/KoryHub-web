@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\AccountStatus;
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -25,6 +27,8 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'handle' => fake()->unique()->regexify('[a-z][a-z0-9]{5,12}'),
+            'locale' => 'en',
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
@@ -34,6 +38,25 @@ class UserFactory extends Factory
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
         ];
+    }
+
+    /**
+     * Compte admin (rôle donné normalement par php artisan koryhub:admin).
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => ['role' => Role::Admin]);
+    }
+
+    /**
+     * Compte suspendu par un admin (W07).
+     */
+    public function suspended(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => AccountStatus::Suspended,
+            'suspended_at' => now(),
+        ]);
     }
 
     /**

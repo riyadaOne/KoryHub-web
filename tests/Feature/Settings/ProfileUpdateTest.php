@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AccountStatus;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -84,14 +85,16 @@ test('user can delete their account', function () {
     $this->actingAs($user);
 
     $response = Livewire::test('pages::settings.delete-user-modal')
+        ->set('handle', $user->handle)
         ->set('password', 'password')
         ->call('deleteUser');
 
     $response
         ->assertHasNoErrors()
-        ->assertRedirect('/');
+        ->assertRedirect(route('home'));
 
-    expect($user->fresh())->toBeNull();
+    expect($user->fresh()->status)->toBe(AccountStatus::Deleted)
+        ->and($user->fresh()->email)->toBeNull();
     expect(auth()->check())->toBeFalse();
 });
 
@@ -101,10 +104,11 @@ test('correct password must be provided to delete account', function () {
     $this->actingAs($user);
 
     $response = Livewire::test('pages::settings.delete-user-modal')
+        ->set('handle', $user->handle)
         ->set('password', 'wrong-password')
         ->call('deleteUser');
 
     $response->assertHasErrors(['password']);
 
-    expect($user->fresh())->not->toBeNull();
+    expect($user->fresh()->status)->toBe(AccountStatus::Active);
 });

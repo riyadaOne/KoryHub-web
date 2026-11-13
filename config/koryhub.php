@@ -25,6 +25,27 @@ return [
     ],
 
     /*
+     * Noms @auteur réservés (W01) : jamais attribués à un compte, parce qu'ils
+     * ressemblent à une adresse du site ou à KoryHub lui-même.
+     */
+    'reserved_handles' => [
+        'admin', 'administration', 'api', 'docs', 'documentation', 'help', 'support',
+        'settings', 'dashboard', 'login', 'logout', 'register', 'search', 'install',
+        'koryhub', 'kory', 'riyadaone', 'root', 'system', 'systeme', 'security',
+        'about', 'governance', 'terms', 'privacy', 'status', 'up', 'www', 'mail',
+        'categories', 'stars', 'watching', 'notifications', 'user', 'users', 'deleted',
+    ],
+
+    /*
+     * Photo de profil (F-AUT-16, DON-08) : jpg, png ou webp, 2 Mo au plus.
+     * Disque local en développement, R2 à partir de W03.
+     */
+    'avatars' => [
+        'disk' => env('KORYHUB_AVATARS_DISK', 'public'),
+        'max_kilobytes' => 2048,
+    ],
+
+    /*
      * CLI kory (TRD §17, §18, T-11) : sous la version minimale, l'API répond 426
      * « Mettez à jour kory » ; la dernière version est annoncée par GET /v1/meta.
      * Versions au format x.y.z.

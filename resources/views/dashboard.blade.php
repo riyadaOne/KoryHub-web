@@ -1,18 +1,31 @@
-<x-layouts::app :title="__('Dashboard')">
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
-        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
+{{-- Tableau de bord (S-30, maquette W01) : vide en W01 ; les cartes « à faire » s'ajoutent module par module. --}}
+<x-layouts::app :title="__('common.dashboard')">
+    <div class="grid gap-6">
+        <div>
+            <flux:heading size="xl" level="1">{{ __('account.dashboard.greeting', ['name' => auth()->user()->displayName()]) }}</flux:heading>
+            <flux:text class="mt-1">{{ __('account.dashboard.subtitle') }}</flux:text>
+        </div>
+
+        @unless (auth()->user()->hasVerifiedEmail())
+            <x-warning-banner :heading="__('account.dashboard.unverified')" data-test="unverified-banner">
+                {{ __('account.dashboard.unverified_action') }}
+                <flux:link :href="route('verification.notice')">{{ __('account.dashboard.resend') }}</flux:link>
+            </x-warning-banner>
+        @endunless
+
+        <div class="grid gap-4 md:grid-cols-2">
+            <div class="grid gap-3 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
+                <flux:heading>{{ __('account.dashboard.step_terminal') }}</flux:heading>
+                <flux:text>{{ __('account.dashboard.step_terminal_text') }}</flux:text>
+                <x-copy-command command="kory login" />
             </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-            </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
+            <div class="grid gap-3 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
+                <flux:heading>{{ __('account.dashboard.step_publish') }}</flux:heading>
+                <flux:text>{{ __('account.dashboard.step_publish_text') }}</flux:text>
+                <x-copy-command command="kory init" />
             </div>
         </div>
-        <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-            <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-        </div>
+
+        <x-empty-state icon="cube" :title="__('account.dashboard.empty_title')" :description="__('account.dashboard.empty_text')" />
     </div>
 </x-layouts::app>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\ApiError;
+use App\Http\Middleware\EnsureAccountActive;
 use App\Http\Middleware\EnsureCliVersion;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Auth\AuthenticationException;
@@ -53,7 +54,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // La configuration n'est pas encore chargée ici : la liste est lue dans le fichier.
         $middleware->trustProxies(at: (require __DIR__.'/../config/koryhub.php')['trusted_proxies']);
 
-        // Langue de la requête (TRD §20).
+        // Compte suspendu ou supprimé : déconnecté (TRD §6). Puis langue de la requête (TRD §20).
+        $middleware->appendToGroup('web', EnsureAccountActive::class);
         $middleware->appendToGroup('web', SetLocale::class);
         $middleware->appendToGroup('api', SetLocale::class);
 

@@ -53,6 +53,53 @@ test('aucune traduction n\'est vide', function () {
 });
 
 /*
+ * Traductions en PHP seulement (choix du développeur, W01) : chaque texte passe par une clé
+ * « fichier.clé » qui existe en anglais ; aucune phrase en clé (« __('Log in') ») et aucun
+ * fichier lang/*.json.
+ */
+test('chaque texte du code passe par une clé « fichier.clé » qui existe', function () {
+    $files = collect(File::allFiles(resource_path('views')))->merge(File::allFiles(app_path()));
+
+    foreach ($files as $file) {
+        preg_match_all(
+            "/(?:__\\(|@lang\\(|#\\[Title\\()\\s*['\"]((?:[^'\"\\\\]|\\\\.)*)['\"]/",
+            File::get($file->getPathname()),
+            $matches,
+        );
+
+        foreach ($matches[1] as $key) {
+            if (str_contains($key, '{$')) {
+                continue; // clé construite (account.status.{$this->value}), vérifiée par les tests des enums
+            }
+
+            expect($key)->toMatch('/^[a-z0-9_]+\.[a-z0-9_.]+$/', "Phrase au lieu d'une clé dans {$file->getRelativePathname()} : {$key}")
+                ->and(trans($key, [], 'en'))->not->toBe($key, "Clé absente de lang/en dans {$file->getRelativePathname()} : {$key}");
+        }
+    }
+
+    expect(File::glob(lang_path('*.json')))->toBe([]);
+});
+
+/*
+ * Les vues de Flux qui contiennent une phrase (« __('Close modal') ») sont recopiées dans
+ * resources/views/flux avec des clés flux.* : après une mise à jour de Flux, une nouvelle
+ * vue à phrase fait échouer ce test.
+ */
+test('chaque vue de Flux contenant une phrase est recopiée avec des clés', function () {
+    $stubs = base_path('vendor/livewire/flux/stubs/resources/views/flux');
+
+    foreach (File::allFiles($stubs) as $file) {
+        preg_match_all("/__\\(\\s*['\"]([^'\"]+)['\"]/", File::get($file->getPathname()), $matches);
+        $phrases = array_filter($matches[1], fn (string $key) => ! preg_match('/^[a-z0-9_]+\.[a-z0-9_.]+$/', $key));
+
+        if ($phrases !== []) {
+            expect(resource_path('views/flux/'.$file->getRelativePathname()))
+                ->toBeFile("Vue Flux à recopier avec des clés flux.* : {$file->getRelativePathname()}");
+        }
+    }
+});
+
+/*
  * Vues de KoryHub contrôlées (les vues du kit sont reprises et traduites en W01).
  * Après retrait des commentaires, des balises, des instructions Blade et des {{ }},
  * il ne doit rester aucun mot.
