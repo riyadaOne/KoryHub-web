@@ -22,6 +22,9 @@ return [
     'security_event' => [
         'login' => 'Início de sessão',
         'login_failed' => 'Início de sessão recusado',
+        'cli_login' => 'Ligação do CLI',
+        'token_created' => 'Token criado',
+        'token_revoked' => 'Token revogado',
         'two_factor_enabled' => 'Autenticação de dois fatores ativada',
         'two_factor_disabled' => 'Autenticação de dois fatores desativada',
         'passkey_added' => 'Passkey adicionada',

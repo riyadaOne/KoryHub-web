@@ -56,6 +56,13 @@ return [
     ],
 
     /*
+     * Jetons du CLI (TRD §7.2) : préfixe reconnu par la recherche de secrets (§22).
+     */
+    'tokens' => [
+        'prefix' => 'kory_',
+    ],
+
+    /*
      * Journal d'audit (TRD §21) : champs notés comme modifiés, sans leur valeur,
      * pour qu'aucune donnée personnelle ni aucun secret n'y entre.
      */

@@ -3,6 +3,7 @@
         <flux:navlist aria-label="{{ __('kit.settings') }}">
             <flux:navlist.item :href="route('profile.edit')" wire:navigate>{{ __('kit.profile') }}</flux:navlist.item>
             <flux:navlist.item :href="route('security.edit')" wire:navigate>{{ __('kit.security') }}</flux:navlist.item>
+            <flux:navlist.item :href="route('tokens.index')" wire:navigate data-test="tokens-link">{{ __('tokens.title') }}</flux:navlist.item>
             <flux:navlist.item :href="route('security-log.index')" wire:navigate data-test="security-log-link">{{ __('account.security_log.title') }}</flux:navlist.item>
             <flux:navlist.item :href="route('appearance.edit')" wire:navigate>{{ __('kit.appearance') }}</flux:navlist.item>
         </flux:navlist>
@@ -14,7 +15,7 @@
         <flux:heading>{{ $heading ?? '' }}</flux:heading>
         <flux:subheading>{{ $subheading ?? '' }}</flux:subheading>
 
-        <div class="mt-5 w-full max-w-lg">
+        <div @class(['mt-5 w-full', 'max-w-lg' => ! ($wide ?? false)])>
             {{ $slot }}
         </div>
     </div>

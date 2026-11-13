@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Enums\Role;
+use App\Enums\TokenOrigin;
 use App\Models\User;
+use App\Services\Cli\CliTokenService;
 use Illuminate\Database\Seeder;
 use RuntimeException;
 
@@ -75,5 +77,36 @@ class DemoUsersSeeder extends Seeder
             'locale' => 'fr',
             'password' => $password,
         ]);
+
+        $this->seedTokens(User::query()->where('handle', 'moussa')->sole());
+    }
+
+    /**
+     * Jetons du CLI de démonstration (W02) : un de chaque statut sur le compte @moussa, écrits
+     * directement pour n'envoyer aucun e-mail. Leurs valeurs en clair ne sont jamais connues.
+     */
+    private function seedTokens(User $user): void
+    {
+        $tokens = [
+            ['kory · Windows', TokenOrigin::CliLogin, now()->subMinutes(2), now()->addDays(90), null, now()->subMinute()],
+            ['CI GitHub', TokenOrigin::Site, now()->subMonths(3), null, null, now()->subHours(4)],
+            ['Serveur de recette', TokenOrigin::Site, now()->subDays(25), now()->addDays(5), null, now()->subDay()],
+            ['kory · Linux', TokenOrigin::CliLogin, now()->subMonths(6), now()->addMonths(6), now()->subMonths(2), now()->subMonths(2)],
+            ['Essai', TokenOrigin::Site, now()->subMonths(4), now()->subMonths(3), null, null],
+        ];
+
+        foreach ($tokens as [$name, $origin, $created, $expires, $revoked, $used]) {
+            $user->tokens()->forceCreate([
+                'name' => $name,
+                'token' => hash('sha256', CliTokenService::generate()),
+                'abilities' => ['*'],
+                'origin' => $origin,
+                'expires_at' => $expires,
+                'revoked_at' => $revoked,
+                'last_used_at' => $used,
+                'created_at' => $created,
+                'updated_at' => $created,
+            ]);
+        }
     }
 }

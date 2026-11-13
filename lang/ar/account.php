@@ -22,6 +22,9 @@ return [
     'security_event' => [
         'login' => 'تسجيل دخول',
         'login_failed' => 'تسجيل دخول مرفوض',
+        'cli_login' => 'تسجيل دخول عبر CLI',
+        'token_created' => 'أُنشئ رمز',
+        'token_revoked' => 'أُلغي رمز',
         'two_factor_enabled' => 'تفعيل المصادقة الثنائية',
         'two_factor_disabled' => 'تعطيل المصادقة الثنائية',
         'passkey_added' => 'إضافة مفتاح مرور',

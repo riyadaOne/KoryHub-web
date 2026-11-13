@@ -22,6 +22,9 @@ return [
     'security_event' => [
         'login' => 'Connexion',
         'login_failed' => 'Connexion refusée',
+        'cli_login' => 'Connexion du CLI',
+        'token_created' => 'Jeton créé',
+        'token_revoked' => 'Jeton révoqué',
         'two_factor_enabled' => 'Double authentification activée',
         'two_factor_disabled' => 'Double authentification désactivée',
         'passkey_added' => 'Passkey ajoutée',

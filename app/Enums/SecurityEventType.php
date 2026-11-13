@@ -3,13 +3,16 @@
 namespace App\Enums;
 
 /**
- * Événements du journal de sécurité (BACKEND-SCHEMA §7, F-AUT-19). Les types liés aux
- * jetons du CLI (cli_login, token_created, token_revoked) s'ajoutent en W02.
+ * Événements du journal de sécurité (BACKEND-SCHEMA §7, F-AUT-19), dont ceux des jetons
+ * du CLI (W02) : connexion d'un terminal, jeton créé, jeton révoqué.
  */
 enum SecurityEventType: string implements HasStatusBadge
 {
     case Login = 'login';
     case LoginFailed = 'login_failed';
+    case CliLogin = 'cli_login';
+    case TokenCreated = 'token_created';
+    case TokenRevoked = 'token_revoked';
     case TwoFactorEnabled = 'two_factor_enabled';
     case TwoFactorDisabled = 'two_factor_disabled';
     case PasskeyAdded = 'passkey_added';
@@ -25,10 +28,10 @@ enum SecurityEventType: string implements HasStatusBadge
     public function color(): StatusColor
     {
         return match ($this) {
-            self::Login => StatusColor::Success,
+            self::Login, self::CliLogin => StatusColor::Success,
             self::LoginFailed => StatusColor::Danger,
-            self::TwoFactorDisabled, self::PasskeyRemoved => StatusColor::Warning,
-            self::TwoFactorEnabled, self::PasskeyAdded => StatusColor::Info,
+            self::TwoFactorDisabled, self::PasskeyRemoved, self::TokenRevoked => StatusColor::Warning,
+            self::TwoFactorEnabled, self::PasskeyAdded, self::TokenCreated => StatusColor::Info,
             self::PasswordChanged, self::EmailChanged => StatusColor::Neutral,
         };
     }

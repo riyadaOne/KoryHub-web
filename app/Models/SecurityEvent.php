@@ -18,9 +18,10 @@ use Illuminate\Support\Carbon;
  * @property SecurityEventType $type
  * @property string|null $ip
  * @property string|null $user_agent
+ * @property string|null $token_id
  * @property Carbon $occurred_at
  */
-#[Fillable(['user_id', 'type', 'ip', 'user_agent', 'occurred_at'])]
+#[Fillable(['user_id', 'type', 'ip', 'user_agent', 'token_id', 'occurred_at'])]
 class SecurityEvent extends Model
 {
     use HasUuids;
@@ -40,5 +41,11 @@ class SecurityEvent extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** @return BelongsTo<PersonalAccessToken, $this> */
+    public function token(): BelongsTo
+    {
+        return $this->belongsTo(PersonalAccessToken::class);
     }
 }

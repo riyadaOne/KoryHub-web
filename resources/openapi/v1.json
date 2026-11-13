@@ -41,6 +41,137 @@
                 }
             }
         },
+        "/auth/device": {
+            "post": {
+                "operationId": "v1.auth.device",
+                "description": "Le code affich\u00e9 (user_code) est valable 15 minutes ; le CLI interroge ensuite\nPOST /v1/auth/device/token toutes les `interval` secondes.",
+                "summary": "Demander un code de connexion",
+                "tags": [
+                    "DeviceAuthorization"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "device_code": {
+                                            "type": "string",
+                                            "description": "Code secret de l'appareil, \u00e0 renvoyer pour obtenir le jeton."
+                                        },
+                                        "user_code": {
+                                            "type": "string",
+                                            "description": "Code \u00e0 afficher (ABCD-EFGH)."
+                                        },
+                                        "verification_uri": {
+                                            "type": "string",
+                                            "description": "Adresse o\u00f9 saisir le code."
+                                        },
+                                        "verification_uri_complete": {
+                                            "type": "string",
+                                            "description": "Adresse avec le code d\u00e9j\u00e0 rempli."
+                                        },
+                                        "expires_in": {
+                                            "type": "integer",
+                                            "description": "Dur\u00e9e de validit\u00e9 du code, en secondes.",
+                                            "const": 900
+                                        },
+                                        "interval": {
+                                            "type": "integer",
+                                            "description": "D\u00e9lai entre deux interrogations, en secondes.",
+                                            "const": 5
+                                        }
+                                    },
+                                    "required": [
+                                        "device_code",
+                                        "user_code",
+                                        "verification_uri",
+                                        "verification_uri_complete",
+                                        "expires_in",
+                                        "interval"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/auth/device/token": {
+            "post": {
+                "operationId": "v1.auth.device.token",
+                "description": "Tant que le code n'est pas autoris\u00e9 : 400 `authorization_pending` (ou `slow_down` si le CLI\ninterroge trop vite). Refus\u00e9 : 400 `access_denied`. Expir\u00e9, inconnu ou d\u00e9j\u00e0 utilis\u00e9 :\n400 `expired_token`. Autoris\u00e9 : le jeton, remis une seule fois.",
+                "summary": "Obtenir le jeton",
+                "tags": [
+                    "DeviceAuthorization"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "device_code": {
+                                        "type": "string",
+                                        "maxLength": 128
+                                    }
+                                },
+                                "required": [
+                                    "device_code"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "description": "Jeton \u00e0 envoyer dans l'en-t\u00eate Authorization: Bearer."
+                                        },
+                                        "token_name": {
+                                            "type": "string",
+                                            "description": "Nom du jeton, visible dans les r\u00e9glages du site."
+                                        },
+                                        "expires_at": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Date d'expiration (ISO 8601, UTC), ou null pour un jeton sans expiration."
+                                        },
+                                        "handle": {
+                                            "type": "string",
+                                            "description": "Nom @auteur du compte."
+                                        }
+                                    },
+                                    "required": [
+                                        "token",
+                                        "token_name",
+                                        "expires_at",
+                                        "handle"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                },
+                "security": []
+            }
+        },
         "/meta": {
             "get": {
                 "operationId": "v1.meta",
@@ -81,6 +212,130 @@
                     }
                 },
                 "security": []
+            }
+        },
+        "/auth/token": {
+            "delete": {
+                "operationId": "v1.auth.token.destroy",
+                "summary": "R\u00e9voquer le jeton de ce terminal",
+                "tags": [
+                    "Token"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "operationId": "v1.user",
+                "summary": "Compte et jeton en cours",
+                "tags": [
+                    "User"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "handle": {
+                                            "type": "string",
+                                            "description": "Nom @auteur."
+                                        },
+                                        "name": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Nom affich\u00e9, ou null."
+                                        },
+                                        "token_name": {
+                                            "type": "string",
+                                            "description": "Nom du jeton utilis\u00e9."
+                                        },
+                                        "token_expires_at": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "description": "Expiration du jeton (ISO 8601, UTC), ou null pour un jeton sans expiration."
+                                        }
+                                    },
+                                    "required": [
+                                        "handle",
+                                        "name",
+                                        "token_name",
+                                        "token_expires_at"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "ValidationException": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Errors overview."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "description": "A detailed description of each field that failed validation.",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "message",
+                                "errors"
+                            ]
+                        }
+                    }
+                }
+            },
+            "AuthenticationException": {
+                "description": "Unauthenticated",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Error overview."
+                                }
+                            },
+                            "required": [
+                                "message"
+                            ]
+                        }
+                    }
+                }
             }
         }
     }

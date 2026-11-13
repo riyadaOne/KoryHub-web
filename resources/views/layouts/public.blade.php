@@ -29,6 +29,8 @@
                     </a>
 
                     @auth
+                        <livewire:notification-bell />
+
                         <flux:dropdown position="bottom" align="end">
                             <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" />
 

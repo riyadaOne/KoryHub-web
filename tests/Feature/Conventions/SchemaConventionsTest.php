@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 /** Tables du framework et des paquets : leur schéma est imposé, elles échappent aux conventions. */
 const FRAMEWORK_TABLES = [
     'migrations', 'cache', 'cache_locks', 'jobs', 'job_batches', 'failed_jobs',
-    'sessions', 'password_reset_tokens', 'passkeys',
+    'sessions', 'password_reset_tokens', 'passkeys', 'notifications',
 ];
 
 /**
@@ -28,6 +28,10 @@ const TABLES_WITHOUT_SOFT_DELETES = [
     'audit_event_changes',
     // Journal de sécurité : ajout seul, effacé avec le compte (TRD §21).
     'security_events',
+    // Jetons du CLI : un jeton révoqué garde sa ligne (historique, TRD §7.2).
+    'personal_access_tokens',
+    // Codes de connexion du CLI : table technique, lignes effacées 7 jours après expiration (TRD §7.3).
+    'cli_device_codes',
 ];
 
 /** @return list<string> */

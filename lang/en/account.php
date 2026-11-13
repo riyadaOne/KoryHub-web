@@ -22,6 +22,9 @@ return [
     'security_event' => [
         'login' => 'Sign-in',
         'login_failed' => 'Sign-in refused',
+        'cli_login' => 'CLI login',
+        'token_created' => 'Token created',
+        'token_revoked' => 'Token revoked',
         'two_factor_enabled' => 'Two-factor authentication enabled',
         'two_factor_disabled' => 'Two-factor authentication disabled',
         'passkey_added' => 'Passkey added',

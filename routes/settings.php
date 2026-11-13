@@ -6,6 +6,12 @@ Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::livewire('settings/profile', 'pages::settings.profile')->name('profile.edit');
+
+    // Jetons du CLI (S-41, S-42) : comme S-26, accessibles avant la vérification de l'e-mail.
+    Route::livewire('settings/tokens', 'pages::settings.tokens')->name('tokens.index');
+    Route::livewire('settings/tokens/create', 'pages::settings.token-create')
+        ->middleware('password.confirm')
+        ->name('tokens.create');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

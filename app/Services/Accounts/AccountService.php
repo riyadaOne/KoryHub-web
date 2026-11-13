@@ -20,7 +20,7 @@ class AccountService
 
     /**
      * Supprime un compte (F-AUT-17, RGPD) : données personnelles effacées, sessions fermées,
-     * journal de sécurité et passkeys effacés ; la ligne reste, son nom @auteur est réservé.
+     * jetons du CLI révoqués, journal de sécurité et passkeys effacés ; la ligne reste, son nom @auteur est réservé.
      */
     public function delete(User $user, ?User $actor = null, ?string $reason = null): void
     {
@@ -32,6 +32,8 @@ class AccountService
         $avatar = $user->avatar_path;
 
         DB::transaction(function () use ($user, $actor, $reason, $previousStatus) {
+            // Jetons du CLI révoqués sans être supprimés (historique, TRD §7.2).
+            $user->tokens()->usable()->update(['revoked_at' => now(), 'revoked_by' => ($actor ?? $user)->getKey()]);
             $user->securityEvents()->delete();
             $user->passkeys()->delete();
             DB::table('sessions')->where('user_id', $user->id)->delete();
