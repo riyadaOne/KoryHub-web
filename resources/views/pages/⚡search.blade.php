@@ -107,13 +107,13 @@ new #[Title('search.title')] class extends Component {
         <div class="grid min-w-0 content-start gap-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <span class="text-sm text-zinc-500 dark:text-zinc-400" data-test="search-total">{{ trans_choice('search.total', $this->results->total(), ['count' => \Illuminate\Support\Number::format($this->results->total())]) }}</span>
-                <div class="flex gap-2" x-data x-init="try { const p = parseInt(localStorage.getItem('kory.search.perPage')); if (p && p !== $wire.perPage) { $wire.set('perPage', p) } } catch (e) {}">
+                <div class="flex gap-2" x-data x-init="(() => { try { const p = parseInt(localStorage.getItem('kory.search.perPage')); if (p && p !== $wire.perPage) { $wire.set('perPage', p) } } catch (e) {} })()">
                     <select wire:model.live="sort" class="rounded-md border border-zinc-200 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900" aria-label="{{ __('search.sort') }}" data-test="search-sort">
                         @foreach (['relevance' => __('search.sorts.relevance'), 'downloads' => __('search.sorts.downloads'), 'rating' => __('search.sorts.rating'), 'recent' => __('search.sorts.recent')] as $option => $label)
                             <option value="{{ $option }}">{{ $label }}</option>
                         @endforeach
                     </select>
-                    <select wire:model.live="perPage" x-on:change="try { localStorage.setItem('kory.search.perPage', $event.target.value) } catch (e) {}" class="rounded-md border border-zinc-200 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900" aria-label="{{ __('search.per_page') }}">
+                    <select wire:model.live="perPage" x-on:change="(() => { try { localStorage.setItem('kory.search.perPage', $event.target.value) } catch (e) {} })()" class="rounded-md border border-zinc-200 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900" aria-label="{{ __('search.per_page') }}">
                         @foreach (config('koryhub.search.per_page') as $size)
                             <option value="{{ $size }}">{{ __('search.per_page_option', ['count' => $size]) }}</option>
                         @endforeach

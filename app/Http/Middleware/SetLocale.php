@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Enums\Locale;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Number;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -17,7 +18,10 @@ class SetLocale
 
     public function handle(Request $request, Closure $next): Response
     {
-        app()->setLocale(self::resolve($request)->value);
+        $locale = self::resolve($request)->value;
+        app()->setLocale($locale);
+        // Nombres dans la langue de la page (4,6 en français), chiffres occidentaux en arabe (UXUI §10).
+        Number::useLocale($locale === 'ar' ? 'ar@numbers=latn' : $locale);
 
         return $next($request);
     }
