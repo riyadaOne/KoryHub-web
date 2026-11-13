@@ -46,7 +46,8 @@ test('sans compte : informations, détail d\'une version, lien signé et compteu
 
     $this->getJson($this->api.'/versions/1.0.0')->assertOk()
         ->assertJsonPath('requires.0', ['ecosystem' => 'composer', 'name' => 'php', 'version' => '>=8.3'])
-        ->assertJsonPath('files.0.path', 'README.md');
+        ->assertJsonPath('files.0.path', 'README.md')
+        ->assertJsonPath('license', 'MIT');
 
     $response = $this->get($this->api.'/versions/1.0.0/download')->assertRedirect();
     expect($response->headers->get('Location'))->toContain($v->archive_path)->toContain('expiration=');

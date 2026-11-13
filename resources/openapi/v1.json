@@ -41,6 +41,119 @@
                 }
             }
         },
+        "/audit": {
+            "post": {
+                "operationId": "v1.audit",
+                "description": "\u00c9tat de chaque version : `up_to_date`, `update_available`, `deprecated`, `removed` ou\n`not_found` ; `latest_version` est la derni\u00e8re version stable. `at_risk` arrive avec la\nmod\u00e9ration (W07).",
+                "summary": "Auditer des versions install\u00e9es",
+                "tags": [
+                    "Audit"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "modules": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "pattern": "#^@[a-z0-9-]+/[a-z0-9-]+$#"
+                                                },
+                                                "version": {
+                                                    "type": "string",
+                                                    "maxLength": 64
+                                                }
+                                            },
+                                            "required": [
+                                                "name",
+                                                "version"
+                                            ]
+                                        },
+                                        "minItems": 1,
+                                        "maxItems": 200
+                                    }
+                                },
+                                "required": [
+                                    "modules"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "version": {
+                                                        "type": "string"
+                                                    },
+                                                    "state": {
+                                                        "type": "string",
+                                                        "description": "up_to_date, update_available, deprecated, removed ou not_found.",
+                                                        "enum": [
+                                                            "not_found",
+                                                            "removed",
+                                                            "deprecated",
+                                                            "update_available",
+                                                            "up_to_date"
+                                                        ]
+                                                    },
+                                                    "latest_version": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ],
+                                                        "description": "Derni\u00e8re version stable, ou null."
+                                                    },
+                                                    "message": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ],
+                                                        "description": "Message de d\u00e9pr\u00e9ciation de l'auteur, ou null."
+                                                    }
+                                                },
+                                                "required": [
+                                                    "name",
+                                                    "version",
+                                                    "state",
+                                                    "latest_version",
+                                                    "message"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "results"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/auth/device": {
             "post": {
                 "operationId": "v1.auth.device",
@@ -172,6 +285,58 @@
                 "security": []
             }
         },
+        "/modules/{author}/{module}/versions/{version}/download": {
+            "get": {
+                "operationId": "v1.modules.versions.download",
+                "description": "Redirige (302) vers un lien sign\u00e9 valable 5 minutes. Refus : `not_found` (404),\n`version_removed` (410), `download_limit_guest` ou `download_limit_user` (429, avec\n`retry_at` en UTC et l'en-t\u00eate `Retry-After`).",
+                "summary": "T\u00e9l\u00e9charger une version",
+                "tags": [
+                    "Download"
+                ],
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "module",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "",
+                        "headers": {
+                            "Location": {
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                }
+            }
+        },
         "/meta": {
             "get": {
                 "operationId": "v1.meta",
@@ -217,7 +382,8 @@
         "/modules/{author}/{module}": {
             "get": {
                 "operationId": "v1.modules.show",
-                "summary": "Un module et sa derni\u00e8re version",
+                "description": "Versions publi\u00e9es, d\u00e9pr\u00e9ci\u00e9es et retir\u00e9es, les plus r\u00e9centes d'abord.",
+                "summary": "Un module et ses versions",
                 "tags": [
                     "Module"
                 ],
@@ -273,13 +439,265 @@
                                                 "null"
                                             ],
                                             "description": "Derni\u00e8re version stable publi\u00e9e, ou null."
+                                        },
+                                        "description": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "language": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "certified": {
+                                            "type": "boolean",
+                                            "description": "Certification (W06) : toujours false pour l'instant."
+                                        },
+                                        "download_count": {
+                                            "type": "integer",
+                                            "description": "T\u00e9l\u00e9chargements, toutes versions."
+                                        },
+                                        "versions": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "version": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "description": "published, deprecated ou removed.",
+                                                        "enum": [
+                                                            "submitted",
+                                                            "published",
+                                                            "rejected",
+                                                            "deprecated",
+                                                            "removed"
+                                                        ]
+                                                    },
+                                                    "prerelease": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "published_at": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "sha256": {
+                                                        "type": "string",
+                                                        "description": "Empreinte SHA-256 de l'archive."
+                                                    },
+                                                    "size": {
+                                                        "type": "integer"
+                                                    },
+                                                    "deprecation_message": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "version",
+                                                    "status",
+                                                    "prerelease",
+                                                    "published_at",
+                                                    "sha256",
+                                                    "size",
+                                                    "deprecation_message"
+                                                ]
+                                            }
                                         }
                                     },
                                     "required": [
                                         "name",
                                         "visibility",
                                         "status",
-                                        "latest_version"
+                                        "latest_version",
+                                        "description",
+                                        "language",
+                                        "certified",
+                                        "download_count",
+                                        "versions"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/modules/{author}/{module}/versions/{version}": {
+            "get": {
+                "operationId": "v1.modules.versions.show",
+                "summary": "Une version : pr\u00e9requis et fichiers (chemin, taille, empreinte)",
+                "tags": [
+                    "Module"
+                ],
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "module",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "version": {
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "description": "published, deprecated ou removed.",
+                                            "enum": [
+                                                "submitted",
+                                                "published",
+                                                "rejected",
+                                                "deprecated",
+                                                "removed"
+                                            ]
+                                        },
+                                        "prerelease": {
+                                            "type": "boolean"
+                                        },
+                                        "license": {
+                                            "type": "string",
+                                            "description": "Identifiant SPDX (MIT, Apache-2.0\u2026).",
+                                            "enum": [
+                                                "MIT",
+                                                "Apache-2.0",
+                                                "BSD-2-Clause",
+                                                "BSD-3-Clause",
+                                                "ISC",
+                                                "MPL-2.0",
+                                                "GPL-2.0",
+                                                "GPL-3.0",
+                                                "LGPL-3.0",
+                                                "AGPL-3.0",
+                                                "Unlicense"
+                                            ]
+                                        },
+                                        "language": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "published_at": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "sha256": {
+                                            "type": "string"
+                                        },
+                                        "size": {
+                                            "type": "integer"
+                                        },
+                                        "deprecation_message": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "requires": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "ecosystem": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "version": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "ecosystem",
+                                                    "name",
+                                                    "version"
+                                                ]
+                                            }
+                                        },
+                                        "files": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "path": {
+                                                        "type": "string"
+                                                    },
+                                                    "size": {
+                                                        "type": "integer"
+                                                    },
+                                                    "sha256": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "path",
+                                                    "size",
+                                                    "sha256"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "name",
+                                        "version",
+                                        "status",
+                                        "prerelease",
+                                        "license",
+                                        "language",
+                                        "published_at",
+                                        "sha256",
+                                        "size",
+                                        "deprecation_message",
+                                        "requires",
+                                        "files"
                                     ]
                                 }
                             }
@@ -287,9 +705,6 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/ModelNotFoundException"
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/AuthenticationException"
                     }
                 }
             }

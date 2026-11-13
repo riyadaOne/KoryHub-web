@@ -80,7 +80,8 @@ class ModuleController extends Controller
             /** published, deprecated ou removed. */
             'status' => $v->status->value,
             'prerelease' => $v->isPrerelease(),
-            'license' => $v->license->value,
+            /** Identifiant SPDX (MIT, Apache-2.0…). */
+            'license' => $v->license->spdx(),
             'language' => $v->language,
             'published_at' => $v->published_at?->toIso8601ZuluString(),
             'sha256' => $v->archive_sha256,
