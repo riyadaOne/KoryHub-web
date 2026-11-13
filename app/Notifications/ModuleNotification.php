@@ -53,6 +53,6 @@ class ModuleNotification extends Notification implements ShouldQueue
             $message->line(__('notifications.detail_reason', $replace));
         }
 
-        return $message->action(__("notifications.{$kind}.action"), NotificationText::url($kind));
+        return $message->action(__("notifications.{$kind}.action"), NotificationText::url($kind, $this->params));
     }
 }

@@ -1,6 +1,11 @@
 <?php
 
+use App\Models\ModuleVersion;
+use App\Models\User;
+use App\Services\Modules\VersionPublisher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Tests\Support\TarBuilder;
 use Tests\TestCase;
 
 /*
@@ -44,7 +49,13 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/** Publie une version par le service, comme kory push. */
+function publishKory(User $author, TarBuilder $archive, string $name = 'paiement', array $options = ['visibility' => 'public']): ModuleVersion
 {
-    // ..
+    $path = $archive->save();
+
+    return app(VersionPublisher::class)->publish(
+        $author, $author->handle, $name, new UploadedFile($path, 'kory.tar.gz', null, null, true), hash_file('sha256', $path),
+        ['rights_certified' => true, 'notice_accepted' => true, ...$options],
+    );
 }

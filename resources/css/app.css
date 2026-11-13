@@ -71,3 +71,41 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+/*
+ * README rendu (S-03) et code coloré par tempest/highlight (S-06) : couleurs tirées de la
+ * maquette de référence, lisibles en clair et en sombre.
+ */
+@layer components {
+    .readme { line-height: 1.6; }
+    .readme h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 0.75rem; }
+    .readme h2 { font-size: 1.25rem; font-weight: 600; margin: 1.75rem 0 0.5rem; text-wrap: balance; }
+    .readme h2:first-child, .readme h1 + h2 { margin-top: 0.5rem; }
+    .readme h3 { font-size: 1.05rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+    .readme p, .readme ul, .readme ol, .readme pre, .readme table, .readme blockquote { margin: 0 0 0.9rem; }
+    .readme ul { list-style: disc; padding-inline-start: 1.3em; }
+    .readme ol { list-style: decimal; padding-inline-start: 1.3em; }
+    .readme li { margin: 0.25rem 0; }
+    .readme a { color: var(--color-accent-content); text-decoration: underline; }
+    .readme code { font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.9em; background: var(--color-zinc-100); padding: 0.05rem 0.3rem; border-radius: 0.25rem; }
+    .readme pre { background: var(--color-zinc-100); border: 1px solid var(--color-zinc-200); border-radius: 0.5rem; padding: 0.85rem 1rem; overflow-x: auto; direction: ltr; font-size: 13px; }
+    .readme pre code { background: none; padding: 0; }
+    .readme blockquote { border-inline-start: 3px solid var(--color-zinc-300); padding-inline-start: 0.8rem; color: var(--color-zinc-600); }
+    .readme img { max-width: 100%; }
+    .readme table { border-collapse: collapse; display: block; overflow-x: auto; }
+    .readme th, .readme td { border: 1px solid var(--color-zinc-200); padding: 0.35rem 0.6rem; }
+    .dark .readme code, .dark .readme pre { background: var(--color-zinc-800); border-color: var(--color-zinc-700); }
+    .dark .readme blockquote { color: var(--color-zinc-400); border-color: var(--color-zinc-600); }
+
+    .hl-keyword, .hl-property { color: var(--color-accent-content); }
+    .hl-type, .hl-generic { color: var(--color-blue-700); }
+    .hl-value, .hl-number { color: var(--color-amber-700); }
+    .hl-comment { color: var(--color-zinc-500); font-style: italic; }
+    .hl-variable { color: var(--color-zinc-900); }
+    .hl-attribute, .hl-injection { color: var(--color-violet-700); }
+    .dark .hl-type, .dark .hl-generic { color: var(--color-blue-400); }
+    .dark .hl-value, .dark .hl-number { color: var(--color-amber-400); }
+    .dark .hl-comment { color: var(--color-zinc-400); }
+    .dark .hl-variable { color: var(--color-zinc-100); }
+    .dark .hl-attribute, .dark .hl-injection { color: var(--color-violet-400); }
+}

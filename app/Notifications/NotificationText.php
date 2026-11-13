@@ -33,12 +33,22 @@ final class NotificationText
         return $replace + ['token' => '', 'ip' => '', 'module' => '', 'version' => '', 'reason' => ''];
     }
 
-    /** Page vers laquelle mènent l'e-mail et la ligne de la cloche. */
-    public static function url(string $kind): string
+    /**
+     * Page vers laquelle mènent l'e-mail et la ligne de la cloche.
+     *
+     * @param  array<string, mixed>  $params
+     */
+    public static function url(string $kind, array $params = []): string
     {
+        if (in_array($kind, ['version_published', 'version_rejected'], true)
+            && preg_match('#^@([a-z0-9-]+)/([a-z0-9-]+)$#', (string) ($params['module'] ?? ''), $m)
+            && is_string($params['version'] ?? null)) {
+            return route('modules.version', ['author' => $m[1], 'module' => $m[2], 'number' => $params['version']]);
+        }
+
         return match ($kind) {
             'password_changed' => route('security.edit'),
-            'version_published', 'version_rejected' => route('dashboard'),
+            'version_published', 'version_rejected' => route('modules.mine'),
             default => route('tokens.index'),
         };
     }

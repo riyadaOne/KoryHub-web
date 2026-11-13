@@ -36,6 +36,7 @@
 
                             <flux:menu>
                                 <flux:menu.item :href="route('dashboard')" icon="layout-grid" wire:navigate>{{ __('common.dashboard') }}</flux:menu.item>
+                                <flux:menu.item :href="route('modules.mine')" icon="cube" wire:navigate data-test="my-modules-link">{{ __('modules.mine.title') }}</flux:menu.item>
                                 <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('common.settings') }}</flux:menu.item>
                                 <flux:menu.separator />
                                 <form method="POST" action="{{ route('logout') }}" class="w-full">

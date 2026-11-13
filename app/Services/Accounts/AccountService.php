@@ -3,9 +3,12 @@
 namespace App\Services\Accounts;
 
 use App\Enums\AccountStatus;
+use App\Enums\Visibility;
 use App\Exceptions\InvalidTransition;
+use App\Models\Module;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
+use App\Services\Modules\ModuleLifecycle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,17 +19,21 @@ use Illuminate\Support\Facades\Storage;
  */
 class AccountService
 {
-    public function __construct(private AuditLogger $audit) {}
+    public function __construct(private AuditLogger $audit, private ModuleLifecycle $modules) {}
 
     /**
      * Supprime un compte (F-AUT-17, RGPD) : données personnelles effacées, sessions fermées,
-     * jetons du CLI révoqués, journal de sécurité et passkeys effacés ; la ligne reste, son nom @auteur est réservé.
+     * jetons du CLI révoqués, journal de sécurité et passkeys effacés, modules privés supprimés
+     * (les modules publics restent) ; la ligne reste, son nom @auteur est réservé.
      */
     public function delete(User $user, ?User $actor = null, ?string $reason = null): void
     {
         if ($user->status === AccountStatus::Deleted) {
             throw new InvalidTransition($user->status, AccountStatus::Deleted);
         }
+
+        $user->modules()->where('visibility', Visibility::Private)->get()
+            ->each(fn (Module $module) => $this->modules->deleteModule($module, $actor ?? $user));
 
         $previousStatus = $user->status;
         $avatar = $user->avatar_path;

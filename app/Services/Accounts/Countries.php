@@ -30,6 +30,12 @@ class Countries
         return $countries;
     }
 
+    /** Nom d'un pays dans la langue en cours. */
+    public function name(string $code): string
+    {
+        return \Locale::getDisplayRegion('-'.$code, app()->getLocale()) ?: $code;
+    }
+
     public function isValid(string $code): bool
     {
         return in_array($code, $this->codes(), true);

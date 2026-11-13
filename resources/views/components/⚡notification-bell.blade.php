@@ -34,7 +34,7 @@ new class extends Component {
         $notification = Auth::user()->notifications()->findOrFail($id);
         $notification->markAsRead();
 
-        $this->redirect(NotificationText::url($notification->data['kind'] ?? ''), navigate: true);
+        $this->redirect(NotificationText::url($notification->data['kind'] ?? '', $notification->data['params'] ?? []), navigate: true);
     }
 }; ?>
 
