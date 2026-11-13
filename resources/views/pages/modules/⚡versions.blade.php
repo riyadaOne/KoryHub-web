@@ -10,6 +10,7 @@ use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 /*
@@ -17,7 +18,7 @@ use Livewire\Component;
  * déprécier (message obligatoire), annuler la dépréciation, supprimer dans les 72 h. Les versions
  * rejetées ne sont visibles que par l'auteur. Confirmations dans l'écran (UXUI U4).
  */
-new class extends Component {
+new #[Title('modules.tabs.versions')] class extends Component {
     #[Locked]
     public string $author = '';
 

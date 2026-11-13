@@ -31,7 +31,7 @@
 
     <div class="flex flex-wrap gap-2" data-test="module-badges">
         @if ($version)
-            <flux:badge size="sm" :color="$version->status->color()->fluxColor()">{{ $version->status->label() }} · <span dir="ltr">{{ $version->version }}</span></flux:badge>
+            <flux:badge size="sm" :color="$version->status->color()->fluxColor()">{{ $version->status->label().' · '.$version->version }}</flux:badge>
             <flux:badge size="sm" color="zinc">{{ $version->license->spdx() }}</flux:badge>
         @endif
         @if ($module->visibility === \App\Enums\Visibility::Private)
