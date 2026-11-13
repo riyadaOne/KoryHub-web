@@ -113,7 +113,7 @@ test('favori et abonnement depuis la fiche ; S-44 et S-45 ; effacés avec le com
     $this->actingAs($this->hassan);
     Livewire::test('module-actions', ['moduleId' => $this->module->id])
         ->call('toggleStar')->assertSee('· 1')
-        ->call('watch', 'releases')->assertSee(WatchLevel::Releases->label());
+        ->call('setWatch', 'releases')->assertSee(WatchLevel::Releases->label());
 
     expect(Star::count())->toBe(1)->and(Watch::sole()->level)->toBe(WatchLevel::Releases);
 

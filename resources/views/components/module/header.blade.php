@@ -6,6 +6,8 @@
 
 @php
     $base = route('modules.show', ['author' => $module->author->handle, 'module' => $module->name]);
+    // Nombre de versions quand la page ne le donne pas (versions publiées et dépréciées).
+    $versionsCount ??= $module->versions()->whereIn('status', [\App\Enums\VersionStatus::Published, \App\Enums\VersionStatus::Deprecated])->count();
     $tabs = [
         'readme' => [__('modules.tabs.readme'), $base],
         'architecture' => [__('modules.tabs.architecture'), route('modules.architecture', ['author' => $module->author->handle, 'module' => $module->name])],

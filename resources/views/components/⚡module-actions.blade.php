@@ -55,7 +55,7 @@ new class extends Component {
         unset($this->starred, $this->starCount);
     }
 
-    public function watch(string $level)
+    public function setWatch(string $level)
     {
         if (! Auth::check()) {
             return $this->redirectRoute('login');
@@ -76,9 +76,15 @@ new class extends Component {
 
 <div class="flex flex-wrap gap-2">
     @if ($this->module->visibility === \App\Enums\Visibility::Public)
-        <flux:button size="sm" :icon="$this->starred ? 'star' : 'star'" :variant="$this->starred ? 'primary' : 'outline'" wire:click="toggleStar" data-test="star-button" aria-pressed="{{ $this->starred ? 'true' : 'false' }}">
-            {{ __('community.stars.button') }} · {{ $this->starCount }}
-        </flux:button>
+        @if ($this->starred)
+            <flux:button size="sm" icon="star" variant="primary" wire:click="toggleStar" data-test="star-button" aria-pressed="true">
+                {{ __('community.stars.button') }} · {{ $this->starCount }}
+            </flux:button>
+        @else
+            <flux:button size="sm" icon="star" icon:variant="outline" wire:click="toggleStar" data-test="star-button" aria-pressed="false">
+                {{ __('community.stars.button') }} · {{ $this->starCount }}
+            </flux:button>
+        @endif
 
         @if ($this->module->author_id !== auth()->id())
             <flux:dropdown>
@@ -87,7 +93,8 @@ new class extends Component {
                 </flux:button>
                 <flux:menu class="w-80">
                     @foreach (\App\Enums\WatchLevel::cases() as $level)
-                        <flux:menu.item wire:click="watch('{{ $level->value }}')" :icon="$this->watchLevel === $level ? 'check' : 'minus'" data-test="watch-{{ $level->value }}">
+                        <flux:menu.item wire:click="setWatch('{{ $level->value }}')" data-test="watch-{{ $level->value }}">
+                            <flux:icon.check variant="mini" @class(['me-2 shrink-0', 'invisible' => $this->watchLevel !== $level]) />
                             <div>
                                 <div class="font-medium">{{ $level->label() }}</div>
                                 <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $level->description() }}</div>
@@ -96,7 +103,7 @@ new class extends Component {
                     @endforeach
                     @if ($this->watchLevel)
                         <flux:menu.separator />
-                        <flux:menu.item wire:click="watch('none')" icon="x-mark" data-test="watch-none">{{ __('community.watch.stop') }}</flux:menu.item>
+                        <flux:menu.item wire:click="setWatch('none')" icon="x-mark" data-test="watch-none">{{ __('community.watch.stop') }}</flux:menu.item>
                     @endif
                 </flux:menu>
             </flux:dropdown>
