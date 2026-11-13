@@ -268,7 +268,10 @@
                                             ]
                                         },
                                         "latest_version": {
-                                            "type": "string",
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
                                             "description": "Derni\u00e8re version stable publi\u00e9e, ou null."
                                         }
                                     },
