@@ -1,0 +1,87 @@
+{
+    "openapi": "3.1.2",
+    "info": {
+        "title": "KoryHub",
+        "version": "1.0.0",
+        "description": "API du CLI kory (TRD \u00a717). Une route ajout\u00e9e ne casse jamais un client existant."
+    },
+    "servers": [
+        {
+            "url": "http://api.koryhub.test/v1"
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "v1.index",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "version": {
+                                            "type": "string",
+                                            "const": "v1"
+                                        }
+                                    },
+                                    "required": [
+                                        "name",
+                                        "version"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/meta": {
+            "get": {
+                "operationId": "v1.meta",
+                "summary": "Versions de l'API et du CLI",
+                "tags": [
+                    "Meta"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "api_version": {
+                                            "type": "string",
+                                            "description": "Version de l'API.",
+                                            "const": "v1"
+                                        },
+                                        "minimum_cli_version": {
+                                            "type": "string",
+                                            "description": "Version minimale du CLI accept\u00e9e (x.y.z)."
+                                        },
+                                        "latest_cli_version": {
+                                            "type": "string",
+                                            "description": "Derni\u00e8re version publi\u00e9e du CLI (x.y.z)."
+                                        }
+                                    },
+                                    "required": [
+                                        "api_version",
+                                        "minimum_cli_version",
+                                        "latest_cli_version"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        }
+    }
+}

@@ -17,12 +17,13 @@ class SetLocale
 
     public function handle(Request $request, Closure $next): Response
     {
-        app()->setLocale($this->resolve($request)->value);
+        app()->setLocale(self::resolve($request)->value);
 
         return $next($request);
     }
 
-    private function resolve(Request $request): Locale
+    /** Langue retenue pour une requête (utilisée aussi pour traduire les erreurs de routage). */
+    public static function resolve(Request $request): Locale
     {
         $fromCookie = Locale::tryFrom((string) $request->cookie(self::COOKIE));
 

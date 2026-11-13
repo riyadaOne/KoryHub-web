@@ -25,6 +25,16 @@ return [
     ],
 
     /*
+     * CLI kory (TRD §17, §18, T-11) : sous la version minimale, l'API répond 426
+     * « Mettez à jour kory » ; la dernière version est annoncée par GET /v1/meta.
+     * Versions au format x.y.z.
+     */
+    'cli' => [
+        'minimum_version' => env('KORYHUB_CLI_MINIMUM_VERSION', '0.1.0'),
+        'latest_version' => env('KORYHUB_CLI_LATEST_VERSION', '0.1.0'),
+    ],
+
+    /*
      * Journal d'audit (TRD §21) : champs notés comme modifiés, sans leur valeur,
      * pour qu'aucune donnée personnelle ni aucun secret n'y entre.
      */
