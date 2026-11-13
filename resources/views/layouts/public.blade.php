@@ -3,12 +3,12 @@
     en-tête avec logo, recherche et connexion ; contenu ; pied de page avec le choix de la langue.
     Sert aussi à l'espace connecté (layouts/app) et à la documentation.
 --}}
-@props(['title' => null])
+@props(['title' => null, 'description' => null])
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ \App\Enums\Locale::current()->direction() }}" class="dark">
     <head>
-        @include('partials.head', ['title' => $title])
+        @include('partials.head', ['title' => $title, 'description' => $description])
     </head>
     <body class="flex min-h-screen flex-col bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-50">
         <header class="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">

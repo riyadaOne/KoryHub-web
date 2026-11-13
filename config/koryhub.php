@@ -53,6 +53,9 @@ return [
     'cli' => [
         'minimum_version' => env('KORYHUB_CLI_MINIMUM_VERSION', '0.1.0'),
         'latest_version' => env('KORYHUB_CLI_LATEST_VERSION', '0.1.0'),
+        // Commandes d'installation affichées sur l'accueil (TRD §18 ; scripts livrés en K05).
+        'install_windows' => 'irm https://koryhub.dev/install.ps1 | iex',
+        'install_unix' => 'curl -fsSL https://koryhub.dev/install.sh | sh',
     ],
 
     /*

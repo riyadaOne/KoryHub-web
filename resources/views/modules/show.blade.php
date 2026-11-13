@@ -1,5 +1,5 @@
 {{-- S-03 Fiche d'un kory : README rendu et colonne latérale (maquette exemple-kory.html). --}}
-<x-layouts::app :title="'@'.$module->author->handle.'/'.$module->name">
+<x-layouts::app :title="'@'.$module->author->handle.'/'.$module->name" :description="$module->description">
     <x-module.header :module="$module" tab="readme" :version="$version" :is-author="$isAuthor" :files-count="$filesCount" :versions-count="$versionsCount" />
 
     <div class="grid items-start gap-8 py-6 lg:grid-cols-[minmax(0,1fr)_320px]">

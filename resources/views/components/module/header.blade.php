@@ -24,7 +24,7 @@
         @if ($module->category)
             {{ $module->category->name() }} ·
         @endif
-        <span class="font-mono" dir="ltr">{{ '@'.$module->author->handle }}</span>
+        <a href="{{ route('profiles.show', $module->author->handle) }}" class="font-mono hover:underline" dir="ltr" wire:navigate>{{ '@'.$module->author->handle }}</a>
     </div>
 
     <h1 class="m-0 break-all font-mono text-2xl font-semibold" dir="ltr">

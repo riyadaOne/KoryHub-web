@@ -1,5 +1,5 @@
 {{-- S-05 Détail d'une version : statut, empreinte complète, licence, contenu ; motif du rejet pour l'auteur. --}}
-<x-layouts::app :title="'@'.$module->author->handle.'/'.$module->name.' '.$version->version">
+<x-layouts::app :title="'@'.$module->author->handle.'/'.$module->name.' '.$version->version" :description="$module->description">
     <x-module.header :module="$module" tab="versions" :version="$version" :is-author="$isAuthor" :files-count="$filesCount" :versions-count="$versionsCount" />
 
     <div class="grid max-w-3xl gap-4 py-6">

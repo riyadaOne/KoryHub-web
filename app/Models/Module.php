@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ModuleStatus;
+use App\Enums\VersionStatus;
 use App\Enums\Visibility;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,6 +32,8 @@ use Laravel\Scout\Searchable;
  * @property string|null $latest_version_id
  * @property int $download_count
  * @property bool $reviews_hidden
+ * @property bool $is_featured
+ * @property Carbon|null $featured_at
  * @property float|null $rating_avg
  * @property int $rating_count
  * @property float $score
@@ -72,6 +75,8 @@ class Module extends Model
             'archived_at' => 'datetime',
             'download_count' => 'integer',
             'reviews_hidden' => 'boolean',
+            'is_featured' => 'boolean',
+            'featured_at' => 'datetime',
             'rating_avg' => 'float',
             'rating_count' => 'integer',
             'score' => 'float',
@@ -132,6 +137,18 @@ class Module extends Model
     public function fullName(): string
     {
         return '@'.$this->author->handle.'/'.$this->name;
+    }
+
+    /**
+     * Modules publics présentables (accueil, catégorie, profil) : au moins une version publiée ou dépréciée.
+     *
+     * @param  Builder<Module>  $query
+     */
+    public function scopeListed(Builder $query): void
+    {
+        $query->where('visibility', Visibility::Public)
+            ->whereHas('versions', fn (Builder $v) => $v->whereIn('status', [VersionStatus::Published, VersionStatus::Deprecated]))
+            ->with(['author', 'latestVersion']);
     }
 
     /** Modules qu'un compte (ou un visiteur) peut voir : publics, ou les siens. */

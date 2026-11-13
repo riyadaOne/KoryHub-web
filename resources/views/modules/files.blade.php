@@ -1,5 +1,5 @@
 {{-- S-06 Fichiers d'une version : arborescence et fichier choisi, coloré (maquette exemple-kory.html). --}}
-<x-layouts::app :title="'@'.$module->author->handle.'/'.$module->name">
+<x-layouts::app :title="'@'.$module->author->handle.'/'.$module->name" :description="$module->description">
     <x-module.header :module="$module" tab="files" :version="$version" :is-author="$isAuthor" :files-count="$filesCount" :versions-count="$versionsCount" />
 
     @if ($files->isEmpty())

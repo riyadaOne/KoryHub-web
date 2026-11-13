@@ -2,13 +2,20 @@
 
 namespace Database\Seeders;
 
+use App\Enums\WatchLevel;
 use App\Models\Category;
+use App\Models\DownloadStat;
 use App\Models\Module;
+use App\Models\Star;
 use App\Models\User;
+use App\Models\Watch;
+use App\Services\Community\ReviewService;
 use App\Services\Modules\DownloadService;
 use App\Services\Modules\ModuleLifecycle;
 use App\Services\Modules\Secrets\SecretScanner;
 use App\Services\Modules\VersionPublisher;
+use App\Services\Search\ScoreCalculator;
+use App\Services\Search\SearchText;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -58,6 +65,53 @@ class DemoModulesSeeder extends Seeder
         }
 
         $this->downloads($hassan);
+        $this->community($hassan, $fatime);
+    }
+
+    /**
+     * Communauté (W05) : avis vérifiés (téléchargés connectés) et non vérifiés, favoris,
+     * abonnements, téléchargements répartis sur un an, un module mis en avant (case de l'admin
+     * en W08), puis texte cherchable et score.
+     */
+    private function community(User $hassan, User $fatime): void
+    {
+        $module = Module::query()->where('name', 'mobile-money-resilient')->sole();
+        $latest = $module->versions()->where('version', '1.2.0')->sole();
+        $reviews = app(ReviewService::class);
+        $others = User::query()->whereIn('handle', ['awa-diop', 'wanjiru'])->get()->keyBy('handle');
+
+        foreach ($others as $user) {
+            RateLimiter::clear('downloads:user:'.$user->id);
+            app(DownloadService::class)->download($latest, $user, 'demo');
+        }
+        $reviews->save($module, $hassan, 5, 'Installé dans notre caisse à N\'Djamena : la file des paiements en suspens a sauvé plusieurs ventes pendant les coupures.');
+        if ($others->has('awa-diop')) {
+            $reviews->save($module, $others['awa-diop'], 5, 'Plus aucun double débit depuis qu\'on l\'utilise à Dakar, même avec le réseau qui coupe.');
+        }
+        if ($others->has('wanjiru')) {
+            $reviews->save($module, $others['wanjiru'], 4, 'Very good. M-Pesa is missing, but the PaymentGateway interface makes it easy to add.');
+        }
+        $reviews->save($module, $fatime, 3, 'Lu le code, pas encore utilisé. Le README est clair.');
+
+        foreach ([$hassan, ...$others->values()] as $user) {
+            Star::query()->firstOrCreate(['user_id' => $user->id, 'module_id' => $module->id]);
+        }
+        Watch::query()->updateOrCreate(['user_id' => $hassan->id, 'module_id' => $module->id], ['level' => WatchLevel::Releases]);
+        if ($others->has('wanjiru')) {
+            Watch::query()->updateOrCreate(['user_id' => $others['wanjiru']->id, 'module_id' => $module->id], ['level' => WatchLevel::All]);
+        }
+
+        // Téléchargements sans compte répartis sur un an : le score ne compte que les 90 derniers jours.
+        foreach (range(1, 365, 7) as $daysAgo) {
+            DownloadStat::query()->updateOrCreate(
+                ['version_id' => $latest->id, 'day' => now()->subDays($daysAgo)->toDateString()],
+                ['module_id' => $module->id, 'count' => 5 + ($daysAgo % 13)],
+            );
+        }
+
+        $module->forceFill(['is_featured' => true, 'featured_at' => now()])->save();
+        Module::query()->each(fn (Module $m) => app(SearchText::class)->refresh($m));
+        app(ScoreCalculator::class)->refreshAll();
     }
 
     /**

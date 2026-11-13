@@ -3,7 +3,7 @@
     rendu en mode strict, chargé à l'ouverture de l'onglet ; clic sur un composant = son fichier (S-06).
     La liste des liens est l'équivalent texte ; elle passe en premier sous 640 px.
 --}}
-<x-layouts::app :title="'@'.$module->author->handle.'/'.$module->name">
+<x-layouts::app :title="'@'.$module->author->handle.'/'.$module->name" :description="$module->description">
     <x-module.header :module="$module" tab="architecture" :version="$version" :is-author="$isAuthor" :files-count="$filesCount" :versions-count="$versionsCount" />
 
     <div class="grid min-w-0 gap-4 py-6">

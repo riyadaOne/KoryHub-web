@@ -1,12 +1,17 @@
 <?php
 
+use App\Http\Controllers\DiscoverController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ModulePageController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'public.home')->name('home');
+Route::get('/', [DiscoverController::class, 'home'])->name('home');
 
 Route::post('locale/{locale}', LocaleController::class)->name('locale.update');
+
+// Découverte (W05) : catégorie (S-09), profil public (S-08).
+Route::get('categories/{slug}', [DiscoverController::class, 'category'])->name('categories.show');
+Route::get('@{author}', [DiscoverController::class, 'profile'])->where('author', '[a-z0-9-]+')->name('profiles.show');
 
 // Recherche (S-02, W05) : publique.
 Route::livewire('search', 'pages::search')->name('search');

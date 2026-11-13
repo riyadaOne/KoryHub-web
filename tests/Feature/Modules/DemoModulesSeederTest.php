@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 test('les kory de démonstration sont publiés avec leur architecture, des versions dépréciées, un privé et un archivé', function () {
     Storage::fake('local');
-    foreach (['moussa', 'hassan-djibrine', 'fatime-zakaria'] as $handle) {
+    foreach (['moussa', 'hassan-djibrine', 'fatime-zakaria', 'awa-diop', 'wanjiru'] as $handle) {
         User::factory()->create(['handle' => $handle]);
     }
 
@@ -27,7 +27,12 @@ test('les kory de démonstration sont publiés avec leur architecture, des versi
         ->and($mobileMoney->versions()->where('status', VersionStatus::Deprecated)->count())->toBe(2)
         ->and(Module::where('name', 'recu-qr')->sole()->visibility)->toBe(Visibility::Private)
         ->and(Module::where('name', 'sms-ussd-fallback')->sole()->status)->toBe(ModuleStatus::Archived)
-        ->and($mobileMoney->fresh()->download_count)->toBe(9)
+        ->and($mobileMoney->fresh()->download_count)->toBe(11)
+        ->and($mobileMoney->fresh()->rating_count)->toBe(3)
+        ->and($mobileMoney->reviews()->count())->toBe(4)
+        ->and($mobileMoney->fresh()->is_featured)->toBeTrue()
+        ->and($mobileMoney->fresh()->score)->toBeGreaterThan(0.0)
+        ->and($mobileMoney->stars()->count())->toBe(3)
         ->and($mobileMoney->fresh()->third_party_downloaded_at)->not->toBeNull()
         ->and(User::where('handle', 'hassan-djibrine')->sole()->moduleDownloads()->count())->toBe(2);
 

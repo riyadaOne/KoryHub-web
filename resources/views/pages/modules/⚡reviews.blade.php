@@ -211,7 +211,7 @@ new #[Title('community.reviews.title')] class extends Component {
                     @foreach ($this->reviews as $review)
                         <article class="grid gap-1.5 py-3.5" wire:key="review-{{ $review->id }}">
                             <div class="flex flex-wrap items-center gap-2.5 text-sm">
-                                <span class="font-mono font-semibold" dir="ltr">{{ '@'.$review->user->handle }}</span>
+                                <a href="{{ route('profiles.show', $review->user->handle) }}" class="font-mono font-semibold" dir="ltr" wire:navigate>{{ '@'.$review->user->handle }}</a>
                                 @if (isset($this->verifiedUsers[$review->user_id]))
                                     <flux:badge size="sm" color="green" data-test="verified">{{ __('community.reviews.verified') }}</flux:badge>
                                 @endif
