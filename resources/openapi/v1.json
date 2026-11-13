@@ -460,6 +460,41 @@
                                             "type": "integer",
                                             "description": "T\u00e9l\u00e9chargements, toutes versions."
                                         },
+                                        "author": {
+                                            "type": "object",
+                                            "description": "Auteur : nom @auteur et pays (code ISO), s'il est renseign\u00e9.",
+                                            "properties": {
+                                                "handle": {
+                                                    "type": "string"
+                                                },
+                                                "country": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "handle",
+                                                "country"
+                                            ]
+                                        },
+                                        "category": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "rating_avg": {
+                                            "type": [
+                                                "number",
+                                                "null"
+                                            ],
+                                            "description": "Note v\u00e9rifi\u00e9e moyenne, ou null (avis masqu\u00e9s : null)."
+                                        },
+                                        "rating_count": {
+                                            "type": "integer"
+                                        },
                                         "versions": {
                                             "type": "array",
                                             "items": {
@@ -523,6 +558,10 @@
                                         "language",
                                         "certified",
                                         "download_count",
+                                        "author",
+                                        "category",
+                                        "rating_avg",
+                                        "rating_count",
                                         "versions"
                                     ]
                                 }
@@ -662,6 +701,80 @@
                                                 ]
                                             }
                                         },
+                                        "architecture": {
+                                            "type": "object",
+                                            "description": "Architecture d\u00e9clar\u00e9e (F-RCH-18) : composants et liens ; listes vides si absente.",
+                                            "properties": {
+                                                "components": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "kind": {
+                                                                "type": "string",
+                                                                "enum": [
+                                                                    "class",
+                                                                    "interface",
+                                                                    "trait",
+                                                                    "enum",
+                                                                    "function",
+                                                                    "module"
+                                                                ]
+                                                            },
+                                                            "file": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "kind",
+                                                            "file"
+                                                        ]
+                                                    }
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "from": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "to": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "kind": {
+                                                                "type": "string",
+                                                                "enum": [
+                                                                    "uses",
+                                                                    "implements",
+                                                                    "extends",
+                                                                    "calls"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "from",
+                                                            "to",
+                                                            "kind"
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "components",
+                                                "links"
+                                            ]
+                                        },
                                         "files": {
                                             "type": "array",
                                             "items": {
@@ -697,6 +810,7 @@
                                         "size",
                                         "deprecation_message",
                                         "requires",
+                                        "architecture",
                                         "files"
                                     ]
                                 }
@@ -705,6 +819,188 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/ModelNotFoundException"
+                    }
+                }
+            }
+        },
+        "/search": {
+            "get": {
+                "operationId": "v1.search",
+                "description": "Modules publics seulement, tri\u00e9s par pertinence puis score. `limit` : 20 par d\u00e9faut, 100 au plus.",
+                "summary": "Chercher des kory",
+                "tags": [
+                    "Search"
+                ],
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 200
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 64
+                        }
+                    },
+                    {
+                        "name": "language",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 64
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "relevance",
+                                "downloads",
+                                "rating",
+                                "recent",
+                                null
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "total": {
+                                            "type": "integer",
+                                            "description": "Nombre total de r\u00e9sultats."
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "language": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "category": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "latest_version": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ],
+                                                        "description": "Derni\u00e8re version stable, ou null."
+                                                    },
+                                                    "deprecated": {
+                                                        "type": "boolean",
+                                                        "description": "La derni\u00e8re version est d\u00e9pr\u00e9ci\u00e9e."
+                                                    },
+                                                    "archived": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "certified": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "rating_avg": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ],
+                                                        "description": "Note v\u00e9rifi\u00e9e moyenne, ou null (avis masqu\u00e9s : null)."
+                                                    },
+                                                    "rating_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "download_count": {
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "name",
+                                                    "description",
+                                                    "language",
+                                                    "category",
+                                                    "latest_version",
+                                                    "deprecated",
+                                                    "archived",
+                                                    "certified",
+                                                    "rating_avg",
+                                                    "rating_count",
+                                                    "download_count"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "total",
+                                        "results"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     }
                 }
             }
