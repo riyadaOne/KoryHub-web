@@ -49,18 +49,22 @@ class SpatieDatabaseBackup implements DatabaseBackup
         File::ensureDirectoryExists($directory);
         $dump = $this->extractDump(Storage::disk('backups')->path($location), $directory);
 
+        // Le fichier passe par l'entrée standard : « --execute=source » n'est pas lu par tous les clients mysql (recette W08).
+        $input = fopen($dump, 'r');
         try {
             $binary = rtrim((string) ($connection['dump']['dump_binary_path'] ?? ''), '/\\');
-            $result = Process::env(['MYSQL_PWD' => (string) $connection['password']])->timeout(1800)->run([
+            $result = Process::env(['MYSQL_PWD' => (string) $connection['password']])->timeout(1800)->input($input)->run([
                 $binary === '' ? 'mysql' : $binary.DIRECTORY_SEPARATOR.'mysql',
                 '--host='.$connection['host'], '--port='.$connection['port'], '--user='.$connection['username'],
                 '--default-character-set=utf8mb4', $database,
-                '--execute=source '.str_replace('\\', '/', $dump),
             ]);
             if ($result->failed()) {
                 throw new RuntimeException(trim($result->errorOutput()) ?: 'mysql a échoué.');
             }
         } finally {
+            if (is_resource($input)) {
+                fclose($input);
+            }
             File::delete($dump);
         }
 
