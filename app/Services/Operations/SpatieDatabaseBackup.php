@@ -22,16 +22,18 @@ class SpatieDatabaseBackup implements DatabaseBackup
 {
     public function dump(BackupKind $kind): array
     {
-        $filename = 'koryhub-'.$kind->value.'-'.now()->format('Y-m-d-His').'.zip';
+        // Le paquet ajoute lui-même le préfixe (backup.destination.filename_prefix) au nom du fichier.
+        $config = app(Config::class);
+        $filename = $kind->value.'-'.now()->format('Y-m-d-His').'.zip';
 
-        BackupJobFactory::createFromConfig(app(Config::class))
+        BackupJobFactory::createFromConfig($config)
             ->dontBackupFilesystem()
             ->onlyBackupTo('backups')
             ->setFilename($filename)
             ->disableSignals()
             ->run();
 
-        $location = config('backup.backup.name').'/'.$filename;
+        $location = config('backup.backup.name').'/'.$config->backup->destination->filenamePrefix.$filename;
 
         return ['location' => $location, 'size' => Storage::disk('backups')->size($location)];
     }
