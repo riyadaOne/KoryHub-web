@@ -26,7 +26,8 @@ class ModuleFinder
         abort_if($module === null || ! $module->isVisibleTo($viewer), 404);
 
         if (! $this->isAuthor($module, $viewer)) {
-            abort_unless($module->versions()->whereIn('status', [VersionStatus::Published, VersionStatus::Deprecated])->exists(), 404);
+            // Une version retirée (W07) garde sa page : la trace du retrait légal reste consultable.
+            abort_unless($module->versions()->whereIn('status', [VersionStatus::Published, VersionStatus::Deprecated, VersionStatus::Removed])->exists(), 404);
         }
 
         return $module;

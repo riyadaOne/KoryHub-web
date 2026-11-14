@@ -39,7 +39,7 @@
                     @case('version_published')
                         {{ __('certification.checks.version_published') }}
                         @unless ($check['passed'])
-                            <small class="block text-zinc-500 dark:text-zinc-400">{{ \App\Enums\VersionStatus::tryFrom((string) $check['detail'])?->label() }}</small>
+                            <small class="block text-zinc-500 dark:text-zinc-400">{{ $check['detail'] === 'at_risk' ? __('moderation.at_risk') : \App\Enums\VersionStatus::tryFrom((string) $check['detail'])?->label() }}</small>
                         @endunless
                         @break
                     @default

@@ -41,7 +41,8 @@ class PreliminaryChecks
             ['code' => 'architecture_declared', 'passed' => $components > 0, 'detail' => $components > 0 ? $components.'/'.$version->links()->count() : null],
             ['code' => 'readme_sections', 'passed' => $missing === [], 'detail' => $missing === [] ? null : implode(',', $missing)],
             ['code' => 'license_allowed', 'passed' => $version->license !== null, 'detail' => $version->license?->spdx()],
-            ['code' => 'version_published', 'passed' => $version->status === VersionStatus::Published, 'detail' => $version->status->value],
+            // Une version à risque (W07) ne se certifie pas : détail « at_risk ».
+            ['code' => 'version_published', 'passed' => $version->status === VersionStatus::Published && $version->at_risk_at === null, 'detail' => $version->at_risk_at !== null ? 'at_risk' : $version->status->value],
             ['code' => 'no_open_case', 'passed' => ! $openCase, 'detail' => null],
         ];
     }

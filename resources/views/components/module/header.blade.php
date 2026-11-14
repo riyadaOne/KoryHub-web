@@ -38,6 +38,9 @@
     <div class="flex flex-wrap gap-2" data-test="module-badges">
         @if ($version)
             <flux:badge size="sm" :color="$version->status->color()->fluxColor()">{{ $version->status->label().' · '.$version->version }}</flux:badge>
+            @if ($version->at_risk_at)
+                <flux:badge size="sm" color="red" icon="shield-exclamation" data-test="at-risk-badge">{{ __('moderation.at_risk') }}</flux:badge>
+            @endif
             @if ($version->isCertified())
                 <flux:badge size="sm" color="green" icon="check-badge" data-test="certified-badge">{{ __('certification.badge') }}</flux:badge>
             @endif
@@ -72,6 +75,19 @@
     <flux:callout icon="archive-box" class="mt-2" data-test="archived-banner">
         <flux:callout.heading>{{ __('modules.banners.archived') }}</flux:callout.heading>
         <flux:callout.text>{{ __('modules.banners.archived_text') }}</flux:callout.text>
+    </flux:callout>
+@endif
+
+{{-- Modération (W07) : avertissement de sécurité de l'équipe, retrait légal (page conservée, fichiers supprimés). --}}
+@if ($version?->status === \App\Enums\VersionStatus::Removed)
+    <flux:callout icon="no-symbol" color="red" class="mt-2" data-test="removed-banner">
+        <flux:callout.heading>{{ __('moderation.banners.removed', ['date' => $version->removed_at?->locale(app()->getLocale())->isoFormat('LL')]) }}</flux:callout.heading>
+        <flux:callout.text>{{ $version->removed_reason }} {{ __('moderation.banners.removed_text') }}</flux:callout.text>
+    </flux:callout>
+@elseif ($version?->at_risk_at)
+    <flux:callout icon="shield-exclamation" color="red" class="mt-2" data-test="at-risk-banner">
+        <flux:callout.heading>{{ __('moderation.banners.at_risk') }}</flux:callout.heading>
+        <flux:callout.text>{{ $version->at_risk_message }}</flux:callout.text>
     </flux:callout>
 @endif
 

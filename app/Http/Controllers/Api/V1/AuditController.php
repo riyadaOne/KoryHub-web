@@ -19,9 +19,9 @@ class AuditController extends Controller
     /**
      * Auditer des versions installées.
      *
-     * État de chaque version : `up_to_date`, `update_available`, `deprecated`, `removed` ou
-     * `not_found` ; `latest_version` est la dernière version stable. `at_risk` arrive avec la
-     * modération (W07).
+     * État de chaque version : `up_to_date`, `update_available`, `deprecated`, `at_risk`, `removed`
+     * ou `not_found` ; `latest_version` est la dernière version stable ; `message` est l'avertissement
+     * de sécurité de l'équipe de modération (`at_risk`) ou le message de dépréciation de l'auteur.
      */
     public function __invoke(Request $request): JsonResponse
     {
@@ -54,6 +54,7 @@ class AuditController extends Controller
             $state = match (true) {
                 $installed === null => 'not_found',
                 $installed->status === VersionStatus::Removed => 'removed',
+                $installed->at_risk_at !== null => 'at_risk',
                 $installed->status === VersionStatus::Deprecated => 'deprecated',
                 $latest !== null && $this->newer($latest, $installed->version) => 'update_available',
                 default => 'up_to_date',
@@ -62,12 +63,12 @@ class AuditController extends Controller
             return [
                 'name' => $entry['name'],
                 'version' => $entry['version'],
-                /** up_to_date, update_available, deprecated, removed ou not_found. */
+                /** up_to_date, update_available, deprecated, at_risk, removed ou not_found. */
                 'state' => $state,
                 /** Dernière version stable, ou null. */
                 'latest_version' => $latest,
-                /** Message de dépréciation de l'auteur, ou null. */
-                'message' => $installed?->deprecation_message,
+                /** Avertissement de sécurité (at_risk) ou message de dépréciation de l'auteur, ou null. */
+                'message' => $state === 'at_risk' ? $installed->at_risk_message : $installed?->deprecation_message,
             ];
         });
 

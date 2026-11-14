@@ -15,3 +15,4 @@ Schedule::command('koryhub:tokens-remind')->dailyAt('08:00');
 Schedule::command('koryhub:device-codes-prune')->everyFifteenMinutes();
 Schedule::command('koryhub:scores')->hourly();
 Schedule::command('koryhub:certifications-remind')->dailyAt('09:00');
+Schedule::command('koryhub:reports-remind')->dailyAt('09:00');

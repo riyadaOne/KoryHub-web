@@ -44,7 +44,7 @@
         "/audit": {
             "post": {
                 "operationId": "v1.audit",
-                "description": "\u00c9tat de chaque version : `up_to_date`, `update_available`, `deprecated`, `removed` ou\n`not_found` ; `latest_version` est la derni\u00e8re version stable. `at_risk` arrive avec la\nmod\u00e9ration (W07).",
+                "description": "\u00c9tat de chaque version : `up_to_date`, `update_available`, `deprecated`, `at_risk`, `removed`\nou `not_found` ; `latest_version` est la derni\u00e8re version stable ; `message` est l'avertissement\nde s\u00e9curit\u00e9 de l'\u00e9quipe de mod\u00e9ration (`at_risk`) ou le message de d\u00e9pr\u00e9ciation de l'auteur.",
                 "summary": "Auditer des versions install\u00e9es",
                 "tags": [
                     "Audit"
@@ -107,10 +107,11 @@
                                                     },
                                                     "state": {
                                                         "type": "string",
-                                                        "description": "up_to_date, update_available, deprecated, removed ou not_found.",
+                                                        "description": "up_to_date, update_available, deprecated, at_risk, removed ou not_found.",
                                                         "enum": [
                                                             "not_found",
                                                             "removed",
+                                                            "at_risk",
                                                             "deprecated",
                                                             "update_available",
                                                             "up_to_date"
@@ -128,7 +129,7 @@
                                                             "string",
                                                             "null"
                                                         ],
-                                                        "description": "Message de d\u00e9pr\u00e9ciation de l'auteur, ou null."
+                                                        "description": "Avertissement de s\u00e9curit\u00e9 (at_risk) ou message de d\u00e9pr\u00e9ciation de l'auteur, ou null."
                                                     }
                                                 },
                                                 "required": [

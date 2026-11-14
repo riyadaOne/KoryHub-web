@@ -90,6 +90,15 @@ class ModuleAudience
         $this->notify($recipients, fn () => new ModuleNotification($type, $params));
     }
 
+    /**
+     * Version signalée à risque ou retirée (F-MOD-14, W07) : même audience que la certification ;
+     * l'auteur est prévenu à part.
+     */
+    public function versionModerated(ModuleVersion $version, NotificationType $type, array $params): void
+    {
+        $this->certificationChanged($version, $type, $params);
+    }
+
     /** Module archivé : abonnés « toutes les activités ». */
     public function moduleArchived(Module $module): void
     {

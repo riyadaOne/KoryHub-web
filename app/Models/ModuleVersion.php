@@ -43,6 +43,12 @@ use Illuminate\Support\Carbon;
  * @property string|null $rejection_reason
  * @property Carbon|null $deprecated_at
  * @property string|null $deprecation_message
+ * @property Carbon|null $at_risk_at
+ * @property string|null $at_risk_message
+ * @property string|null $at_risk_report_id
+ * @property Carbon|null $removed_at
+ * @property string|null $removed_by
+ * @property string|null $removed_reason
  * @property int $download_count
  * @property Carbon|null $first_downloaded_at
  * @property-read Module $module
@@ -68,6 +74,8 @@ class ModuleVersion extends Model
             'submitted_at' => 'datetime',
             'published_at' => 'datetime',
             'deprecated_at' => 'datetime',
+            'at_risk_at' => 'datetime',
+            'removed_at' => 'datetime',
             'download_count' => 'integer',
             'first_downloaded_at' => 'datetime',
         ];

@@ -15,4 +15,8 @@ Route::middleware(['auth', 'verified', EnsureAdmin::class])->group(function () {
     // Certification (W06.2) : liste (S-63), dossier (S-64).
     Route::livewire('certifications', 'pages::admin.certifications')->name('certifications.index');
     Route::livewire('certifications/{certification}', 'pages::admin.certification')->name('certifications.show');
+
+    // Signalements (W07.2) : liste (S-61), détail et décision (S-62).
+    Route::livewire('reports', 'pages::admin.reports')->name('reports.index');
+    Route::livewire('reports/{report}', 'pages::admin.report')->name('reports.show');
 });

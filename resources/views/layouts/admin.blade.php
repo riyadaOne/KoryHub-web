@@ -23,6 +23,9 @@
                     {{ __('common.dashboard') }}
                 </flux:sidebar.item>
                 <flux:sidebar.group :heading="__('admin.moderation')">
+                    <flux:sidebar.item icon="flag" :href="route('admin.reports.index')" :current="request()->routeIs('admin.reports.*')" :badge="\App\Models\Report::query()->whereIn('status', \App\Enums\ReportStatus::open())->count() ?: null" data-test="admin-reports-link">
+                        {{ __('moderation.admin.reports') }}
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="check-badge" :href="route('admin.certifications.index')" :current="request()->routeIs('admin.certifications.*')" :badge="\App\Models\Certification::query()->whereIn('status', \App\Enums\CertificationStatus::open())->count() ?: null" data-test="admin-certifications-link">
                         {{ __('certification.admin.title') }}
                     </flux:sidebar.item>
