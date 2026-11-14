@@ -25,6 +25,12 @@
                 <flux:text>{{ __('certification.admin.to_review_detail', ['requested' => (clone $open)->where('status', \App\Enums\CertificationStatus::Requested)->count(), 'audit' => (clone $open)->where('status', \App\Enums\CertificationStatus::InAudit)->count()]) }}</flux:text>
                 <div><flux:button variant="primary" size="sm" :href="route('admin.certifications.index')" wire:navigate>{{ __('certification.mine.open') }}</flux:button></div>
             </div>
+            {{-- Semaine (W08) : nouveaux comptes et modules publics des 7 derniers jours. --}}
+            <div class="grid gap-3 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900" data-test="week-card">
+                <flux:heading>{{ __('admin.home.week') }}</flux:heading>
+                <flux:text>{{ trans_choice('admin.home.new_accounts', $newAccounts = \App\Models\User::query()->where('created_at', '>=', now()->subDays(7))->count(), ['count' => $newAccounts]) }}</flux:text>
+                <flux:text>{{ trans_choice('admin.home.new_modules', $newModules = \App\Models\Module::query()->where('visibility', \App\Enums\Visibility::Public)->where('created_at', '>=', now()->subDays(7))->count(), ['count' => $newModules]) }}</flux:text>
+            </div>
             @if ($oldest)
                 <div class="grid gap-3 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
                     <flux:heading>{{ __('certification.admin.oldest') }}</flux:heading>

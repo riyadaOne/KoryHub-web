@@ -125,7 +125,19 @@ return [
         'mail' => 'Votre compte KoryHub est suspendu. Vos modules publics restent téléchargeables.',
         'action' => 'Ouvrir KoryHub',
     ],
+    'admin_incident' => [
+        'title' => 'Incident : :what',
+        'mail' => 'Un incident demande votre attention. Détail : :note',
+        'action' => 'Ouvrir la supervision',
+    ],
+    'admin_weekly_report' => [
+        'title' => 'Rapport de la semaine du :from au :to',
+        'mail' => 'Le rapport hebdomadaire de KoryHub est disponible.',
+        'action' => 'Ouvrir l\'administration',
+    ],
     'types' => [
+        'admin_incident' => 'Incident (sauvegarde, sécurité)',
+        'admin_weekly_report' => 'Rapport du lundi',
         'version_at_risk' => 'Avertissement de sécurité',
         'version_removed' => 'Version retirée',
         'report_received' => 'Signalement reçu',

@@ -31,7 +31,7 @@ final class NotificationText
             ? __('tokens.never')
             : Carbon::parse($expires)->locale(app()->getLocale())->isoFormat('LL');
 
-        return $replace + ['token' => '', 'ip' => '', 'module' => '', 'version' => '', 'reason' => '', 'installed' => '', 'target' => '', 'count' => ''];
+        return $replace + ['token' => '', 'ip' => '', 'module' => '', 'version' => '', 'reason' => '', 'installed' => '', 'target' => '', 'count' => '', 'what' => '', 'note' => '', 'from' => '', 'to' => ''];
     }
 
     /**
@@ -71,6 +71,8 @@ final class NotificationText
 
         return match ($kind) {
             'account_suspended' => route('home'),
+            'admin_incident' => Route::has('admin.health') ? route('admin.health') : route('dashboard'),
+            'admin_weekly_report' => Route::has('admin.home') ? route('admin.home') : route('dashboard'),
             'password_changed' => route('security.edit'),
             'version_published', 'version_rejected' => route('modules.mine'),
             'update_available', 'version_deprecated' => route('downloads.index'),

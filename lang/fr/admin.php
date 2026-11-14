@@ -1,9 +1,57 @@
 <?php
 
+// Administration : menu, tableau de bord, catégories, journal d'audit, réglages, supervision.
 return [
     'title' => 'Administration',
     'back_to_site' => 'Retour au site',
     'moderation' => 'Modération',
+    'platform' => 'Plateforme',
     'two_factor_required' => 'Activez la double authentification pour accéder à l\'administration.',
     'two_factor_required_text' => 'Elle est obligatoire pour le rôle admin.',
+    'home' => [
+        'week' => '7 derniers jours',
+        'new_accounts' => '{0} Aucun nouveau compte|{1} 1 nouveau compte|[2,*] :count nouveaux comptes',
+        'new_modules' => '{0} Aucun nouveau module public|{1} 1 nouveau module public|[2,*] :count nouveaux modules publics',
+    ],
+    'categories' => [
+        'title' => 'Catégories',
+        'new' => 'Nouvelle catégorie',
+        'edit_title' => 'Modifier la catégorie',
+        'order' => 'Ordre',
+        'name' => 'Nom',
+        'slug' => 'Identifiant',
+        'active' => 'Active',
+        'inactive' => 'Inactive',
+        'edit' => 'Modifier',
+        'activate' => 'Activer',
+        'deactivate' => 'Désactiver',
+        'delete' => 'Supprimer',
+        'delete_title' => 'Supprimer « :name » ?',
+        'save' => 'Enregistrer',
+        'up' => 'Monter',
+        'down' => 'Descendre',
+        'errors' => [
+            'slug' => 'Identifiant invalide ou déjà pris : lettres minuscules, chiffres et tirets.',
+            'names' => 'Le nom est obligatoire dans les 4 langues (64 caractères au plus).',
+            'used' => 'Cette catégorie est utilisée par des modules : désactivez-la plutôt.',
+        ],
+    ],
+    'audit' => [
+        'title' => 'Journal d\'audit',
+        'read_only' => 'Lecture seule. Rien ne peut y être modifié ni supprimé.',
+        'from' => 'Du',
+        'to' => 'Au',
+        'actor' => 'Auteur',
+        'actor_hint' => '@identifiant ou system',
+        'all' => 'Toutes',
+        'empty' => 'Aucun événement',
+        'reason' => 'Motif',
+        'system' => 'Système',
+    ],
+    'settings' => [
+        'title' => 'Réglages',
+        'subtitle' => 'Les canaux qui reçoivent vos alertes.',
+        'alert' => 'Alerte',
+        'save' => 'Enregistrer',
+    ],
 ];

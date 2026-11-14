@@ -26,6 +26,8 @@ enum NotificationType: string
     case ReportClosed = 'report_closed';
     case AdminReportsMultiple = 'admin_reports_multiple';
     case AdminReportStale = 'admin_report_stale';
+    case AdminIncident = 'admin_incident';
+    case AdminWeeklyReport = 'admin_weekly_report';
     case AccountSuspended = 'account_suspended';
     case CliLogin = 'cli_login';
     case TokenCreated = 'token_created';
@@ -54,17 +56,24 @@ enum NotificationType: string
             $this->isSecurity() => 'security',
             in_array($this, [self::UpdateAvailable, self::VersionDeprecated, self::VersionAtRisk, self::VersionRemoved], true) => 'installed',
             in_array($this, [self::NewVersionWatched, self::ModuleArchived], true) => 'watched',
-            in_array($this, [self::AdminCertificationRequested, self::AdminReportsMultiple, self::AdminReportStale], true) => 'admin',
+            in_array($this, [self::AdminCertificationRequested, self::AdminReportsMultiple, self::AdminReportStale, self::AdminIncident, self::AdminWeeklyReport], true) => 'admin',
             in_array($this, [self::ReportReceived, self::ReportClosed], true) => 'reports',
             in_array($this, [self::CertificationComplement, self::CertificationGranted, self::CertificationRefused, self::CertificationRevoked], true) => 'certification',
             default => 'mine',
         };
     }
 
-    /** Canal actif quand le compte n'a rien réglé : « mise à jour disponible » seulement dans la cloche. */
+    /** Canal actif quand le compte n'a rien réglé : « mise à jour disponible » seulement dans la cloche, rapport du lundi seulement par e-mail. */
     public function enabledByDefault(string $channel): bool
     {
-        return ! ($this === self::UpdateAvailable && $channel === 'mail');
+        return ! ($this === self::UpdateAvailable && $channel === 'mail')
+            && ! ($this === self::AdminWeeklyReport && $channel === 'database');
+    }
+
+    /** Incident (W08) : toujours envoyé par e-mail ; seule la cloche se règle sur S-73. */
+    public function alwaysByMail(): bool
+    {
+        return $this === self::AdminIncident;
     }
 
     public function label(): string

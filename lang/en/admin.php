@@ -1,9 +1,57 @@
 <?php
 
+// Administration : menu, tableau de bord, catégories, journal d'audit, réglages, supervision.
 return [
     'title' => 'Administration',
     'back_to_site' => 'Back to the site',
     'moderation' => 'Moderation',
+    'platform' => 'Platform',
     'two_factor_required' => 'Enable two-factor authentication to access the administration.',
     'two_factor_required_text' => 'It is mandatory for the admin role.',
+    'home' => [
+        'week' => 'Last 7 days',
+        'new_accounts' => '{0} No new accounts|{1} 1 new account|[2,*] :count new accounts',
+        'new_modules' => '{0} No new public modules|{1} 1 new public module|[2,*] :count new public modules',
+    ],
+    'categories' => [
+        'title' => 'Categories',
+        'new' => 'New category',
+        'edit_title' => 'Edit the category',
+        'order' => 'Order',
+        'name' => 'Name',
+        'slug' => 'Identifier',
+        'active' => 'Active',
+        'inactive' => 'Inactive',
+        'edit' => 'Edit',
+        'activate' => 'Activate',
+        'deactivate' => 'Deactivate',
+        'delete' => 'Delete',
+        'delete_title' => 'Delete “:name”?',
+        'save' => 'Save',
+        'up' => 'Move up',
+        'down' => 'Move down',
+        'errors' => [
+            'slug' => 'Invalid or taken identifier: lowercase letters, digits and hyphens.',
+            'names' => 'The name is required in all 4 languages (64 characters at most).',
+            'used' => 'This category is used by modules: deactivate it instead.',
+        ],
+    ],
+    'audit' => [
+        'title' => 'Audit log',
+        'read_only' => 'Read only. Nothing can be changed or deleted.',
+        'from' => 'From',
+        'to' => 'To',
+        'actor' => 'Author',
+        'actor_hint' => '@handle or system',
+        'all' => 'All',
+        'empty' => 'No events',
+        'reason' => 'Reason',
+        'system' => 'System',
+    ],
+    'settings' => [
+        'title' => 'Settings',
+        'subtitle' => 'The channels that receive your alerts.',
+        'alert' => 'Alert',
+        'save' => 'Save',
+    ],
 ];

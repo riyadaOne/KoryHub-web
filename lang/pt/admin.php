@@ -1,9 +1,57 @@
 <?php
 
+// Administration : menu, tableau de bord, catégories, journal d'audit, réglages, supervision.
 return [
     'title' => 'Administração',
     'back_to_site' => 'Voltar ao site',
     'moderation' => 'Moderação',
+    'platform' => 'Plataforma',
     'two_factor_required' => 'Ative a autenticação de dois fatores para aceder à administração.',
     'two_factor_required_text' => 'É obrigatória para o papel de administrador.',
+    'home' => [
+        'week' => 'Últimos 7 dias',
+        'new_accounts' => '{0} Nenhuma conta nova|{1} 1 conta nova|[2,*] :count contas novas',
+        'new_modules' => '{0} Nenhum módulo público novo|{1} 1 módulo público novo|[2,*] :count módulos públicos novos',
+    ],
+    'categories' => [
+        'title' => 'Categorias',
+        'new' => 'Nova categoria',
+        'edit_title' => 'Editar a categoria',
+        'order' => 'Ordem',
+        'name' => 'Nome',
+        'slug' => 'Identificador',
+        'active' => 'Ativa',
+        'inactive' => 'Inativa',
+        'edit' => 'Editar',
+        'activate' => 'Ativar',
+        'deactivate' => 'Desativar',
+        'delete' => 'Eliminar',
+        'delete_title' => 'Eliminar «:name»?',
+        'save' => 'Guardar',
+        'up' => 'Subir',
+        'down' => 'Descer',
+        'errors' => [
+            'slug' => 'Identificador inválido ou já usado: letras minúsculas, algarismos e hífenes.',
+            'names' => 'O nome é obrigatório nas 4 línguas (64 caracteres no máximo).',
+            'used' => 'Esta categoria é usada por módulos: desative-a em vez disso.',
+        ],
+    ],
+    'audit' => [
+        'title' => 'Registo de auditoria',
+        'read_only' => 'Só de leitura. Nada pode ser alterado nem eliminado.',
+        'from' => 'De',
+        'to' => 'Até',
+        'actor' => 'Autor',
+        'actor_hint' => '@identificador ou system',
+        'all' => 'Todas',
+        'empty' => 'Nenhum evento',
+        'reason' => 'Motivo',
+        'system' => 'Sistema',
+    ],
+    'settings' => [
+        'title' => 'Definições',
+        'subtitle' => 'Os canais que recebem os seus alertas.',
+        'alert' => 'Alerta',
+        'save' => 'Guardar',
+    ],
 ];

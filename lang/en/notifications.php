@@ -125,7 +125,19 @@ return [
         'mail' => 'Your KoryHub account is suspended. Your public modules can still be downloaded.',
         'action' => 'Open KoryHub',
     ],
+    'admin_incident' => [
+        'title' => 'Incident: :what',
+        'mail' => 'An incident needs your attention. Detail: :note',
+        'action' => 'Open monitoring',
+    ],
+    'admin_weekly_report' => [
+        'title' => 'Report for the week of :from to :to',
+        'mail' => 'The KoryHub weekly report is available.',
+        'action' => 'Open the administration',
+    ],
     'types' => [
+        'admin_incident' => 'Incident (backup, security)',
+        'admin_weekly_report' => 'Monday report',
         'version_at_risk' => 'Security warning',
         'version_removed' => 'Version removed',
         'report_received' => 'Report received',

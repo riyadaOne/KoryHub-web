@@ -109,7 +109,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     /** Canaux d'un type de notification réglable ; sans préférence, les deux sont actifs (S-43). */
     public function wantsNotification(NotificationType $type, string $channel): bool
     {
-        if ($type->isSecurity()) {
+        if ($type->isSecurity() || ($channel === 'mail' && $type->alwaysByMail())) {
             return true;
         }
 

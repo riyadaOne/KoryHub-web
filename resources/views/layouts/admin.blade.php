@@ -33,6 +33,11 @@
                     <flux:sidebar.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" data-test="admin-users-link">{{ __('moderation.admin.users') }}</flux:sidebar.item>
                     <flux:sidebar.item icon="chat-bubble-left-right" :href="route('admin.reviews.index')" :current="request()->routeIs('admin.reviews.*')" data-test="admin-reviews-link">{{ __('moderation.admin.reviews') }}</flux:sidebar.item>
                 </flux:sidebar.group>
+                <flux:sidebar.group :heading="__('admin.platform')">
+                    <flux:sidebar.item icon="tag" :href="route('admin.categories.index')" :current="request()->routeIs('admin.categories.*')" data-test="admin-categories-link">{{ __('admin.categories.title') }}</flux:sidebar.item>
+                    <flux:sidebar.item icon="document-magnifying-glass" :href="route('admin.audit.index')" :current="request()->routeIs('admin.audit.*')" data-test="admin-audit-link">{{ __('admin.audit.title') }}</flux:sidebar.item>
+                    <flux:sidebar.item icon="cog-6-tooth" :href="route('admin.settings')" :current="request()->routeIs('admin.settings')" data-test="admin-settings-link">{{ __('admin.settings.title') }}</flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />

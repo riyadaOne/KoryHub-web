@@ -26,4 +26,10 @@ Route::middleware(['auth', 'verified', EnsureAdmin::class])->group(function () {
     Route::livewire('users', 'pages::admin.users')->name('users.index');
     Route::livewire('users/{user}', 'pages::admin.user')->name('users.show');
     Route::livewire('reviews', 'pages::admin.reviews')->name('reviews.index');
+
+    // Plateforme (W08) : catégories (S-70), journal d'audit en lecture seule (S-71), canaux d'alerte (S-73).
+    Route::livewire('categories', 'pages::admin.categories')->name('categories.index');
+    Route::livewire('audit', 'pages::admin.audit')->name('audit.index');
+    Route::livewire('audit/{event}', 'pages::admin.audit-event')->name('audit.show');
+    Route::livewire('settings', 'pages::admin.settings')->name('settings');
 });

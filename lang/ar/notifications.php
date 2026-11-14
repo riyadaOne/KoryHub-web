@@ -125,7 +125,19 @@ return [
         'mail' => 'حسابك في KoryHub موقوف. تبقى وحداتك العامة قابلة للتنزيل.',
         'action' => 'فتح KoryHub',
     ],
+    'admin_incident' => [
+        'title' => 'حادث: :what',
+        'mail' => 'حادث يتطلب انتباهك. التفاصيل: :note',
+        'action' => 'فتح المراقبة',
+    ],
+    'admin_weekly_report' => [
+        'title' => 'تقرير الأسبوع من :from إلى :to',
+        'mail' => 'التقرير الأسبوعي لـ KoryHub متاح.',
+        'action' => 'فتح الإدارة',
+    ],
     'types' => [
+        'admin_incident' => 'حادث (نسخ احتياطي، أمن)',
+        'admin_weekly_report' => 'تقرير يوم الاثنين',
         'version_at_risk' => 'تحذير أمني',
         'version_removed' => 'إصدار مسحوب',
         'report_received' => 'استلام بلاغ',
