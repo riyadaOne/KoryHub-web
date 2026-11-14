@@ -167,4 +167,10 @@ return [
         'security_row' => 'Nouvelle connexion du CLI, jetons, mot de passe',
         'saved' => 'Enregistré.',
     ],
+    'page' => [
+        'title' => 'Notifications',
+        'all' => 'Toutes',
+        'unread' => 'Non lues (:count)',
+        'see_all' => 'Tout voir',
+    ],
 ];

@@ -7,7 +7,7 @@ use Livewire\Component;
 
 /*
  * Cloche de l'en-tête (W02, TRD §19) : nombre de notifications non lues et les 5 dernières.
- * La page complète des notifications (S-31) arrive en W08. Les textes sont traduits à
+ * La page complète des notifications (S-31) est liée en bas (W08). Les textes sont traduits à
  * l'affichage à partir du type enregistré (lang/*\/notifications.php).
  */
 new class extends Component {
@@ -68,5 +68,7 @@ new class extends Component {
             @empty
                 <flux:text class="px-4 py-6 text-center">{{ __('notifications.empty') }}</flux:text>
             @endforelse
+
+            <a href="{{ route('notifications.index') }}" wire:navigate class="block border-t border-zinc-200 px-4 py-2 text-center text-sm text-accent hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800" data-test="see-all-notifications">{{ __('notifications.page.see_all') }}</a>
         </div>
 </div>

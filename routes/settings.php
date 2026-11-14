@@ -14,6 +14,8 @@ Route::middleware(['auth'])->group(function () {
     Route::livewire('settings/downloads', 'pages::settings.downloads')->name('downloads.index');
     // Mes signalements (S-48, F-MOD-09) : visibles par leur auteur seul.
     Route::livewire('settings/reports', 'pages::settings.reports')->name('reports.mine');
+    // Mon activité (S-47, F-ADM-07) : les actions du compte dans le journal d'audit.
+    Route::livewire('settings/activity', 'pages::settings.activity')->name('activity.index');
     Route::livewire('settings/tokens/create', 'pages::settings.token-create')
         ->middleware('password.confirm')
         ->name('tokens.create');

@@ -167,4 +167,10 @@ return [
         'security_row' => 'New CLI login, tokens, password',
         'saved' => 'Saved.',
     ],
+    'page' => [
+        'title' => 'Notifications',
+        'all' => 'All',
+        'unread' => 'Unread (:count)',
+        'see_all' => 'See all',
+    ],
 ];

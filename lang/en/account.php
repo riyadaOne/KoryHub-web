@@ -65,5 +65,11 @@ return [
         'step_publish_text' => 'In your project, prepare then publish a kory.',
         'empty_title' => 'No kory yet',
         'empty_text' => 'Your published kory will appear here.',
+        'token_expiring' => 'The token “:token” expires on :date',
+        'new_token' => 'Create a new token',
+        'recent_notifications' => 'Recent notifications',
+        'my_modules' => 'My modules',
+        'see_modules' => 'See my modules',
+        'see_certifications' => 'See my certifications',
     ],
 ];

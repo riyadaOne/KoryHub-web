@@ -31,6 +31,9 @@ Route::middleware(['auth'])->group(function () {
     Route::livewire('stars', 'pages::community.stars')->name('stars.index');
     Route::livewire('watching', 'pages::community.watching')->name('watching.index');
 
+    // Toutes les notifications (S-31, W08).
+    Route::livewire('notifications', 'pages::notifications')->name('notifications.index');
+
     // Certification (W06) : demande (S-35), mes dossiers (S-36).
     Route::livewire('@{author}/{module}/v/{number}/certification', 'pages::certification.request')->name('modules.certification');
     Route::livewire('dashboard/certifications', 'pages::certification.index')->name('certifications.index');

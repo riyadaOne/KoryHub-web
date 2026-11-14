@@ -65,5 +65,11 @@ return [
         'step_publish_text' => 'Dans votre projet, préparez puis publiez un kory.',
         'empty_title' => "Aucun kory pour l'instant",
         'empty_text' => 'Vos kory publiés apparaîtront ici.',
+        'token_expiring' => 'Le jeton « :token » expire le :date',
+        'new_token' => 'Créer un nouveau jeton',
+        'recent_notifications' => 'Notifications récentes',
+        'my_modules' => 'Mes modules',
+        'see_modules' => 'Voir mes modules',
+        'see_certifications' => 'Voir mes certifications',
     ],
 ];

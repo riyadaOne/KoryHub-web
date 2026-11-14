@@ -65,5 +65,11 @@ return [
         'step_publish_text' => 'في مشروعك، حضّر kory ثم انشره.',
         'empty_title' => 'لا توجد kory بعد',
         'empty_text' => 'ستظهر هنا kory التي تنشرها.',
+        'token_expiring' => 'ينتهي الرمز «:token» في :date',
+        'new_token' => 'إنشاء رمز جديد',
+        'recent_notifications' => 'آخر الإشعارات',
+        'my_modules' => 'وحداتي',
+        'see_modules' => 'عرض وحداتي',
+        'see_certifications' => 'عرض اعتماداتي',
     ],
 ];

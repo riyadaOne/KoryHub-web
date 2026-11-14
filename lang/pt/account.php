@@ -65,5 +65,11 @@ return [
         'step_publish_text' => 'No seu projeto, prepare e publique um kory.',
         'empty_title' => 'Ainda não há kory',
         'empty_text' => 'Os seus kory publicados aparecerão aqui.',
+        'token_expiring' => 'O token «:token» expira a :date',
+        'new_token' => 'Criar um novo token',
+        'recent_notifications' => 'Notificações recentes',
+        'my_modules' => 'Os meus módulos',
+        'see_modules' => 'Ver os meus módulos',
+        'see_certifications' => 'Ver as minhas certificações',
     ],
 ];

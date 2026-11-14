@@ -167,4 +167,10 @@ return [
         'security_row' => 'Nova ligação do CLI, tokens, palavra-passe',
         'saved' => 'Guardado.',
     ],
+    'page' => [
+        'title' => 'Notificações',
+        'all' => 'Todas',
+        'unread' => 'Não lidas (:count)',
+        'see_all' => 'Ver tudo',
+    ],
 ];
