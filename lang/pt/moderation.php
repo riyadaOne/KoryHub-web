@@ -103,6 +103,7 @@ return [
         'open_reports' => '{0} Nenhuma denúncia aberta|{1} 1 denúncia aberta|[2,*] :count denúncias abertas',
         'stale_reports' => '{0} Nenhuma sem resposta há mais de 48 h.|{1} 1 sem resposta há mais de 48 h.|[2,*] :count sem resposta há mais de 48 h.',
         'multiple' => 'Denunciado várias vezes',
+        'take' => 'Assumir a denúncia',
         'suspend_owner' => 'Suspender :handle',
         'delete_owner' => 'Eliminar :handle',
         'suspend' => 'Suspender',

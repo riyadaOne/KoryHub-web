@@ -1,11 +1,14 @@
 <?php
 
 use App\Enums\NotificationType;
+use App\Enums\ReportReason;
+use App\Enums\ReportTargetType;
 use App\Enums\TokenOrigin;
 use App\Models\User;
 use App\Notifications\ModuleNotification;
 use App\Services\Audit\AuditLogger;
 use App\Services\Cli\CliTokenService;
+use App\Services\Moderation\ReportService;
 use App\Services\Modules\Secrets\SecretScanner;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
@@ -71,4 +74,10 @@ test('S-47 : seulement les actions du compte, libellé traduit, champ personnel 
         ->assertSee(__('audit.redacted'))->assertDontSee('Moussa Mahamat')
         ->assertDontSee('@awa-diop');
     $this->actingAs($other)->get(route('activity.index'))->assertOk()->assertDontSee('@moussa/paiement');
+
+    // Recette W08 : un signalement montre l'objet visé et des valeurs traduites, pas des codes.
+    $target = publishKory($other, TarBuilder::kory('@awa-diop/caisse', '1.0.0', ['src/A.php' => "<?php\n"]), 'caisse');
+    app(ReportService::class)->create($this->user, ReportTargetType::Module, $target->module_id, ReportReason::Copyright, null);
+    $this->actingAs($this->user)->get(route('activity.index'))
+        ->assertSee('@awa-diop/caisse')->assertSee(__('moderation.status.open'))->assertSee(__('moderation.reason.copyright'));
 });

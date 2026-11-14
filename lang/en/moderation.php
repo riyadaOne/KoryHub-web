@@ -103,6 +103,7 @@ return [
         'open_reports' => '{0} No open reports|{1} 1 open report|[2,*] :count open reports',
         'stale_reports' => '{0} None unanswered for more than 48 h.|{1} 1 unanswered for more than 48 h.|[2,*] :count unanswered for more than 48 h.',
         'multiple' => 'Reported several times',
+        'take' => 'Take the report',
         'suspend_owner' => 'Suspend :handle',
         'delete_owner' => 'Delete :handle',
         'suspend' => 'Suspend',

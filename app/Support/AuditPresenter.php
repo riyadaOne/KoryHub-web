@@ -2,6 +2,15 @@
 
 namespace App\Support;
 
+use App\Enums\AccountStatus;
+use App\Enums\CertificationStatus;
+use App\Enums\ModuleStatus;
+use App\Enums\ReportReason;
+use App\Enums\ReportResolution;
+use App\Enums\ReportStatus;
+use App\Enums\ReportTargetType;
+use App\Enums\VersionStatus;
+use App\Enums\Visibility;
 use App\Models\AuditEvent;
 use App\Models\AuditEventChange;
 use App\Models\Category;
@@ -66,11 +75,40 @@ final class AuditPresenter
             $subject instanceof ModuleVersion => $subject->module()->withTrashed()->first()?->fullName().' '.$subject->version,
             $subject instanceof User => '@'.$subject->handle,
             $subject instanceof Review, $subject instanceof Certification => $subject->module()->withTrashed()->first()?->fullName(),
-            $subject instanceof Report => $subject->target_type->label(),
+            $subject instanceof Report => $subject->targetLabel(),
             $subject instanceof PersonalAccessToken => $subject->name,
             $subject instanceof Category => $subject->slug,
             default => null,
         };
+    }
+
+    /**
+     * Valeur lisible d'un champ : libellé traduit pour les statuts, motifs et types connus
+     * (« published » → « Publiée ») ; la valeur brute sinon, « — » si elle est vide.
+     */
+    public static function value(?string $value, string $field, string $subjectClass): string
+    {
+        if ($value === null || $value === '') {
+            return '—';
+        }
+
+        $enum = match (true) {
+            $field === 'status' => match ($subjectClass) {
+                Report::class => ReportStatus::class,
+                ModuleVersion::class => VersionStatus::class,
+                Certification::class => CertificationStatus::class,
+                User::class => AccountStatus::class,
+                Module::class => ModuleStatus::class,
+                default => null,
+            },
+            $field === 'reason' && $subjectClass === Report::class => ReportReason::class,
+            $field === 'target_type' => ReportTargetType::class,
+            $field === 'resolution' => ReportResolution::class,
+            $field === 'visibility' => Visibility::class,
+            default => null,
+        };
+
+        return $enum !== null && ($case = $enum::tryFrom($value)) !== null ? $case->label() : $value;
     }
 
     /** Champ masqué (donnée personnelle) : noté comme modifié, sans valeur. */

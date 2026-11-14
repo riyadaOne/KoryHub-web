@@ -121,7 +121,7 @@ test('retrait légal : mot de passe redemandé, archive et README supprimés, em
     Notification::assertSentTo($this->author, ModuleNotification::class, fn ($n) => $n->type === NotificationType::VersionRemoved);
 
     $this->get(route('modules.version', ['author' => 'moussa', 'module' => 'paiement', 'number' => '1.0.0']))
-        ->assertSee('data-test="removed-banner"', false)->assertSee('Retirée pour une raison légale.')->assertDontSee('Demande de retrait');
+        ->assertSee('data-test="removed-banner"', false)->assertSee('Retirée pour une raison légale.')->assertDontSee('Demande de retrait')->assertDontSee('data-test="install-version"', false);
     $this->get('http://'.config('koryhub.domains.api').'/v1/modules/moussa/paiement/versions/1.0.0/download')->assertStatus(410);
     $this->get(route('modules.show', ['author' => 'moussa', 'module' => 'paiement']))->assertOk();
     expect(fn () => $this->moderation->removeVersion($version, $this->admin, 'x', 'y'))->toThrow(InvalidTransition::class);

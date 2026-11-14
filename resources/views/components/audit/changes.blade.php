@@ -14,7 +14,7 @@
                 @if (\App\Support\AuditPresenter::isRedacted($change))
                     {{ __('audit.redacted') }}
                 @else
-                    <span dir="auto">{{ \Illuminate\Support\Str::limit($change->before ?? '—', 60) }}</span> → <span dir="auto">{{ \Illuminate\Support\Str::limit($change->after ?? '—', 60) }}</span>
+                    <span dir="auto">{{ \Illuminate\Support\Str::limit(\App\Support\AuditPresenter::value($change->before, $change->field, $event->subject_type), 60) }}</span> → <span dir="auto">{{ \Illuminate\Support\Str::limit(\App\Support\AuditPresenter::value($change->after, $change->field, $event->subject_type), 60) }}</span>
                 @endif
             </span>
         @endforeach
@@ -36,8 +36,8 @@
                         @if (\App\Support\AuditPresenter::isRedacted($change))
                             <td colspan="2" class="px-3 py-2 text-zinc-500 dark:text-zinc-400">{{ __('audit.redacted') }}</td>
                         @else
-                            <td class="whitespace-pre-line break-all bg-red-50 px-3 py-2 dark:bg-red-950/40" dir="auto">{{ $change->before ?? '—' }}</td>
-                            <td class="whitespace-pre-line break-all bg-green-50 px-3 py-2 dark:bg-green-950/40" dir="auto">{{ $change->after ?? '—' }}</td>
+                            <td class="whitespace-pre-line break-all bg-red-50 px-3 py-2 dark:bg-red-950/40" dir="auto">{{ \App\Support\AuditPresenter::value($change->before, $change->field, $event->subject_type) }}</td>
+                            <td class="whitespace-pre-line break-all bg-green-50 px-3 py-2 dark:bg-green-950/40" dir="auto">{{ \App\Support\AuditPresenter::value($change->after, $change->field, $event->subject_type) }}</td>
                         @endif
                     </tr>
                 @endforeach

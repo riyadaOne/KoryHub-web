@@ -103,6 +103,7 @@ return [
         'open_reports' => '{0} Aucun signalement ouvert|{1} 1 signalement ouvert|[2,*] :count signalements ouverts',
         'stale_reports' => '{0} Aucun sans réponse depuis plus de 48 h.|{1} 1 sans réponse depuis plus de 48 h.|[2,*] :count sans réponse depuis plus de 48 h.',
         'multiple' => 'Signalé plusieurs fois',
+        'take' => 'Prendre le signalement',
         'suspend_owner' => 'Suspendre :handle',
         'delete_owner' => 'Supprimer :handle',
         'suspend' => 'Suspendre',

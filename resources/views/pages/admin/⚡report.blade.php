@@ -252,7 +252,7 @@ new #[Layout('layouts::admin')] #[Title('moderation.admin.reports')] class exten
                     <flux:heading>{{ __('moderation.admin.decision') }}</flux:heading>
                     <div class="flex flex-wrap gap-2" data-test="decisions">
                         @if ($r->status === \App\Enums\ReportStatus::Open)
-                            <flux:button variant="primary" wire:click="take" data-test="take">{{ __('certification.admin.take') }}</flux:button>
+                            <flux:button variant="primary" wire:click="take" data-test="take">{{ __('moderation.admin.take') }}</flux:button>
                         @endif
                         <flux:button wire:click="open('close')" data-test="close">{{ __('moderation.admin.close') }}</flux:button>
                         @if ($this->version?->status->isAvailable())

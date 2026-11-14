@@ -35,10 +35,13 @@
                         <dt class="text-xs text-zinc-500 dark:text-zinc-400">{{ __('modules.version.content') }}</dt>
                         <dd class="m-0">{{ __('modules.version.files_size', ['count' => $version->files_count, 'size' => max(1, (int) ceil($version->archive_size / 1024))]) }}</dd>
                     </div>
-                    <div class="grid gap-1">
-                        <dt class="text-xs text-zinc-500 dark:text-zinc-400">{{ __('modules.version.install') }}</dt>
-                        <dd class="m-0"><x-copy-command :command="'kory pull @'.$module->author->handle.'/'.$module->name.'@'.$version->version" dir="ltr" /></dd>
-                    </div>
+                    {{-- Version retirée (W07) : plus téléchargeable, aucune commande d'installation. --}}
+                    @if ($version->status !== \App\Enums\VersionStatus::Removed)
+                        <div class="grid gap-1" data-test="install-version">
+                            <dt class="text-xs text-zinc-500 dark:text-zinc-400">{{ __('modules.version.install') }}</dt>
+                            <dd class="m-0"><x-copy-command :command="'kory pull @'.$module->author->handle.'/'.$module->name.'@'.$version->version" dir="ltr" /></dd>
+                        </div>
+                    @endif
                 @endif
             </dl>
 
