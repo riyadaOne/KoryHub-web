@@ -15,6 +15,11 @@ enum NotificationType: string
     case VersionDeprecated = 'version_deprecated';
     case NewVersionWatched = 'new_version_watched';
     case ModuleArchived = 'module_archived';
+    case CertificationComplement = 'certification_complement';
+    case CertificationGranted = 'certification_granted';
+    case CertificationRefused = 'certification_refused';
+    case CertificationRevoked = 'certification_revoked';
+    case AdminCertificationRequested = 'admin_certification_requested';
     case CliLogin = 'cli_login';
     case TokenCreated = 'token_created';
     case TokenRevoked = 'token_revoked';
@@ -42,6 +47,8 @@ enum NotificationType: string
             $this->isSecurity() => 'security',
             in_array($this, [self::UpdateAvailable, self::VersionDeprecated], true) => 'installed',
             in_array($this, [self::NewVersionWatched, self::ModuleArchived], true) => 'watched',
+            $this === self::AdminCertificationRequested => 'admin',
+            in_array($this, [self::CertificationComplement, self::CertificationGranted, self::CertificationRefused, self::CertificationRevoked], true) => 'certification',
             default => 'mine',
         };
     }

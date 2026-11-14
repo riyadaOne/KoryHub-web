@@ -45,6 +45,9 @@ const TABLES_WITHOUT_SOFT_DELETES = [
     // Favoris et abonnements : préférences (BACKEND-SCHEMA §4.3).
     'stars',
     'watches',
+    // Certification : contrôles et échanges en ajout seul, comme un journal (BACKEND-SCHEMA §4.5).
+    'certification_checks',
+    'certification_messages',
 ];
 
 /** Tables de liaison : clé primaire composée (BACKEND-SCHEMA §4.2), sans colonne id ni suppression logique. */

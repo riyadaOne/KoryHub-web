@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Textes et liens communs aux notifications, pour l'e-mail et pour la cloche : seuls le type
@@ -44,6 +45,17 @@ final class NotificationText
             && preg_match('#^@([a-z0-9-]+)/([a-z0-9-]+)$#', (string) ($params['module'] ?? ''), $m)
             && is_string($params['version'] ?? null)) {
             return route('modules.version', ['author' => $m[1], 'module' => $m[2], 'number' => $params['version']]);
+        }
+
+        // Certification (W06) : le dossier, côté développeur ou côté administration.
+        if (is_string($params['certification'] ?? null)) {
+            if ($kind === 'admin_certification_requested') {
+                return Route::has('admin.certifications.show')
+                    ? route('admin.certifications.show', ['certification' => $params['certification']])
+                    : route('dashboard');
+            }
+
+            return route('certifications.show', ['certification' => $params['certification']]);
         }
 
         return match ($kind) {

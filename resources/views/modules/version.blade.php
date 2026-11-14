@@ -41,6 +41,21 @@
                     </div>
                 @endif
             </dl>
+
+            {{-- Certification (W06) : pour l'auteur d'un module public, demande sur une version publiée. --}}
+            @if ($isAuthor && $version->status === \App\Enums\VersionStatus::Published && app(\App\Services\Certification\CertificationService::class)->canRequest($module, auth()->user()))
+                @php($openCase = \App\Models\Certification::query()->where('module_id', $module->id)->whereIn('status', \App\Enums\CertificationStatus::open())->first())
+                <div class="mt-4 grid gap-2 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900" data-test="certification-box">
+                    <flux:heading>{{ __('certification.box.title') }}</flux:heading>
+                    @if ($openCase)
+                        <flux:text>{{ __('certification.box.open', ['version' => $openCase->version->version, 'status' => $openCase->status->label()]) }}</flux:text>
+                        <div><flux:button size="sm" :href="route('certifications.show', $openCase)" wire:navigate>{{ __('certification.mine.open') }}</flux:button></div>
+                    @else
+                        <flux:text>{{ __('certification.box.text') }}</flux:text>
+                        <div><flux:button size="sm" variant="primary" :href="route('modules.certification', ['author' => $module->author->handle, 'module' => $module->name, 'number' => $version->version])" wire:navigate data-test="request-certification-link">{{ __('certification.request.title') }}</flux:button></div>
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 </x-layouts::app>

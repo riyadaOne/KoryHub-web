@@ -30,6 +30,11 @@ Route::middleware(['auth'])->group(function () {
     // Communauté (W05) : favoris (S-44), modules suivis (S-45).
     Route::livewire('stars', 'pages::community.stars')->name('stars.index');
     Route::livewire('watching', 'pages::community.watching')->name('watching.index');
+
+    // Certification (W06) : demande (S-35), mes dossiers (S-36).
+    Route::livewire('@{author}/{module}/v/{number}/certification', 'pages::certification.request')->name('modules.certification');
+    Route::livewire('dashboard/certifications', 'pages::certification.index')->name('certifications.index');
+    Route::livewire('dashboard/certifications/{certification}', 'pages::certification.show')->name('certifications.show');
 });
 
 // Fiche d'un kory (S-03 à S-06) : publique ; un module privé répond 404 à tout autre que son auteur.

@@ -13,6 +13,14 @@
             </x-warning-banner>
         @endunless
 
+        {{-- Certification (W06) : complément demandé par l'équipe de modération. --}}
+        @foreach (\App\Models\Certification::query()->where('requested_by', auth()->id())->where('status', \App\Enums\CertificationStatus::ComplementRequired)->with(['module.author', 'version'])->get() as $pending)
+            <x-warning-banner :heading="__('certification.dashboard.complement', ['module' => $pending->module->fullName(), 'version' => $pending->version->version])" data-test="complement-card">
+                {{ __('certification.dashboard.complement_text') }}
+                <flux:link :href="route('certifications.show', $pending)" wire:navigate>{{ __('certification.mine.respond') }}</flux:link>
+            </x-warning-banner>
+        @endforeach
+
         <div class="grid gap-4 md:grid-cols-2">
             <div class="grid gap-3 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900">
                 <flux:heading>{{ __('account.dashboard.step_terminal') }}</flux:heading>

@@ -37,6 +37,7 @@
                             <flux:menu>
                                 <flux:menu.item :href="route('dashboard')" icon="layout-grid" wire:navigate>{{ __('common.dashboard') }}</flux:menu.item>
                                 <flux:menu.item :href="route('modules.mine')" icon="cube" wire:navigate data-test="my-modules-link">{{ __('modules.mine.title') }}</flux:menu.item>
+                                <flux:menu.item :href="route('certifications.index')" icon="check-badge" wire:navigate data-test="certifications-link">{{ __('certification.mine.title') }}</flux:menu.item>
                                 <flux:menu.item :href="route('stars.index')" icon="star" wire:navigate data-test="stars-link">{{ __('community.stars.title') }}</flux:menu.item>
                                 <flux:menu.item :href="route('watching.index')" icon="eye" wire:navigate data-test="watching-link">{{ __('community.watch.title') }}</flux:menu.item>
                                 <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('common.settings') }}</flux:menu.item>
