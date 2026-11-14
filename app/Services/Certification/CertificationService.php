@@ -7,12 +7,14 @@ use App\Enums\NotificationType;
 use App\Enums\Role;
 use App\Enums\Visibility;
 use App\Exceptions\InvalidTransition;
+use App\Jobs\GenerateCertificationReport;
 use App\Models\Certification;
 use App\Models\Module;
 use App\Models\ModuleVersion;
 use App\Models\User;
 use App\Notifications\ModuleNotification;
 use App\Services\Audit\AuditLogger;
+use App\Services\Community\ModuleAudience;
 use App\Services\Search\ScoreCalculator;
 use Illuminate\Support\Facades\DB;
 
@@ -142,6 +144,12 @@ class CertificationService
 
         $this->refreshScore($certification);
         $certification->requester->notify(new ModuleNotification(NotificationType::CertificationGranted, $this->params($certification)));
+        app(ModuleAudience::class)->certificationChanged($certification->version, NotificationType::CertificationGranted, $this->params($certification));
+
+        // Rapport PDF (F-MOD-06) : langue du développeur et anglais, en file d'attente, après validation.
+        foreach (array_unique([$certification->requester->locale ?: 'en', 'en']) as $locale) {
+            GenerateCertificationReport::dispatch($certification->id, $locale)->afterCommit();
+        }
     }
 
     /** Admin : refuse, avec un motif montré à l'auteur. */
@@ -169,6 +177,7 @@ class CertificationService
 
         $this->refreshScore($certification);
         $certification->requester->notify(new ModuleNotification(NotificationType::CertificationRevoked, $this->params($certification) + ['reason' => $reason]));
+        app(ModuleAudience::class)->certificationChanged($certification->version, NotificationType::CertificationRevoked, $this->params($certification));
     }
 
     /**

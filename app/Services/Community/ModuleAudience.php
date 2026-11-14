@@ -72,6 +72,24 @@ class ModuleAudience
         ]));
     }
 
+    /**
+     * Certification accordée ou révoquée (F-MOD-14, W06.3) : abonnés (toutes les activités ou
+     * versions) et comptes qui ont téléchargé la version ; l'auteur est prévenu à part.
+     */
+    public function certificationChanged(ModuleVersion $version, NotificationType $type, array $params): void
+    {
+        $module = $version->module;
+        if ($module->visibility !== Visibility::Public) {
+            return;
+        }
+
+        $recipients = $this->watchers($module, [WatchLevel::All, WatchLevel::Releases])
+            ->merge(ModuleDownload::query()->where('version_id', $version->id)->where('user_id', '!=', $module->author_id)->pluck('user_id'))
+            ->diff($this->watchers($module, [WatchLevel::Ignore]));
+
+        $this->notify($recipients, fn () => new ModuleNotification($type, $params));
+    }
+
     /** Module archivé : abonnés « toutes les activités ». */
     public function moduleArchived(Module $module): void
     {

@@ -1,10 +1,13 @@
 <?php
 
 use App\Enums\ModuleStatus;
+use App\Enums\Role;
 use App\Enums\VersionStatus;
 use App\Enums\Visibility;
+use App\Models\Certification;
 use App\Models\Module;
 use App\Models\User;
+use App\Services\Certification\Reports\ReportRenderer;
 use Database\Seeders\DemoModulesSeeder;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,6 +20,15 @@ test('les kory de démonstration sont publiés avec leur architecture, des versi
     foreach (['moussa', 'hassan-djibrine', 'fatime-zakaria', 'awa-diop', 'wanjiru'] as $handle) {
         User::factory()->create(['handle' => $handle]);
     }
+
+    User::factory()->create(['handle' => 'achta-riyadaone', 'role' => Role::Admin]);
+    $this->app->instance(ReportRenderer::class, new class implements ReportRenderer
+    {
+        public function render(string $view, array $data): string
+        {
+            return '%PDF-demo';
+        }
+    });
 
     $this->seed(DemoModulesSeeder::class);
 
@@ -35,6 +47,11 @@ test('les kory de démonstration sont publiés avec leur architecture, des versi
         ->and($mobileMoney->stars()->count())->toBe(3)
         ->and($mobileMoney->fresh()->third_party_downloaded_at)->not->toBeNull()
         ->and(User::where('handle', 'hassan-djibrine')->sole()->moduleDownloads()->count())->toBe(2);
+
+    // Un dossier de certification dans chaque statut (W06).
+    expect(Certification::query()->pluck('status')->map->value->sort()->values()->all())
+        ->toBe(['complement_required', 'granted', 'in_audit', 'refused', 'requested', 'revoked'])
+        ->and($mobileMoney->latestVersion->fresh()->isCertified())->toBeTrue();
 
     $this->get('/@moussa/mobile-money-resilient/architecture')->assertOk()->assertSee('RetryPendingPayments');
 });

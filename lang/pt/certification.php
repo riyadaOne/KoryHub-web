@@ -65,6 +65,10 @@ return [
         'sent' => 'Resposta enviada: o processo volta a auditoria.',
     ],
     'box' => [
+        'granted_on' => 'Concedida em :date.',
+        'revoked_on' => 'Certificação revogada em :date. O relatório abaixo é mantido tal como estava.',
+        'report' => 'Relatório (:language)',
+        'report_pending' => 'O relatório PDF está a ser gerado.',
         'title' => 'Certificação',
         'open' => 'Processo aberto na versão :version: :status.',
         'text' => 'Peça à equipa de moderação o selo «Verificado em Produção» para esta versão.',
@@ -100,5 +104,16 @@ return [
         'to_review' => '{0} Nenhuma certificação a tratar|{1} 1 certificação a tratar|[2,*] :count certificações a tratar',
         'to_review_detail' => 'Pedidas: :requested · em auditoria: :audit',
         'oldest' => 'Pedido mais antigo',
+    ],
+    'report' => [
+        'title' => 'Relatório de certificação',
+        'reference' => 'Processo',
+        'module' => 'Módulo',
+        'version' => 'Versão',
+        'checksum' => 'Impressão digital SHA-256',
+        'license_language' => 'Licença · linguagem',
+        'decision' => ':badge — concedido em :date (UTC)',
+        'team' => 'Decisão da equipa de moderação do KoryHub.',
+        'verification' => 'Estado atual: a página abaixo faz fé; este documento nunca é alterado.',
     ],
 ];

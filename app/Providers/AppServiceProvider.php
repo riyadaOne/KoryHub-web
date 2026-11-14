@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\PersonalAccessToken;
+use App\Services\Certification\Reports\ChromeReportRenderer;
+use App\Services\Certification\Reports\ReportRenderer;
 use App\Services\Modules\Secrets\GitleaksScanner;
 use App\Services\Modules\Secrets\SecretScanner;
 use Carbon\CarbonImmutable;
@@ -24,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // Recherche de secrets à la publication (TRD §16) : gitleaks ; faux scanner dans les tests.
         $this->app->bind(SecretScanner::class, fn () => GitleaksScanner::fromConfig());
+
+        // Rapport de certification PDF (TRD §15) : spatie/laravel-pdf ; faux moteur dans les tests.
+        $this->app->bind(ReportRenderer::class, ChromeReportRenderer::class);
     }
 
     /**

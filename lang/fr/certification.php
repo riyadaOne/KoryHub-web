@@ -65,6 +65,10 @@ return [
         'sent' => 'Réponse envoyée : le dossier repasse en audit.',
     ],
     'box' => [
+        'granted_on' => 'Accordée le :date.',
+        'revoked_on' => 'Certification révoquée le :date. Le rapport ci-dessous est conservé tel quel.',
+        'report' => 'Rapport (:language)',
+        'report_pending' => 'Le rapport PDF est en cours de génération.',
         'title' => 'Certification',
         'open' => 'Dossier ouvert sur la version :version : :status.',
         'text' => 'Demandez à l\'équipe de modération le badge « Vérifié en Prod » pour cette version.',
@@ -100,5 +104,16 @@ return [
         'to_review' => '{0} Aucune certification à traiter|{1} 1 certification à traiter|[2,*] :count certifications à traiter',
         'to_review_detail' => 'Demandées : :requested · en audit : :audit',
         'oldest' => 'Plus ancienne demande',
+    ],
+    'report' => [
+        'title' => 'Rapport de certification',
+        'reference' => 'Dossier',
+        'module' => 'Module',
+        'version' => 'Version',
+        'checksum' => 'Empreinte SHA-256',
+        'license_language' => 'Licence · langage',
+        'decision' => ':badge — accordé le :date (UTC)',
+        'team' => 'Décision de l\'équipe de modération KoryHub.',
+        'verification' => 'Statut actuel : la page ci-dessous fait foi ; ce document n\'est jamais modifié.',
     ],
 ];

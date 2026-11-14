@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CertificationStatus;
+use App\Models\CertificationReport;
 use App\Models\Module;
 use App\Models\ModuleVersion;
 use App\Services\Modules\ModuleFinder;
@@ -10,6 +12,7 @@ use App\Support\ArchitectureDiagram;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Fiche publique d'un kory (S-03 README, S-05 version, S-06 fichiers, images du README) ;
@@ -89,6 +92,29 @@ class ModulePageController extends Controller
             'X-Content-Type-Options' => 'nosniff',
             'Content-Security-Policy' => "default-src 'none'",
             'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
+    }
+
+    /**
+     * Rapport de certification PDF d'une version (F-MOD-06, UXUI §11) : servi tel quel pour
+     * toujours, même après une révocation (la page fait foi) ; 404 s'il n'existe pas.
+     */
+    public function report(Request $request, string $author, string $module, string $number, string $locale): Response
+    {
+        $found = $this->finder->find($author, $module, $request->user());
+        $version = $this->finder->version($found, $number, $request->user());
+        $report = CertificationReport::query()
+            ->whereHas('certification', fn ($q) => $q->where('version_id', $version->id)->whereIn('status', [CertificationStatus::Granted, CertificationStatus::Revoked]))
+            ->where('locale', $locale)->latest('generated_at')->first();
+        abort_if($report === null, 404);
+
+        $content = Storage::disk(config('koryhub.publication.archives_disk'))->get($report->path);
+        abort_if($content === null, 404);
+
+        return response($content, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$found->name.'-'.$version->version.'-'.$locale.'.pdf"',
+            'X-Content-Type-Options' => 'nosniff',
         ]);
     }
 

@@ -42,6 +42,31 @@
                 @endif
             </dl>
 
+            {{-- Certification (W06.3) : badge ou révocation, rapports PDF ; la page fait foi, le PDF n'est jamais modifié. --}}
+            @php($decided = \App\Models\Certification::query()->where('version_id', $version->id)->whereIn('status', [\App\Enums\CertificationStatus::Granted, \App\Enums\CertificationStatus::Revoked])->with('reports')->latest('decided_at')->first())
+            @if ($decided)
+                <div class="mt-4 grid gap-2 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900" data-test="certification-public">
+                    <flux:heading>{{ __('certification.box.title') }}</flux:heading>
+                    @if ($decided->status === \App\Enums\CertificationStatus::Granted)
+                        <div><flux:badge size="sm" color="green" icon="check-badge">{{ __('certification.badge') }}</flux:badge></div>
+                        <flux:text>{{ __('certification.box.granted_on', ['date' => $decided->decided_at->locale(app()->getLocale())->isoFormat('LL')]) }}</flux:text>
+                    @else
+                        <flux:text class="text-red-700 dark:text-red-400" data-test="certification-revoked">{{ __('certification.box.revoked_on', ['date' => $decided->revoked_at?->locale(app()->getLocale())->isoFormat('LL')]) }}</flux:text>
+                    @endif
+                    @if ($decided->reports->isNotEmpty())
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($decided->reports->sortBy(fn ($r) => $r->locale === 'en') as $report)
+                                <flux:button size="xs" icon="document-arrow-down" :href="route('modules.report', ['author' => $module->author->handle, 'module' => $module->name, 'number' => $version->version, 'locale' => $report->locale])" target="_blank" data-test="report-{{ $report->locale }}">
+                                    {{ __('certification.box.report', ['language' => \App\Enums\Locale::from($report->locale)->nativeName()]) }}
+                                </flux:button>
+                            @endforeach
+                        </div>
+                    @elseif ($decided->status === \App\Enums\CertificationStatus::Granted)
+                        <flux:text class="text-sm">{{ __('certification.box.report_pending') }}</flux:text>
+                    @endif
+                </div>
+            @endif
+
             {{-- Certification (W06) : pour l'auteur d'un module public, demande sur une version publiée. --}}
             @if ($isAuthor && $version->status === \App\Enums\VersionStatus::Published && app(\App\Services\Certification\CertificationService::class)->canRequest($module, auth()->user()))
                 @php($openCase = \App\Models\Certification::query()->where('module_id', $module->id)->whereIn('status', \App\Enums\CertificationStatus::open())->first())

@@ -48,6 +48,8 @@ const TABLES_WITHOUT_SOFT_DELETES = [
     // Certification : contrôles et échanges en ajout seul, comme un journal (BACKEND-SCHEMA §4.5).
     'certification_checks',
     'certification_messages',
+    // Rapport de certification : jamais réécrit (T-35).
+    'certification_reports',
 ];
 
 /** Tables de liaison : clé primaire composée (BACKEND-SCHEMA §4.2), sans colonne id ni suppression logique. */

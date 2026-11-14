@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Enums\WatchLevel;
 use App\Models\Category;
 use App\Models\DownloadStat;
@@ -9,6 +10,7 @@ use App\Models\Module;
 use App\Models\Star;
 use App\Models\User;
 use App\Models\Watch;
+use App\Services\Certification\CertificationService;
 use App\Services\Community\ReviewService;
 use App\Services\Modules\DownloadService;
 use App\Services\Modules\ModuleLifecycle;
@@ -66,6 +68,56 @@ class DemoModulesSeeder extends Seeder
 
         $this->downloads($hassan);
         $this->community($hassan, $fatime);
+        $this->certifications();
+    }
+
+    /**
+     * Certification (W06) : un dossier dans chaque statut, par le vrai service. Il faut l'admin de
+     * démonstration (DemoUsersSeeder) ; sans lui, rien n'est créé. Les rapports PDF partent en
+     * file d'attente (worker et Chrome nécessaires pour les voir).
+     */
+    private function certifications(): void
+    {
+        $admin = User::query()->where('role', Role::Admin)->first();
+        if ($admin === null) {
+            return;
+        }
+        $service = app(CertificationService::class);
+        $moussa = User::query()->where('handle', 'moussa')->sole();
+
+        // Accordée : la maquette de référence.
+        $mobileMoney = Module::query()->where('name', 'mobile-money-resilient')->sole()->versions()->where('version', '1.2.0')->sole();
+        $granted = $service->request($mobileMoney, $moussa);
+        $service->take($granted, $admin);
+        $service->grant($granted->fresh(), $admin, 'Interface PaymentGateway claire ; file des paiements en suspens idempotente.', 'README complet : pièges réels et solutions vérifiables.');
+
+        // Demandée : offline-sync.
+        $hassan = User::query()->where('handle', 'hassan-djibrine')->sole();
+        $service->request(Module::query()->where('name', 'offline-sync')->sole()->versions()->sole(), $hassan);
+
+        // Les autres statuts, sur des kory dédiés.
+        $statuses = ['awa-diop' => ['orange-money-ci', 'complement'], 'wanjiru' => ['mpesa-stk', 'refused'], 'fatime-zakaria' => ['sms-relay', 'revoked'], 'hassan-djibrine' => ['carte-terrain', 'in_audit']];
+        foreach ($statuses as $handle => [$name, $status]) {
+            $author = User::query()->where('handle', $handle)->first();
+            if ($author === null) {
+                continue;
+            }
+            $this->publish($author, $name, '1.0.0', ['src/Gateway.php' => "<?php\n\nfinal class Gateway\n{\n}\n"], 'Kory de démonstration pour la certification.', [
+                'architecture' => ['components' => [['id' => 'Gateway', 'file' => 'src/Gateway.php', 'kind' => 'class']], 'links' => []],
+            ], tags: ['mobile-money']);
+            $version = Module::query()->where('name', $name)->sole()->versions()->sole();
+            $certification = $service->request($version, $author);
+            $service->take($certification, $admin);
+            match ($status) {
+                'in_audit' => null,
+                'complement' => $service->requestComplement($certification->fresh(), $admin, 'Expliquez dans le README ce qui se passe si le webhook n\'arrive jamais.'),
+                'refused' => $service->refuse($certification->fresh(), $admin, 'Aucune gestion des erreurs de l\'opérateur.'),
+                default => (function () use ($service, $certification, $admin) {
+                    $service->grant($certification->fresh(), $admin, 'Structure simple.', 'README suffisant.');
+                    $service->revoke($certification->fresh(), $admin, 'Faille signalée après la certification.');
+                })(),
+            };
+        }
     }
 
     /**

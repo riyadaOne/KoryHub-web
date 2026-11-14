@@ -43,6 +43,7 @@ Route::prefix('@{author}/{module}')->group(function () {
     Route::livewire('versions', 'pages::modules.versions')->name('modules.versions');
     Route::get('v/{number}', [ModulePageController::class, 'version'])->name('modules.version');
     Route::get('v/{number}/raw/{path}', [ModulePageController::class, 'raw'])->where('path', '.*')->name('modules.raw');
+    Route::get('v/{number}/certification-report/{locale}', [ModulePageController::class, 'report'])->where('locale', 'en|fr|ar|pt')->name('modules.report');
     Route::get('files', [ModulePageController::class, 'files'])->name('modules.files');
     Route::get('architecture', [ModulePageController::class, 'architecture'])->name('modules.architecture');
     Route::livewire('reviews', 'pages::modules.reviews')->name('modules.reviews');

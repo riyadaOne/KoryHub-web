@@ -97,6 +97,12 @@ class Certification extends Model
         return $this->hasMany(CertificationMessage::class);
     }
 
+    /** @return HasMany<CertificationReport, $this> */
+    public function reports(): HasMany
+    {
+        return $this->hasMany(CertificationReport::class);
+    }
+
     /** Dernière étape datée du dossier (S-36). */
     public function lastStepAt(): Carbon
     {

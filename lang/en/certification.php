@@ -65,6 +65,10 @@ return [
         'sent' => 'Answer sent: the case is back in audit.',
     ],
     'box' => [
+        'granted_on' => 'Granted on :date.',
+        'revoked_on' => 'Certification revoked on :date. The report below is kept as it was.',
+        'report' => 'Report (:language)',
+        'report_pending' => 'The PDF report is being generated.',
         'title' => 'Certification',
         'open' => 'Case open on version :version: :status.',
         'text' => 'Ask the moderation team for the “Verified in Prod” badge on this version.',
@@ -100,5 +104,16 @@ return [
         'to_review' => '{0} No certification to review|{1} 1 certification to review|[2,*] :count certifications to review',
         'to_review_detail' => 'Requested: :requested · in audit: :audit',
         'oldest' => 'Oldest request',
+    ],
+    'report' => [
+        'title' => 'Certification report',
+        'reference' => 'Case',
+        'module' => 'Module',
+        'version' => 'Version',
+        'checksum' => 'SHA-256 checksum',
+        'license_language' => 'License · language',
+        'decision' => ':badge — granted on :date (UTC)',
+        'team' => 'Decision of the KoryHub moderation team.',
+        'verification' => 'Current status: the page below is authoritative; this document is never modified.',
     ],
 ];
