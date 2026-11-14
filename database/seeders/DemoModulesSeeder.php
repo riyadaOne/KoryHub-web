@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ReportReason;
+use App\Enums\ReportTargetType;
 use App\Enums\Role;
 use App\Enums\WatchLevel;
 use App\Models\Category;
@@ -12,6 +14,8 @@ use App\Models\User;
 use App\Models\Watch;
 use App\Services\Certification\CertificationService;
 use App\Services\Community\ReviewService;
+use App\Services\Moderation\ModerationService;
+use App\Services\Moderation\ReportService;
 use App\Services\Modules\DownloadService;
 use App\Services\Modules\ModuleLifecycle;
 use App\Services\Modules\Secrets\SecretScanner;
@@ -69,6 +73,55 @@ class DemoModulesSeeder extends Seeder
         $this->downloads($hassan);
         $this->community($hassan, $fatime);
         $this->certifications();
+        $this->moderation();
+    }
+
+    /**
+     * Modération (W07) : un signalement dans chaque statut, une version à risque (signalée trois
+     * fois), une version retirée pour une raison légale, un compte suspendu. Par les vrais services ;
+     * il faut l'admin de démonstration et les comptes de DemoUsersSeeder.
+     */
+    private function moderation(): void
+    {
+        $admin = User::query()->where('role', Role::Admin)->first();
+        $handles = ['moussa', 'hassan-djibrine', 'fatime-zakaria', 'awa-diop', 'wanjiru'];
+        $users = User::query()->whereIn('handle', $handles)->get()->keyBy('handle');
+        if ($admin === null || $users->count() !== count($handles)) {
+            return;
+        }
+        $reports = app(ReportService::class);
+        $moderation = app(ModerationService::class);
+
+        // Ouvert : un module signalé.
+        $mpesa = Module::query()->where('name', 'mpesa-stk')->sole();
+        $reports->create($users['hassan-djibrine'], ReportTargetType::Module, $mpesa->id, ReportReason::Malware, 'Le jeton de l\'opérateur est écrit dans les journaux.');
+
+        // En examen : un compte signalé, pris par l'admin.
+        $inReview = $reports->create($users['fatime-zakaria'], ReportTargetType::User, $users['wanjiru']->id, ReportReason::Harassment, 'Messages insultants dans les avis.');
+        $moderation->take($inReview, $admin);
+
+        // Clos sans suite.
+        $offline = Module::query()->where('name', 'offline-sync')->sole();
+        $noAction = $reports->create($users['awa-diop'], ReportTargetType::Module, $offline->id, ReportReason::Copyright, null);
+        $moderation->closeNoAction($noAction, $admin, 'Code original, licence MIT respectée.');
+
+        // Clos avec action : avertissement de sécurité sur mobile-money-resilient 1.0.0, signalée trois fois.
+        $risky = Module::query()->where('name', 'mobile-money-resilient')->sole()->versions()->where('version', '1.0.0')->sole();
+        $first = null;
+        foreach (['hassan-djibrine', 'fatime-zakaria', 'awa-diop'] as $handle) {
+            $report = $reports->create($users[$handle], ReportTargetType::Version, $risky->id, ReportReason::Malware, 'Double débit possible après une coupure.');
+            $first ??= $report;
+        }
+        $moderation->markAtRisk($risky, $admin, 'Clé d’idempotence par essai : un nouvel essai peut débiter deux fois. Passez en 1.2.0.', $first);
+
+        // Retrait légal, sur un kory dédié.
+        $this->publish($users['awa-diop'], 'cle-api-copiee', '1.0.0', ['src/Client.php' => "<?php\n\nfinal class Client\n{\n}\n"], 'Client d\'API (démonstration du retrait légal).');
+        $copied = Module::query()->where('name', 'cle-api-copiee')->sole()->versions()->sole();
+        $legal = $reports->create($users['wanjiru'], ReportTargetType::Version, $copied->id, ReportReason::Copyright, 'Copié de mpesa-stk sans respecter la licence.');
+        $moderation->removeVersion($copied, $admin, 'Retirée pour une raison légale.', 'Demande de retrait reçue le 12 novembre 2026 : code copié sans respecter la licence.', $legal);
+
+        // Compte suspendu.
+        $moderation->suspendAccount($users['wanjiru'], $admin, 'Messages insultants répétés.');
     }
 
     /**

@@ -19,4 +19,11 @@ Route::middleware(['auth', 'verified', EnsureAdmin::class])->group(function () {
     // Signalements (W07.2) : liste (S-61), détail et décision (S-62).
     Route::livewire('reports', 'pages::admin.reports')->name('reports.index');
     Route::livewire('reports/{report}', 'pages::admin.report')->name('reports.show');
+
+    // Modules publics (S-65, S-66), comptes (S-67, S-68), avis (S-69) : W07.2 ; jamais un module privé (T-13).
+    Route::livewire('modules', 'pages::admin.modules')->name('modules.index');
+    Route::livewire('modules/{module}', 'pages::admin.module')->name('modules.show');
+    Route::livewire('users', 'pages::admin.users')->name('users.index');
+    Route::livewire('users/{user}', 'pages::admin.user')->name('users.show');
+    Route::livewire('reviews', 'pages::admin.reviews')->name('reviews.index');
 });

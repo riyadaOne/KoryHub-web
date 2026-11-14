@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AccountStatus;
 use App\Enums\Visibility;
 use App\Exceptions\InvalidTransition;
 use App\Models\Module;
@@ -76,6 +77,15 @@ new #[Layout('layouts::admin')] #[Title('moderation.admin.reports')] class exten
         return $this->target instanceof ModuleVersion ? $this->target : ($this->target instanceof Module ? $this->target->latestVersion : null);
     }
 
+    /** Compte responsable de la cible, s'il peut être suspendu ou supprimé (ni admin ni supprimé). */
+    #[Computed]
+    public function owner(): ?User
+    {
+        $owner = $this->report->targetOwner();
+
+        return $owner !== null && ! $owner->isAdmin() && $owner->status !== AccountStatus::Deleted ? $owner : null;
+    }
+
     #[Computed]
     public function related()
     {
@@ -87,7 +97,7 @@ new #[Layout('layouts::admin')] #[Title('moderation.admin.reports')] class exten
     {
         $this->resetErrorBag();
         [$this->reason, $this->publicMessage] = ['', ''];
-        if ($action === 'remove' && ! $this->passwordRecentlyConfirmed()) {
+        if (in_array($action, ['remove', 'suspend', 'delete'], true) && ! $this->passwordRecentlyConfirmed()) {
             session()->put('url.intended', route('admin.reports.show', $this->reportId));
             $this->redirect(route('password.confirm'));
 
@@ -125,8 +135,23 @@ new #[Layout('layouts::admin')] #[Title('moderation.admin.reports')] class exten
         $this->run(fn () => $moderation->hideReview($this->target, Auth::user(), $this->reason, $this->report), 'hide', 'moderation.admin.hidden_done');
     }
 
+    public function suspend(ModerationService $moderation): void
+    {
+        abort_unless($this->passwordRecentlyConfirmed(), 403);
+        abort_if($this->owner === null, 404);
+        $this->run(fn () => $moderation->suspendAccount($this->owner, Auth::user(), $this->reason, $this->report), 'suspend', 'moderation.admin.suspended_done');
+    }
+
+    public function deleteAccount(ModerationService $moderation): void
+    {
+        abort_unless($this->passwordRecentlyConfirmed(), 403);
+        abort_if($this->owner === null, 404);
+        $this->run(fn () => $moderation->deleteAccount($this->owner, Auth::user(), $this->reason, $this->report), 'delete', 'moderation.admin.deleted_done');
+    }
+
     private function run(Closure $action, ?string $modal, string $done): void
     {
+        $this->resetErrorBag();
         try {
             $action();
             $this->notice = __($done);
@@ -137,7 +162,7 @@ new #[Layout('layouts::admin')] #[Title('moderation.admin.reports')] class exten
         } catch (ModerationRefused|InvalidTransition $exception) {
             $this->addError('reason', $exception->getMessage());
         }
-        unset($this->report, $this->target, $this->module, $this->version, $this->related);
+        unset($this->report, $this->target, $this->module, $this->version, $this->related, $this->owner);
     }
 
     /** Mot de passe confirmé récemment (même délai que le middleware password.confirm). */
@@ -239,6 +264,12 @@ new #[Layout('layouts::admin')] #[Title('moderation.admin.reports')] class exten
                         @if ($target instanceof \App\Models\Review && $this->module && ! $target->hidden_at)
                             <flux:button variant="danger" wire:click="open('hide')" data-test="hide">{{ __('moderation.admin.hide') }}</flux:button>
                         @endif
+                        @if ($this->owner?->status === \App\Enums\AccountStatus::Active)
+                            <flux:button variant="danger" wire:click="open('suspend')" data-test="suspend">{{ __('moderation.admin.suspend_owner', ['handle' => '@'.$this->owner->handle]) }}</flux:button>
+                        @endif
+                        @if ($this->owner)
+                            <flux:button variant="danger" wire:click="open('delete')" data-test="delete-account">{{ __('moderation.admin.delete_owner', ['handle' => '@'.$this->owner->handle]) }}</flux:button>
+                        @endif
                     </div>
                     <flux:text>{{ __('moderation.admin.closes_all') }}</flux:text>
                 </div>
@@ -246,7 +277,7 @@ new #[Layout('layouts::admin')] #[Title('moderation.admin.reports')] class exten
         </aside>
     </div>
 
-    @foreach ([['close', __('moderation.admin.close'), 'primary', 'close'], ['at-risk', __('moderation.admin.at_risk'), 'danger', 'atRisk'], ['hide', __('moderation.admin.hide'), 'danger', 'hide']] as [$action, $label, $variant, $method])
+    @foreach ([['close', __('moderation.admin.close'), 'primary', 'close'], ['at-risk', __('moderation.admin.at_risk'), 'danger', 'atRisk'], ['hide', __('moderation.admin.hide'), 'danger', 'hide'], ['suspend', __('moderation.admin.suspend'), 'danger', 'suspend'], ['delete', __('moderation.admin.delete'), 'danger', 'deleteAccount']] as [$action, $label, $variant, $method])
         <x-confirm-step :name="$action.'-report'" :heading="$label">
             <flux:textarea wire:model="reason" :label="$action === 'at-risk' ? __('moderation.admin.at_risk_message') : __('certification.admin.reason')" rows="3" data-test="reason-{{ $action }}" />
             <x-slot:action><flux:button :variant="$variant" wire:click="{{ $method }}" data-test="confirm-{{ $action }}">{{ $label }}</flux:button></x-slot:action>

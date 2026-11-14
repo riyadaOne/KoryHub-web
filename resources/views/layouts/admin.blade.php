@@ -29,6 +29,9 @@
                     <flux:sidebar.item icon="check-badge" :href="route('admin.certifications.index')" :current="request()->routeIs('admin.certifications.*')" :badge="\App\Models\Certification::query()->whereIn('status', \App\Enums\CertificationStatus::open())->count() ?: null" data-test="admin-certifications-link">
                         {{ __('certification.admin.title') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="cube" :href="route('admin.modules.index')" :current="request()->routeIs('admin.modules.*')" data-test="admin-modules-link">{{ __('moderation.admin.modules') }}</flux:sidebar.item>
+                    <flux:sidebar.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" data-test="admin-users-link">{{ __('moderation.admin.users') }}</flux:sidebar.item>
+                    <flux:sidebar.item icon="chat-bubble-left-right" :href="route('admin.reviews.index')" :current="request()->routeIs('admin.reviews.*')" data-test="admin-reviews-link">{{ __('moderation.admin.reviews') }}</flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

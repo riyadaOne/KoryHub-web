@@ -8,13 +8,18 @@ use App\Enums\ReportResolution;
 use App\Enums\ReportStatus;
 use App\Enums\Role;
 use App\Enums\VersionStatus;
+use App\Enums\Visibility;
 use App\Exceptions\InvalidTransition;
+use App\Models\Module;
 use App\Models\ModuleVersion;
+use App\Models\PersonalAccessToken;
 use App\Models\Report;
 use App\Models\Review;
 use App\Models\User;
 use App\Notifications\ModuleNotification;
+use App\Services\Accounts\AccountService;
 use App\Services\Audit\AuditLogger;
+use App\Services\Cli\CliTokenService;
 use App\Services\Community\ModuleAudience;
 use App\Services\Community\ReviewService;
 use App\Services\Modules\ModuleLifecycle;
@@ -165,6 +170,65 @@ class ModerationService
     }
 
     /**
+     * Suspend un compte (F-AUT-15, F-ADM-02) ; avec un signalement, le clôt avec l'action. Jamais
+     * son propre compte ni un autre admin (rôles gérés en W08).
+     */
+    public function suspendAccount(User $user, User $admin, string $reason, ?Report $report = null): void
+    {
+        $this->requireAdmin($admin);
+        $this->requireTargetAccount($user, $admin);
+        $reason = $this->requireText($reason);
+
+        DB::transaction(function () use ($user, $admin, $reason, $report) {
+            app(AccountService::class)->suspend($user, $admin, $reason);
+            if ($report !== null) {
+                $this->closeTarget($report, $admin, ReportResolution::AccountSuspended, $reason);
+            }
+        });
+    }
+
+    public function reactivateAccount(User $user, User $admin, string $reason): void
+    {
+        $this->requireAdmin($admin);
+        $this->requireTargetAccount($user, $admin);
+        app(AccountService::class)->reactivate($user, $admin, $this->requireText($reason));
+    }
+
+    /** Supprime un compte (F-ADM-02) par le même effacement que la suppression par le développeur. */
+    public function deleteAccount(User $user, User $admin, string $reason, ?Report $report = null): void
+    {
+        $this->requireAdmin($admin);
+        $this->requireTargetAccount($user, $admin);
+        $reason = $this->requireText($reason);
+
+        if ($report !== null) {
+            $this->closeTarget($report, $admin, ReportResolution::AccountDeleted, $reason);
+        }
+        app(AccountService::class)->delete($user, $admin, $reason);
+    }
+
+    /** Révocation d'urgence d'un jeton du CLI (F-AUT-15) : motif et audit ; la valeur n'est jamais vue. */
+    public function revokeToken(PersonalAccessToken $token, User $admin, string $reason): void
+    {
+        $this->requireAdmin($admin);
+        app(CliTokenService::class)->revoke($token, $admin, $this->requireText($reason));
+    }
+
+    /** Mise en avant sur l'accueil (F-RCH-12) : décision humaine, module public seulement, journalisée. */
+    public function setFeatured(Module $module, User $admin, bool $featured): void
+    {
+        $this->requireAdmin($admin);
+        if ($module->visibility !== Visibility::Public || $module->is_featured === $featured) {
+            throw new ModerationRefused('moderation.errors.not_allowed');
+        }
+
+        DB::transaction(function () use ($module, $admin, $featured) {
+            $module->forceFill(['is_featured' => $featured, 'featured_at' => $featured ? now() : null])->save();
+            $this->audit->record('module.featured', $module, ['is_featured' => [! $featured, $featured]], actor: $admin);
+        });
+    }
+
+    /**
      * Clôt tous les signalements ouverts sur l'objet de $report (un signalement encore « ouvert »
      * passe par « en examen ») ; chaque auteur reçoit une seule notification.
      */
@@ -236,6 +300,13 @@ class ModerationService
     private function requireAdmin(User $admin): void
     {
         if (! $admin->isAdmin()) {
+            throw new ModerationRefused('moderation.errors.not_allowed');
+        }
+    }
+
+    private function requireTargetAccount(User $user, User $admin): void
+    {
+        if ($user->is($admin) || $user->isAdmin()) {
             throw new ModerationRefused('moderation.errors.not_allowed');
         }
     }

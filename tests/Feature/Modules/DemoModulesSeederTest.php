@@ -1,11 +1,13 @@
 <?php
 
+use App\Enums\AccountStatus;
 use App\Enums\ModuleStatus;
 use App\Enums\Role;
 use App\Enums\VersionStatus;
 use App\Enums\Visibility;
 use App\Models\Certification;
 use App\Models\Module;
+use App\Models\Report;
 use App\Models\User;
 use App\Services\Certification\Reports\ReportRenderer;
 use Database\Seeders\DemoModulesSeeder;
@@ -52,6 +54,13 @@ test('les kory de démonstration sont publiés avec leur architecture, des versi
     expect(Certification::query()->pluck('status')->map->value->sort()->values()->all())
         ->toBe(['complement_required', 'granted', 'in_audit', 'refused', 'requested', 'revoked'])
         ->and($mobileMoney->latestVersion->fresh()->isCertified())->toBeTrue();
+
+    // Modération (W07) : un signalement dans chaque statut, une version à risque, une retirée, un compte suspendu.
+    expect(Report::query()->pluck('status')->map->value->unique()->sort()->values()->all())
+        ->toBe(['closed_no_action', 'closed_with_action', 'in_review', 'open'])
+        ->and($mobileMoney->versions()->where('version', '1.0.0')->sole()->at_risk_at)->not->toBeNull()
+        ->and(Module::where('name', 'cle-api-copiee')->sole()->versions()->sole()->status)->toBe(VersionStatus::Removed)
+        ->and(User::where('handle', 'wanjiru')->sole()->status)->toBe(AccountStatus::Suspended);
 
     $this->get('/@moussa/mobile-money-resilient/architecture')->assertOk()->assertSee('RetryPendingPayments');
 });

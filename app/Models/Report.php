@@ -95,6 +95,18 @@ class Report extends Model
         };
     }
 
+    /** Compte responsable de la cible : le compte visé, l'auteur du module ou de l'avis. */
+    public function targetOwner(): ?User
+    {
+        $target = $this->target();
+
+        return match (true) {
+            $target instanceof User => $target,
+            $target instanceof Review => $target->user,
+            default => $this->targetModule()?->author,
+        };
+    }
+
     /** Libellé court de la cible pour les listes : nom du module, version, @compte. */
     public function targetLabel(): string
     {

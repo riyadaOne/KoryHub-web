@@ -3,10 +3,12 @@
 namespace App\Services\Accounts;
 
 use App\Enums\AccountStatus;
+use App\Enums\NotificationType;
 use App\Enums\Visibility;
 use App\Exceptions\InvalidTransition;
 use App\Models\Module;
 use App\Models\User;
+use App\Notifications\ModuleNotification;
 use App\Services\Audit\AuditLogger;
 use App\Services\Community\ReviewService;
 use App\Services\Modules\ModuleLifecycle;
@@ -15,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * Cycle de vie d'un compte (BACKEND-SCHEMA §6) : Actif → Suspendu → Supprimé.
- * W01 livre la suppression ; la suspension et la réactivation arrivent en W07.
+ * W01 livre la suppression ; W07 la suspension et la réactivation par un admin.
  * Chaque module ajoute ici ce qu'il faut effacer à la suppression (jetons, modules privés…).
  */
 class AccountService
@@ -78,5 +80,38 @@ class AccountService
         if ($avatar !== null) {
             Storage::disk(config('koryhub.avatars.disk'))->delete($avatar);
         }
+    }
+
+    /**
+     * Suspend un compte (F-AUT-15, F-ADM-02, W07) : sessions fermées ; jetons refusés (403
+     * account_suspended) mais conservés ; modules publics toujours téléchargeables ; e-mail au
+     * développeur avec le motif.
+     */
+    public function suspend(User $user, User $admin, string $reason): void
+    {
+        if ($user->status !== AccountStatus::Active) {
+            throw new InvalidTransition($user->status, AccountStatus::Suspended);
+        }
+
+        DB::transaction(function () use ($user, $admin, $reason) {
+            $user->forceFill(['status' => AccountStatus::Suspended, 'suspended_at' => now(), 'suspension_reason' => $reason])->save();
+            DB::table('sessions')->where('user_id', $user->id)->delete();
+            $this->audit->record('account.suspended', $user, ['status' => [AccountStatus::Active, AccountStatus::Suspended]], $reason, $admin);
+        });
+
+        $user->notify(new ModuleNotification(NotificationType::AccountSuspended, ['reason' => $reason]));
+    }
+
+    /** Réactive un compte suspendu : il retrouve l'accès au site et à ses jetons encore valides. */
+    public function reactivate(User $user, User $admin, string $reason): void
+    {
+        if ($user->status !== AccountStatus::Suspended) {
+            throw new InvalidTransition($user->status, AccountStatus::Active);
+        }
+
+        DB::transaction(function () use ($user, $admin, $reason) {
+            $user->forceFill(['status' => AccountStatus::Active, 'suspended_at' => null, 'suspension_reason' => null])->save();
+            $this->audit->record('account.reactivated', $user, ['status' => [AccountStatus::Suspended, AccountStatus::Active]], $reason, $admin);
+        });
     }
 }
