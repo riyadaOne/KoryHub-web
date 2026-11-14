@@ -84,8 +84,13 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            // Sauvegardes (W08) : dossier de mysqldump et mysql, s'ils ne sont pas dans le PATH.
-            'dump' => ['dump_binary_path' => env('DB_DUMP_BINARY_PATH', '')],
+            // Sauvegardes (W08) : dossier de mysqldump et mysql, s'ils ne sont pas dans le PATH ;
+            // --set-gtid-purged=OFF : sans les lignes SET @@SESSION.SQL_LOG_BIN et GTID_PURGED, qui
+            // demandent le droit SUPER à la restauration (recette W08, erreur 1227).
+            'dump' => [
+                'dump_binary_path' => env('DB_DUMP_BINARY_PATH', ''),
+                'mysql_gtid_purged' => 'OFF',
+            ],
         ],
 
         /*
