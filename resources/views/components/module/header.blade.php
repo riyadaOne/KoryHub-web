@@ -32,7 +32,7 @@
     </h1>
 
     @if ($module->description)
-        <p class="m-0 max-w-prose text-zinc-600 dark:text-zinc-400">{{ $module->description }}</p>
+        <p class="m-0 max-w-prose text-zinc-600 dark:text-zinc-400" dir="auto">{{ $module->description }}</p>
     @endif
 
     <div class="flex flex-wrap gap-2" data-test="module-badges">

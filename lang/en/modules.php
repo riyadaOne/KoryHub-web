@@ -90,6 +90,8 @@ return [
         'unarchive' => 'Unarchive',
         'archive_title' => 'Archive this module?',
         'archive_text' => 'It stays visible and downloadable, but no longer accepts new versions.',
+        'unarchive_title' => 'Unarchive this module?',
+        'unarchive_text' => 'It accepts new versions again.',
         'delete' => 'Delete the module',
         'delete_title' => 'Delete :name?',
         'delete_text' => 'All its versions and files are erased. The name can never be reused.',

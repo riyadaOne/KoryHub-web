@@ -42,7 +42,7 @@ new class extends Component {
         <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="relative grid size-8 place-items-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50" aria-label="{{ __('notifications.bell') }}" data-test="notification-bell">
             <flux:icon name="bell" class="size-5" />
             @if ($this->unreadCount > 0)
-                <span class="absolute -end-1 -top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-red-600 px-1 text-[11px] font-semibold text-white" data-test="notification-count">{{ $this->unreadCount > 9 ? '9+' : $this->unreadCount }}</span>
+                <span class="absolute -end-1 -top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-red-600 px-1 text-[11px] font-semibold text-white" dir="ltr" data-test="notification-count">{{ $this->unreadCount > 9 ? '9+' : $this->unreadCount }}</span>
             @endif
         </button>
 

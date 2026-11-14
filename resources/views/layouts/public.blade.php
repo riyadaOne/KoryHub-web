@@ -32,7 +32,7 @@
                         <livewire:notification-bell />
 
                         <flux:dropdown position="bottom" align="end">
-                            <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" />
+                            <flux:profile :avatar="auth()->user()->avatarUrl()" :initials="auth()->user()->initials()" icon-trailing="chevron-down" data-test="profile-menu" />
 
                             <flux:menu>
                                 <flux:menu.item :href="route('dashboard')" icon="layout-grid" wire:navigate>{{ __('common.dashboard') }}</flux:menu.item>

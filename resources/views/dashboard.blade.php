@@ -25,7 +25,7 @@
 
         {{-- Certification (W06) : complément demandé par l'équipe de modération. --}}
         @foreach ($complements as $pending)
-            <x-warning-banner :heading="__('certification.dashboard.complement', ['module' => $pending->module->fullName(), 'version' => $pending->version->version])" data-test="complement-card">
+            <x-warning-banner :heading="__('certification.dashboard.complement', ['module' => \App\Support\Bidi::isolate($pending->module->fullName()), 'version' => $pending->version->version])" data-test="complement-card">
                 {{ __('certification.dashboard.complement_text') }}
                 <flux:link :href="route('certifications.show', $pending)" wire:navigate>{{ __('certification.mine.respond') }}</flux:link>
             </x-warning-banner>

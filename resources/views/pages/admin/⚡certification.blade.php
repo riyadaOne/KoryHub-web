@@ -88,6 +88,11 @@ new #[Layout('layouts::admin')] #[Title('certification.admin.title')] class exte
     public function grant(CertificationService $service): void
     {
         abort_unless($this->passwordRecentlyConfirmed(), 403);
+        // Recette W06 : commentaires vides signalés sous leur champ, dans la fenêtre (et non « motif »).
+        $this->validate(
+            ['architectureComment' => ['required', 'string', 'max:5000'], 'documentationComment' => ['required', 'string', 'max:5000']],
+            attributes: ['architectureComment' => __('certification.admin.architecture_comment'), 'documentationComment' => __('certification.admin.documentation_comment')],
+        );
         $this->run(fn () => $service->grant($this->certification, Auth::user(), $this->architectureComment, $this->documentationComment), 'grant', 'certification.admin.granted');
     }
 
@@ -107,12 +112,15 @@ new #[Layout('layouts::admin')] #[Title('certification.admin.title')] class exte
     {
         try {
             $action();
+            // Recette W06 : l'erreur d'un essai précédent (motif vide) ne reste pas sous le message de réussite.
+            $this->resetErrorBag();
             $this->notice = __($done);
             if ($modal !== null) {
                 Flux::modal($modal.'-certification')->close();
             }
             [$this->reason, $this->architectureComment, $this->documentationComment] = ['', '', ''];
         } catch (CertificationRefused|InvalidTransition $exception) {
+            $this->notice = null;
             $this->addError('reason', $exception->getMessage());
         }
         unset($this->certification, $this->checks, $this->timeline);

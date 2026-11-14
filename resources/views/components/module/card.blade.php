@@ -9,7 +9,7 @@
         <span class="font-normal text-zinc-500 dark:text-zinc-400">{{ '@'.$module->author->handle }}/</span>{{ $module->name }}
     </a>
     @if ($module->description)
-        <p class="m-0 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">{{ $module->description }}</p>
+        <p class="m-0 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400" dir="auto">{{ $module->description }}</p>
     @endif
     <div class="flex flex-wrap items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400">
         @if ($module->latestVersion)

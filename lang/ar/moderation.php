@@ -132,7 +132,7 @@ return [
         'email_verified' => 'البريد مؤكَّد',
         'suspension_reason' => 'سبب الإيقاف',
         'last_used' => 'آخر استخدام',
-        'revoke_token' => 'إلغاء',
+        'revoke_token' => 'إبطال',
         'no_tokens' => 'لا توجد رموز نشطة',
         'danger_zone' => 'منطقة الخطر',
         'danger_text' => 'تتطلب هذه الإجراءات سببًا؛ وتُسجَّل.',

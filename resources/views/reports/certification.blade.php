@@ -49,11 +49,11 @@
     <p>{{ __('certification.report.team') }}</p>
 
     <h2>{{ __('certification.admin.architecture_comment') }}</h2>
-    <p>{{ $certification->architecture_comment }}</p>
+    <p dir="auto">{{ $certification->architecture_comment }}</p>
 
     <h2>{{ __('certification.admin.documentation_comment') }}</h2>
-    <p>{{ $certification->documentation_comment }}</p>
+    <p dir="auto">{{ $certification->documentation_comment }}</p>
 
-    <div class="foot">{{ __('certification.report.verification') }} <span class="mono">{{ $url }}</span></div>
+    <div class="foot">{{ __('certification.report.verification') }} <bdi class="mono" dir="ltr">{{ $url }}</bdi></div>
 </body>
 </html>

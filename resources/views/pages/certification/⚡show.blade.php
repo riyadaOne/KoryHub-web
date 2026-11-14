@@ -89,7 +89,7 @@ new #[Title('certification.mine.title')] class extends Component {
     @endif
 
     @if ($this->certification->status === \App\Enums\CertificationStatus::Refused && $this->certification->decision_reason)
-        <flux:callout icon="x-circle" color="red"><flux:callout.heading>{{ __('certification.mine.refused_reason') }}</flux:callout.heading><flux:callout.text>{{ $this->certification->decision_reason }}</flux:callout.text></flux:callout>
+        <flux:callout icon="x-circle" color="red"><flux:callout.heading>{{ __('certification.mine.refused_reason') }}</flux:callout.heading><flux:callout.text dir="auto">{{ $this->certification->decision_reason }}</flux:callout.text></flux:callout>
     @endif
 
     <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -98,12 +98,12 @@ new #[Title('certification.mine.title')] class extends Component {
             @forelse ($this->certification->messages->sortBy('created_at') as $message)
                 <div class="grid gap-1 rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-900" wire:key="m-{{ $message->id }}">
                     <span class="text-xs text-zinc-500 dark:text-zinc-400">
-                        {{ $message->author_id === $this->certification->requested_by ? '@'.$message->author->handle : __('certification.moderation_team') }} · <x-relative-date :at="$message->created_at" />
+                        @if ($message->author_id === $this->certification->requested_by)<bdi dir="ltr">{{ '@'.$message->author->handle }}</bdi>@else{{ __('certification.moderation_team') }}@endif · <x-relative-date :at="$message->created_at" />
                         @if ($message->version)
                             · {{ __('certification.mine.proposed_version', ['version' => $message->version->version]) }}
                         @endif
                     </span>
-                    <p class="m-0 whitespace-pre-line">{{ $message->body }}</p>
+                    <p class="m-0 whitespace-pre-line" dir="auto">{{ $message->body }}</p>
                 </div>
             @empty
                 <flux:text>{{ __('certification.mine.no_message') }}</flux:text>

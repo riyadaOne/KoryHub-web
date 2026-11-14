@@ -33,6 +33,9 @@ test('la photo de profil est enregistrée et remplace l\'ancienne', function () 
     Livewire::test('pages::settings.profile')->set('photo', UploadedFile::fake()->image('b.webp'))->assertHasNoErrors();
 
     Storage::disk('public')->assertMissing($first)->assertExists($user->fresh()->avatar_path);
+
+    // Recette W01 : la photo remplace les initiales dans le menu de l'en-tête.
+    $this->get(route('dashboard'))->assertOk()->assertSee($user->fresh()->avatarUrl(), false);
 });
 
 test('une photo trop lourde ou qui n\'est pas une image est refusée', function (UploadedFile $file) {

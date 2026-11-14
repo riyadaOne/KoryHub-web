@@ -90,6 +90,8 @@ return [
         'unarchive' => 'Desarquivar',
         'archive_title' => 'Arquivar este módulo?',
         'archive_text' => 'Continua visível e descarregável, mas já não aceita novas versões.',
+        'unarchive_title' => 'Desarquivar este módulo?',
+        'unarchive_text' => 'Volta a aceitar novas versões.',
         'delete' => 'Eliminar o módulo',
         'delete_title' => 'Eliminar :name?',
         'delete_text' => 'Todas as suas versões e ficheiros são apagados. O nome não poderá ser reutilizado.',

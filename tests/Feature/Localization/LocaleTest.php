@@ -2,6 +2,7 @@
 
 use App\Enums\Locale;
 use App\Http\Middleware\SetLocale;
+use App\Notifications\NotificationText;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 
@@ -71,4 +72,14 @@ test('une date est écrite en UTC pour être affichée dans le fuseau du navigat
 
     expect($html)->toContain('datetime="2026-11-13T09:30:00Z"')
         ->and($html)->toContain('data-relative-date');
+});
+
+test('en arabe, le nom du module est isolé dans les notifications (le « @ » reste en tête)', function () {
+    app()->setLocale('ar');
+    expect(NotificationText::replacements(['module' => '@fatime-zakaria/facture'])['module'])
+        ->toBe("\u{2066}@fatime-zakaria/facture\u{2069}");
+
+    app()->setLocale('fr');
+    expect(NotificationText::replacements(['module' => '@fatime-zakaria/facture'])['module'])
+        ->toBe('@fatime-zakaria/facture');
 });

@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Enums\BackupKind;
+use App\Support\Bidi;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,11 @@ final class NotificationText
             if (is_scalar($value)) {
                 $replace[$key] = (string) $value;
             }
+        }
+
+        // Nom du module dans une phrase arabe : isolé, le « @ » reste en tête.
+        if (isset($replace['module'])) {
+            $replace['module'] = Bidi::isolate($replace['module']);
         }
 
         // Incident de sauvegarde (W08) : type traduit à l'affichage, dans la langue du lecteur.

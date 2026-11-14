@@ -186,7 +186,7 @@ new #[Title('modules.settings')] class extends Component {
 
     <div class="grid gap-2.5 rounded-lg border border-amber-500 p-4">
         <flux:heading class="text-amber-700! dark:text-amber-400!">{{ $this->module->status === \App\Enums\ModuleStatus::Archived ? __('modules.form.unarchive') : __('modules.form.archive') }}</flux:heading>
-        <flux:text>{{ __('modules.form.archive_text') }}</flux:text>
+        <flux:text>{{ $this->module->status === \App\Enums\ModuleStatus::Archived ? __('modules.form.unarchive_text') : __('modules.form.archive_text') }}</flux:text>
         <div>
             <flux:modal.trigger name="archive-module">
                 <flux:button data-test="archive-module-button">{{ $this->module->status === \App\Enums\ModuleStatus::Archived ? __('modules.form.unarchive') : __('modules.form.archive') }}</flux:button>
@@ -206,8 +206,8 @@ new #[Title('modules.settings')] class extends Component {
         </div>
     @endif
 
-    <x-confirm-step name="archive-module" :heading="$this->module->status === \App\Enums\ModuleStatus::Archived ? __('modules.form.unarchive') : __('modules.form.archive_title')">
-        {{ __('modules.form.archive_text') }}
+    <x-confirm-step name="archive-module" :heading="$this->module->status === \App\Enums\ModuleStatus::Archived ? __('modules.form.unarchive_title') : __('modules.form.archive_title')">
+        {{ $this->module->status === \App\Enums\ModuleStatus::Archived ? __('modules.form.unarchive_text') : __('modules.form.archive_text') }}
         <x-slot:action>
             <flux:button variant="primary" wire:click="toggleArchive" data-test="confirm-archive">{{ $this->module->status === \App\Enums\ModuleStatus::Archived ? __('modules.form.unarchive') : __('modules.form.archive') }}</flux:button>
         </x-slot:action>

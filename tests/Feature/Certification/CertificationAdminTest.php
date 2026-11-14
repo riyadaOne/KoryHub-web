@@ -108,9 +108,21 @@ test('S-64 : prendre le dossier ; accorder redemande le mot de passe', function 
 
     session(['auth.password_confirmed_at' => time()]);
     Livewire::test('pages::admin.certification', ['certification' => $this->certification])
+        ->call('grant')->assertHasErrors(['architectureComment', 'documentationComment'])->assertHasNoErrors('reason')
         ->set('architectureComment', 'Claire.')->set('documentationComment', 'Complète.')
         ->call('grant')->assertSee(__('certification.admin.granted'));
     expect($this->certification->fresh()->status)->toBe(CertificationStatus::Granted);
+});
+
+test('S-64 : après un refus sans motif, le refus motivé n\'affiche plus l\'erreur', function () {
+    $this->actingAs($this->admin);
+    $this->service->take($this->certification, $this->admin);
+    session(['auth.password_confirmed_at' => time()]);
+
+    Livewire::test('pages::admin.certification', ['certification' => $this->certification])
+        ->call('refuse')->assertHasErrors('reason')
+        ->set('reason', 'Pas de gestion des erreurs.')->call('refuse')
+        ->assertHasNoErrors()->assertSee(__('certification.admin.refused'));
 });
 
 test('« Certifiés seulement » ne garde que les modules dont la dernière version est certifiée', function () {

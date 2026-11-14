@@ -17,7 +17,14 @@ export async function renderArchitecture(root = document) {
 
     mermaidModule ??= (await import('mermaid')).default;
     const dark = document.documentElement.classList.contains('dark');
-    mermaidModule.initialize({ startOnLoad: false, securityLevel: 'strict', theme: dark ? 'dark' : 'neutral' });
+    // Étiquettes en texte SVG : les étiquettes HTML étaient mesurées trop courtes en arabe (recette W03).
+    mermaidModule.initialize({
+        startOnLoad: false,
+        securityLevel: 'strict',
+        theme: dark ? 'dark' : 'neutral',
+        htmlLabels: false,
+        flowchart: { htmlLabels: false },
+    });
 
     for (const container of containers) {
         const source = container.querySelector('[data-mermaid-source]')?.textContent ?? '';
