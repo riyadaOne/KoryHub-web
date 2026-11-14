@@ -103,10 +103,14 @@ class Module extends Model
         return $this->belongsToMany(Tag::class);
     }
 
-    /** @return HasMany<Review, $this> */
+    /**
+     * Avis visibles : un avis masqué par la modération n'est ni affiché ni compté (F-RCH-13).
+     *
+     * @return HasMany<Review, $this>
+     */
     public function reviews(): HasMany
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Review::class)->whereNull('hidden_at');
     }
 
     /** @return HasMany<Star, $this> */

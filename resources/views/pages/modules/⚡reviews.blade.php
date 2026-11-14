@@ -59,7 +59,8 @@ new #[Title('community.reviews.title')] class extends Component {
     #[Computed]
     public function mine(): ?Review
     {
-        return Auth::check() ? $this->module->reviews()->where('user_id', Auth::id())->first() : null;
+        // Avec un avis masqué par la modération : son auteur le voit encore (maquettes W07).
+        return Auth::check() ? Review::query()->where('module_id', $this->module->id)->where('user_id', Auth::id())->first() : null;
     }
 
     #[Computed]
@@ -186,6 +187,9 @@ new #[Title('community.reviews.title')] class extends Component {
                     </div>
                 </form>
             @elseif ($this->canReview)
+                @if ($this->mine?->hidden_at)
+                    <flux:callout icon="eye-slash" color="amber" data-test="review-hidden-mine"><flux:callout.heading>{{ __('moderation.review_hidden_mine') }}</flux:callout.heading></flux:callout>
+                @endif
                 <div class="flex flex-wrap gap-2">
                     <flux:button variant="primary" wire:click="edit" data-test="write-review">{{ $this->mine ? __('community.reviews.edit_mine') : __('community.reviews.write') }}</flux:button>
                     @if ($this->mine)
@@ -217,6 +221,7 @@ new #[Title('community.reviews.title')] class extends Component {
                                 @endif
                                 <x-rating :value="$review->rating" />
                                 <span class="text-xs text-zinc-500 dark:text-zinc-400"><x-relative-date :at="$review->created_at" />@if ($review->wasEdited()) · {{ __('community.reviews.edited') }}@endif</span>
+                                <span class="ms-auto"><livewire:report-button type="review" :target-id="$review->id" :key="'report-r-'.$review->id" /></span>
                             </div>
                             @if ($review->comment)
                                 <p class="m-0 whitespace-pre-line text-sm">{{ $review->comment }}</p>

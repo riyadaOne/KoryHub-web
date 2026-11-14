@@ -112,6 +112,15 @@ return [
     ],
 
     /*
+     * Modération (W07, F-MOD-11, F-MOD-12) : alerte des admins dès multiple_threshold signalements
+     * ouverts sur un même objet (rien n'est masqué automatiquement) ; relance après stale_hours.
+     */
+    'moderation' => [
+        'multiple_threshold' => 3,
+        'stale_hours' => 48,
+    ],
+
+    /*
      * Journal d'audit (TRD §21) : champs notés comme modifiés, sans leur valeur,
      * pour qu'aucune donnée personnelle ni aucun secret n'y entre.
      */

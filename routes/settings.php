@@ -12,6 +12,8 @@ Route::middleware(['auth'])->group(function () {
     Route::livewire('settings/notifications', 'pages::settings.notifications')->name('notifications.edit');
     // Mes téléchargements (S-46, F-RCH-14) : visibles par l'intéressé seul.
     Route::livewire('settings/downloads', 'pages::settings.downloads')->name('downloads.index');
+    // Mes signalements (S-48, F-MOD-09) : visibles par leur auteur seul.
+    Route::livewire('settings/reports', 'pages::settings.reports')->name('reports.mine');
     Route::livewire('settings/tokens/create', 'pages::settings.token-create')
         ->middleware('password.confirm')
         ->name('tokens.create');

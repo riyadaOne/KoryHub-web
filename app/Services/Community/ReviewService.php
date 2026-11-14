@@ -92,6 +92,7 @@ class ReviewService
     {
         $verified = Review::query()
             ->where('module_id', $module->id)
+            ->whereNull('hidden_at')
             ->whereIn('user_id', ModuleDownload::query()->select('user_id')->where('module_id', $module->id))
             ->selectRaw('AVG(rating) as average, COUNT(*) as total')
             ->first();

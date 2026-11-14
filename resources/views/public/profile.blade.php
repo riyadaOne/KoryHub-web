@@ -15,7 +15,7 @@
                 @if ($user->name)
                     <flux:heading size="xl" level="1">{{ $user->name }}</flux:heading>
                 @endif
-                <div class="font-mono text-sm" dir="ltr">{{ '@'.$user->handle }}</div>
+                <div class="flex items-center gap-2"><span class="font-mono text-sm" dir="ltr">{{ '@'.$user->handle }}</span><livewire:report-button type="user" :target-id="$user->id" :key="'report-u-'.$user->id" /></div>
                 <flux:text class="mt-1 text-sm">
                     @if ($country){{ $country }} · @endif{{ __('discover.member_since', ['date' => $user->created_at->locale(app()->getLocale())->isoFormat('MMMM YYYY')]) }}
                     · {{ trans_choice('discover.public_modules', $modules->count(), ['count' => $modules->count()]) }}

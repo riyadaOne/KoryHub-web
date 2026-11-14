@@ -20,6 +20,13 @@ enum NotificationType: string
     case CertificationRefused = 'certification_refused';
     case CertificationRevoked = 'certification_revoked';
     case AdminCertificationRequested = 'admin_certification_requested';
+    case VersionAtRisk = 'version_at_risk';
+    case VersionRemoved = 'version_removed';
+    case ReportReceived = 'report_received';
+    case ReportClosed = 'report_closed';
+    case AdminReportsMultiple = 'admin_reports_multiple';
+    case AdminReportStale = 'admin_report_stale';
+    case AccountSuspended = 'account_suspended';
     case CliLogin = 'cli_login';
     case TokenCreated = 'token_created';
     case TokenRevoked = 'token_revoked';
@@ -28,7 +35,7 @@ enum NotificationType: string
 
     public function isSecurity(): bool
     {
-        return in_array($this, [self::CliLogin, self::TokenCreated, self::TokenRevoked, self::TokenExpiring, self::PasswordChanged], true);
+        return in_array($this, [self::CliLogin, self::TokenCreated, self::TokenRevoked, self::TokenExpiring, self::PasswordChanged, self::AccountSuspended], true);
     }
 
     /** Types réglables sur S-43, par groupe affiché. */
@@ -39,15 +46,16 @@ enum NotificationType: string
 
     /**
      * Groupe sur S-43 : mine (mes kory), installed (kory téléchargés, F-INT-06), watched (modules
-     * suivis, F-RCH-09), security (toujours envoyées).
+     * suivis, F-RCH-09), reports (mes signalements, F-MOD-16), certification, admin, security (toujours envoyées).
      */
     public function group(): string
     {
         return match (true) {
             $this->isSecurity() => 'security',
-            in_array($this, [self::UpdateAvailable, self::VersionDeprecated], true) => 'installed',
+            in_array($this, [self::UpdateAvailable, self::VersionDeprecated, self::VersionAtRisk, self::VersionRemoved], true) => 'installed',
             in_array($this, [self::NewVersionWatched, self::ModuleArchived], true) => 'watched',
-            $this === self::AdminCertificationRequested => 'admin',
+            in_array($this, [self::AdminCertificationRequested, self::AdminReportsMultiple, self::AdminReportStale], true) => 'admin',
+            in_array($this, [self::ReportReceived, self::ReportClosed], true) => 'reports',
             in_array($this, [self::CertificationComplement, self::CertificationGranted, self::CertificationRefused, self::CertificationRevoked], true) => 'certification',
             default => 'mine',
         };

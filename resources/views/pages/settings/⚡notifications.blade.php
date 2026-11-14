@@ -59,7 +59,7 @@ new #[Title('notifications.preferences.title')] class extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (array_filter([[__('notifications.preferences.group_modules'), 'mine'], [__('notifications.preferences.group_installed'), 'installed'], [__('notifications.preferences.group_watched'), 'watched'], [__('notifications.preferences.group_certification'), 'certification'], auth()->user()->isAdmin() ? [__('notifications.preferences.group_admin'), 'admin'] : null]) as [$groupLabel, $group])
+                    @foreach (array_filter([[__('notifications.preferences.group_modules'), 'mine'], [__('notifications.preferences.group_installed'), 'installed'], [__('notifications.preferences.group_watched'), 'watched'], [__('notifications.preferences.group_reports'), 'reports'], [__('notifications.preferences.group_certification'), 'certification'], auth()->user()->isAdmin() ? [__('notifications.preferences.group_admin'), 'admin'] : null]) as [$groupLabel, $group])
                         <tr class="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50">
                             <td colspan="3" class="px-3 py-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">{{ $groupLabel }}</td>
                         </tr>

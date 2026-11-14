@@ -2,7 +2,7 @@
     En-tête de la fiche d'un kory (S-03 à S-06, maquette exemple-kory.html et maquettes W03) :
     catégorie et auteur, nom, description, badges, actions de l'auteur, bandeaux, onglets.
 --}}
-@props(['module', 'tab', 'version' => null, 'isAuthor' => false, 'filesCount' => null, 'versionsCount' => null, 'reviewsCount' => null])
+@props(['module', 'tab', 'version' => null, 'reportVersion' => null, 'isAuthor' => false, 'filesCount' => null, 'versionsCount' => null, 'reviewsCount' => null])
 
 @php
     $base = route('modules.show', ['author' => $module->author->handle, 'module' => $module->name]);
@@ -56,6 +56,12 @@
 
     <div class="flex flex-wrap gap-2">
         <livewire:module-actions :module-id="$module->id" :key="'actions-'.$module->id" />
+        {{-- Signaler (W07) : la version sur S-05, le module ailleurs. --}}
+        @if ($reportVersion)
+            <livewire:report-button type="version" :target-id="$reportVersion->id" :key="'report-v-'.$reportVersion->id" />
+        @else
+            <livewire:report-button type="module" :target-id="$module->id" :key="'report-m-'.$module->id" />
+        @endif
         @if ($isAuthor)
             <flux:button size="sm" icon="cog-6-tooth" :href="route('modules.settings', ['author' => $module->author->handle, 'module' => $module->name])" wire:navigate data-test="module-settings-link">{{ __('modules.settings') }}</flux:button>
         @endif
