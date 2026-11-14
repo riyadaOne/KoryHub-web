@@ -30,7 +30,7 @@ new #[Layout('layouts::admin')] #[Title('admin.audit.title')] class extends Comp
         <flux:link :href="route('admin.audit.index')" wire:navigate class="text-sm">← {{ __('admin.audit.title') }}</flux:link>
         <flux:heading size="xl" level="1" class="mt-2">{{ \App\Support\AuditPresenter::action($event->action) }}</flux:heading>
         <flux:text class="mt-1">
-            {{ $event->occurred_at->format('Y-m-d H:i:s') }} UTC
+            {{ \App\Support\LocalTime::format($event->occurred_at, 'Y-m-d H:i:s') }}
             · <span class="font-mono" dir="ltr">{{ $event->actor ? '@'.$event->actor->handle : __('admin.audit.system') }}</span>
             · {{ \App\Support\AuditPresenter::subjectType($event->subject_type) }} <span class="font-mono" dir="ltr">{{ \App\Support\AuditPresenter::subject($event) ?? $event->subject_id }}</span>
             · <span class="font-mono text-xs" dir="ltr">{{ $event->action }}</span>

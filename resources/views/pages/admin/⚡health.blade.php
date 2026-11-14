@@ -102,7 +102,7 @@ new #[Layout('layouts::admin')] #[Title('admin.health.title')] class extends Com
                         <tr class="border-t border-zinc-200 align-top dark:border-zinc-700" wire:key="{{ $run->id }}">
                             <td class="whitespace-nowrap px-3 py-2">{{ $run->kind->label() }}</td>
                             <td class="px-3 py-2"><x-status-badge :status="$run->status" /></td>
-                            <td class="whitespace-nowrap px-3 py-2">{{ $run->started_at->format('d/m/Y H:i') }}</td>
+                            <td class="whitespace-nowrap px-3 py-2">{{ \App\Support\LocalTime::format($run->started_at) }}</td>
                             <td class="whitespace-nowrap px-3 py-2">{{ $run->duration() !== null ? __('admin.health.seconds', ['count' => $run->duration()]) : '—' }}</td>
                             <td class="whitespace-nowrap px-3 py-2">{{ $run->size === null ? '—' : ($run->size < 1048576 ? __('admin.health.size_kb', ['size' => \Illuminate\Support\Number::format($run->size / 1024, 1)]) : __('admin.health.size_mb', ['size' => \Illuminate\Support\Number::format($run->size / 1048576, 1)])) }}</td>
                             <td class="px-3 py-2">{{ $run->note ?? '—' }}</td>

@@ -130,7 +130,7 @@ test('S-72 et S-60 : signal, sauvegardes, restauration, liste', function () {
         ->assertSee('data-test="tile-scheduler" data-ok="yes"', false)
         ->assertSee('data-test="tile-backup" data-ok="no"', false)
         ->assertSee('mysqldump : accès refusé')->assertSee(__('admin.health.kind.daily'))
-        ->assertSee('data-test="healthchecks-off"', false);
+        ->assertSee('data-test="healthchecks-off"', false)->assertSee(' WAT');
     $this->get($admin.'/')->assertOk()->assertSee('data-test="health-card"', false);
 });
 

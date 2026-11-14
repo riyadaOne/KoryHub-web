@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\Admin\CategoryService;
 use App\Services\Audit\AuditLogger;
 use App\Services\Moderation\ModerationRefused;
+use App\Support\LocalTime;
 use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 
@@ -78,7 +79,7 @@ test('journal d\'audit : filtres, détail avant et après, aucun bouton d\'écri
         ->assertSee('Correction.')->assertDontSee('Création par Achta.');
     $this->get($this->adminUrl.'/audit?action=category.created')->assertOk()->assertSee('@achta');
     $this->get($this->adminUrl.'/audit/'.$event->id)->assertOk()
-        ->assertSee('Ancienne')->assertSee('Nouvelle')->assertSee('Correction.')
+        ->assertSee(LocalTime::format($event->occurred_at, 'Y-m-d H:i:s'))->assertSee('Ancienne')->assertSee('Nouvelle')->assertSee('Correction.')
         ->assertSee(__('audit.redacted'))->assertDontSee('a@b.c')
         ->assertDontSee('data-test="confirm-', false);
 });

@@ -127,6 +127,9 @@ return [
      * la dernière sauvegarde (jamais la base de l'application) ; adresses de signal Healthchecks.io
      * (vides = rien n'est envoyé). Mot de passe des sauvegardes : BACKUP_ARCHIVE_PASSWORD.
      */
+    // Fuseau des heures exactes de l'administration (S-71, S-72) ; les dates restent stockées en UTC.
+    'display_timezone' => env('KORYHUB_DISPLAY_TIMEZONE', 'Africa/Ndjamena'),
+
     'backups' => [
         'restore_database' => env('BACKUP_RESTORE_DATABASE', 'koryhub_restore'),
     ],

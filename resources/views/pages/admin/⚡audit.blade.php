@@ -111,7 +111,7 @@ new #[Layout('layouts::admin')] #[Title('admin.audit.title')] class extends Comp
                 <tbody>
                     @foreach ($this->events as $event)
                         <tr class="border-t border-zinc-200 align-top dark:border-zinc-700" wire:key="{{ $event->id }}">
-                            <td class="whitespace-nowrap px-3 py-2"><a href="{{ route('admin.audit.show', $event->id) }}" wire:navigate>{{ $event->occurred_at->format('d/m/Y H:i') }}</a></td>
+                            <td class="whitespace-nowrap px-3 py-2"><a href="{{ route('admin.audit.show', $event->id) }}" wire:navigate>{{ \App\Support\LocalTime::format($event->occurred_at) }}</a></td>
                             <td class="whitespace-nowrap px-3 py-2 font-mono" dir="ltr">{{ $event->actor ? '@'.$event->actor->handle : __('admin.audit.system') }}</td>
                             <td class="whitespace-nowrap px-3 py-2">{{ \App\Support\AuditPresenter::action($event->action) }}</td>
                             <td class="px-3 py-2">{{ \App\Support\AuditPresenter::subjectType($event->subject_type) }} · <span class="font-mono" dir="ltr">{{ \App\Support\AuditPresenter::subject($event) ?? '—' }}</span></td>

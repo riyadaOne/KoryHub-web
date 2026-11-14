@@ -91,6 +91,7 @@ test('avertissement de sécurité : bandeau, audience prévenue, at_risk dans l\
     $this->get(route('modules.version', ['author' => 'moussa', 'module' => 'paiement', 'number' => '1.0.0']))
         ->assertSee('data-test="at-risk-banner"', false)->assertSee('Webhook non signé.');
     $result = $this->postJson('http://'.config('koryhub.domains.api').'/v1/audit', ['modules' => [['name' => '@moussa/paiement', 'version' => '1.0.0']]])->json('results.0');
+    $this->getJson('http://'.config('koryhub.domains.api').'/v1/modules/moussa/paiement/versions/1.0.0')->assertJsonPath('at_risk_message', 'Webhook non signé.');
     expect($result['state'])->toBe('at_risk')->and($result['message'])->toBe('Webhook non signé.')
         ->and(collect(app(PreliminaryChecks::class)->run($this->version->fresh()))->firstWhere('code', 'version_published')['passed'])->toBeFalse();
 

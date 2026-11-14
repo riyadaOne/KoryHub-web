@@ -93,6 +93,8 @@ class ModuleController extends Controller
             'sha256' => $v->archive_sha256,
             'size' => $v->archive_size,
             'deprecation_message' => $v->deprecation_message,
+            /** Avertissement de sécurité de l'équipe de modération (W07), ou null : kory pull l'affiche avant d'installer. */
+            'at_risk_message' => $v->at_risk_at !== null ? $v->at_risk_message : null,
             'requires' => $v->requirements->map(fn ($r) => [
                 'ecosystem' => $r->ecosystem,
                 'name' => $r->name,
