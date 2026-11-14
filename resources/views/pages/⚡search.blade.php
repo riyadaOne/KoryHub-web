@@ -137,6 +137,9 @@ new #[Title('search.title')] class extends Component {
                                 @if ($module->latestVersion)
                                     <flux:badge size="sm" :color="$module->latestVersion->status->color()->fluxColor()" data-test="result-version">{{ $module->latestVersion->version }}@if ($module->latestVersion->status === \App\Enums\VersionStatus::Deprecated) · {{ $module->latestVersion->status->label() }}@endif</flux:badge>
                                 @endif
+                                @if ($module->latestVersion?->isCertified())
+                                    <flux:badge size="sm" color="green" icon="check-badge" data-test="result-certified">{{ __('certification.badge') }}</flux:badge>
+                                @endif
                                 @if ($module->status === \App\Enums\ModuleStatus::Archived)
                                     <x-status-badge :status="$module->status" />
                                 @endif

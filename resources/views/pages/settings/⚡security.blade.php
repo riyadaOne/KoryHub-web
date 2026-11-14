@@ -175,6 +175,13 @@ new #[Title('kit.security_settings')] class extends Component {
 
     <flux:heading level="2" class="sr-only">{{ __('kit.security_settings') }}</flux:heading>
 
+    {{-- Administration (W06, F-AUT-22) : un admin sans double authentification est renvoyé ici. --}}
+    @if (session(\App\Http\Middleware\EnsureAdmin::SESSION_FLAG) && ! auth()->user()->hasEnabledTwoFactorAuthentication())
+        <x-warning-banner :heading="__('admin.two_factor_required')" class="mb-6" data-test="admin-two-factor-banner">
+            {{ __('admin.two_factor_required_text') }}
+        </x-warning-banner>
+    @endif
+
     <x-pages::settings.layout :heading="__('kit.update_password')" :subheading="__('kit.ensure_your_account_is_using_a')">
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
             <flux:input

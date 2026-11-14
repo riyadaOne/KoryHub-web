@@ -45,7 +45,7 @@ class SearchController extends Controller
                 /** La dernière version est dépréciée. */
                 'deprecated' => $m->latestVersion?->status === VersionStatus::Deprecated,
                 'archived' => $m->status->value === 'archived',
-                'certified' => false,
+                'certified' => (bool) $m->latestVersion?->isCertified(),
                 /** Note vérifiée moyenne, ou null (avis masqués : null). */
                 'rating_avg' => $m->reviews_hidden ? null : $m->rating_avg,
                 'rating_count' => $m->reviews_hidden ? 0 : $m->rating_count,

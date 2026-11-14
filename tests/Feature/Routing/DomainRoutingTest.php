@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,8 +32,14 @@ test("l'administration demande une connexion", function () {
     $this->get(koryhubUrl('admin'))->assertRedirect(route('login'));
 });
 
-test("l'administration répond à un compte connecté", function () {
+test("l'administration répond à un admin avec double authentification, 403 à un développeur (W06, F-AUT-22)", function () {
     $this->actingAs(User::factory()->create())
+        ->get(koryhubUrl('admin'))
+        ->assertForbidden();
+
+    $admin = User::factory()->create(['role' => Role::Admin]);
+    $admin->forceFill(['two_factor_secret' => encrypt('secret'), 'two_factor_confirmed_at' => now()])->save();
+    $this->actingAs($admin)
         ->get(koryhubUrl('admin'))
         ->assertOk();
 });

@@ -14,6 +14,9 @@
     <div class="flex flex-wrap items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400">
         @if ($module->latestVersion)
             <span class="font-mono" dir="ltr">{{ $module->latestVersion->version }}</span>
+            @if ($module->latestVersion->isCertified())
+                <flux:badge size="sm" color="green" icon="check-badge">{{ __('certification.badge') }}</flux:badge>
+            @endif
         @endif
         @if ($module->language)
             <span>{{ $module->language }}</span>

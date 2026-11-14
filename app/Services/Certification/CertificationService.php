@@ -13,6 +13,7 @@ use App\Models\ModuleVersion;
 use App\Models\User;
 use App\Notifications\ModuleNotification;
 use App\Services\Audit\AuditLogger;
+use App\Services\Search\ScoreCalculator;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -104,6 +105,111 @@ class CertificationService
         });
 
         $this->notifyAdmins($certification->fresh());
+    }
+
+    /** Admin : prend le dossier (en audit, attribué). */
+    public function take(Certification $certification, User $admin): void
+    {
+        $this->decide($certification, $admin, CertificationStatus::InAudit, [
+            'assigned_to' => $admin->id,
+            'audit_started_at' => $certification->audit_started_at ?? now(),
+        ]);
+    }
+
+    /** Admin : demande un complément ; le motif devient un message du dossier, l'auteur est prévenu. */
+    public function requestComplement(Certification $certification, User $admin, string $reason): void
+    {
+        $reason = $this->requireText($reason);
+        $this->decide($certification, $admin, CertificationStatus::ComplementRequired, [
+            'complement_requested_at' => now(),
+            'last_reminder_at' => null,
+        ], $reason, function (Certification $c) use ($admin, $reason) {
+            $c->messages()->create(['author_id' => $admin->id, 'body' => $reason]);
+        });
+
+        $certification->requester->notify(new ModuleNotification(NotificationType::CertificationComplement, $this->params($certification) + ['reason' => $reason]));
+    }
+
+    /** Admin : accorde le badge à la version du dossier, avec les commentaires repris dans le rapport. */
+    public function grant(Certification $certification, User $admin, string $architectureComment, string $documentationComment): void
+    {
+        $this->decide($certification, $admin, CertificationStatus::Granted, [
+            'decided_at' => now(),
+            'decided_by' => $admin->id,
+            'architecture_comment' => $this->requireText($architectureComment),
+            'documentation_comment' => $this->requireText($documentationComment),
+        ]);
+
+        $this->refreshScore($certification);
+        $certification->requester->notify(new ModuleNotification(NotificationType::CertificationGranted, $this->params($certification)));
+    }
+
+    /** Admin : refuse, avec un motif montré à l'auteur. */
+    public function refuse(Certification $certification, User $admin, string $reason): void
+    {
+        $reason = $this->requireText($reason);
+        $this->decide($certification, $admin, CertificationStatus::Refused, [
+            'decided_at' => now(),
+            'decided_by' => $admin->id,
+            'decision_reason' => $reason,
+        ], $reason);
+
+        $certification->requester->notify(new ModuleNotification(NotificationType::CertificationRefused, $this->params($certification) + ['reason' => $reason]));
+    }
+
+    /** Admin : révoque un badge accordé ; le rapport reste tel quel, la page fait foi. */
+    public function revoke(Certification $certification, User $admin, string $reason): void
+    {
+        $reason = $this->requireText($reason);
+        $this->decide($certification, $admin, CertificationStatus::Revoked, [
+            'revoked_at' => now(),
+            'revoked_by' => $admin->id,
+            'revoked_reason' => $reason,
+        ], $reason);
+
+        $this->refreshScore($certification);
+        $certification->requester->notify(new ModuleNotification(NotificationType::CertificationRevoked, $this->params($certification) + ['reason' => $reason]));
+    }
+
+    /**
+     * Transition par un admin : vérifiée, consignée dans l'audit avec son motif (F-MOD-15).
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    private function decide(Certification $certification, User $admin, CertificationStatus $next, array $attributes, ?string $reason = null, ?callable $also = null): void
+    {
+        if (! $admin->isAdmin()) {
+            throw new CertificationRefused('certification.errors.not_allowed');
+        }
+        if (! in_array($next, $certification->status->allowedNext(), true)) {
+            throw new InvalidTransition($certification->status, $next);
+        }
+
+        DB::transaction(function () use ($certification, $admin, $next, $attributes, $reason, $also) {
+            $previous = $certification->status;
+            $certification->forceFill(['status' => $next, ...$attributes])->save();
+            if ($also !== null) {
+                $also($certification);
+            }
+            $this->audit->record('certification.status_changed', $certification, ['status' => [$previous, $next]], $reason, $admin);
+        });
+    }
+
+    /** Le badge compte dans le score (TRD §14) : recalcul immédiat, sans attendre la tâche horaire. */
+    private function refreshScore(Certification $certification): void
+    {
+        $module = $certification->module->fresh(['latestVersion.grantedCertification']);
+        $module->forceFill(['score' => app(ScoreCalculator::class)->score($module), 'score_computed_at' => now()])->saveQuietly();
+    }
+
+    private function requireText(string $text): string
+    {
+        $text = trim($text);
+        if ($text === '') {
+            throw new CertificationRefused('certification.errors.reason_required');
+        }
+
+        return mb_substr($text, 0, 5000);
     }
 
     /** Relance chaque jour les dossiers en complément depuis 7 jours sans réponse ; renvoie le nombre. */

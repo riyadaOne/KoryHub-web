@@ -22,6 +22,11 @@
                 <flux:sidebar.item icon="home" :href="route('admin.home')" :current="request()->routeIs('admin.home')">
                     {{ __('common.dashboard') }}
                 </flux:sidebar.item>
+                <flux:sidebar.group :heading="__('admin.moderation')">
+                    <flux:sidebar.item icon="check-badge" :href="route('admin.certifications.index')" :current="request()->routeIs('admin.certifications.*')" :badge="\App\Models\Certification::query()->whereIn('status', \App\Enums\CertificationStatus::open())->count() ?: null" data-test="admin-certifications-link">
+                        {{ __('certification.admin.title') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />

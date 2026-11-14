@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Locale;
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Blade;
 
@@ -39,7 +40,10 @@ test("l'espace connecté reprend l'en-tête public avec le menu du compte", func
 });
 
 test("l'administration affiche la mention Administration", function () {
-    $this->actingAs(User::factory()->create())
+    // Depuis W06, l'administration est réservée aux admins avec double authentification.
+    $admin = User::factory()->create(['role' => Role::Admin]);
+    $admin->forceFill(['two_factor_secret' => encrypt('secret'), 'two_factor_confirmed_at' => now()])->save();
+    $this->actingAs($admin)
         ->get(spaceUrl('admin'))
         ->assertOk()
         ->assertSee('data-test="admin-badge"', false)

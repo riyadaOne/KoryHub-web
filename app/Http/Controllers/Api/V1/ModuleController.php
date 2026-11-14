@@ -44,8 +44,8 @@ class ModuleController extends Controller
             'latest_version' => $found->latestVersion?->version,
             'description' => $found->description,
             'language' => $found->language,
-            /** Certification (W06) : toujours false pour l'instant. */
-            'certified' => false,
+            /** Dernière version stable certifiée « Vérifié en Prod » (W06). */
+            'certified' => (bool) $found->latestVersion?->isCertified(),
             /** Téléchargements, toutes versions. */
             'download_count' => $found->download_count,
             /** Auteur : nom @auteur et pays (code ISO), s'il est renseigné. */

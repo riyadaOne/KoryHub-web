@@ -46,7 +46,7 @@ class ScoreCalculator
             ->sum('count');
 
         $rating = $module->reviews_hidden ? 0.0 : $this->rating($module, $weights['prior_count'], $weights['prior_mean']);
-        $certification = 0.0; // W06 : 1 si la dernière version est certifiée
+        $certification = $module->latestVersion?->isCertified() ? 1.0 : 0.0; // dernière version stable certifiée (W06)
 
         return round(
             $weights['downloads'] * log(1 + $downloads)

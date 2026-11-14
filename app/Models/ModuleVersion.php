@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CertificationStatus;
 use App\Enums\License;
 use App\Enums\VersionStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -105,6 +107,21 @@ class ModuleVersion extends Model
     public function requirements(): HasMany
     {
         return $this->hasMany(VersionRequirement::class, 'version_id')->orderBy('ecosystem')->orderBy('name');
+    }
+
+    /**
+     * Dossier accordé à cette version (badge « Vérifié en Prod », F-MOD-04) ; une révocation l'en retire.
+     *
+     * @return HasOne<Certification, $this>
+     */
+    public function grantedCertification(): HasOne
+    {
+        return $this->hasOne(Certification::class, 'version_id')->where('status', CertificationStatus::Granted);
+    }
+
+    public function isCertified(): bool
+    {
+        return $this->grantedCertification !== null;
     }
 
     public function isPrerelease(): bool

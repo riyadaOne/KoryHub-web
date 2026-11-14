@@ -144,6 +144,9 @@ new #[Title('modules.tabs.versions')] class extends Component {
                             <td class="px-3.5 py-2.5">
                                 <div class="flex flex-wrap gap-1.5">
                                     <x-status-badge :status="$v->status" />
+                                    @if ($v->isCertified())
+                                        <flux:badge size="sm" color="green" icon="check-badge" data-test="certified-{{ $v->version }}">{{ __('certification.badge') }}</flux:badge>
+                                    @endif
                                     @if ($v->isPrerelease())
                                         <flux:badge size="sm" color="zinc">{{ __('modules.versions.prerelease') }}</flux:badge>
                                     @endif

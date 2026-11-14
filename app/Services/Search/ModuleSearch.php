@@ -82,7 +82,8 @@ class ModuleSearch
             $query->where('language', $filters['language']);
         }
         if (! empty($filters['certified'])) {
-            $query->whereRaw('1 = 0'); // Certification en W06 : aucun module certifié pour l'instant.
+            // Dernière version stable certifiée (badge « Vérifié en Prod », W06).
+            $query->whereHas('latestVersion.grantedCertification');
         }
     }
 
