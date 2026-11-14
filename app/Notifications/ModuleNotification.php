@@ -53,6 +53,15 @@ class ModuleNotification extends Notification implements ShouldQueue
             $message->line(__('notifications.detail_reason', $replace));
         }
 
+        // Rapport du lundi (W08, F-ADM-10) : une ligne par élément, disponibilité non mesurée avant la MEP.
+        if ($this->type === NotificationType::AdminWeeklyReport) {
+            $message->line(__('notifications.admin_weekly_report.uptime'));
+            foreach (['backups', 'reports', 'certifications', 'accounts', 'modules'] as $line) {
+                $message->line(__("notifications.admin_weekly_report.{$line}", $replace));
+            }
+            $message->line(! empty($this->params['restore']) ? __('notifications.admin_weekly_report.restore', $replace) : __('notifications.admin_weekly_report.restore_none'));
+        }
+
         return $message->action(__("notifications.{$kind}.action"), NotificationText::url($kind, $this->params));
     }
 }

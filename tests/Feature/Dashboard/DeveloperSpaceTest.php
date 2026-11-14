@@ -53,7 +53,7 @@ test('S-31 : toutes les notifications, filtre non lues, tout marquer comme lu, o
         ->call('markAllRead');
     expect($this->user->unreadNotifications()->count())->toBe(0);
 
-    $id = $this->user->notifications()->first()->id;
+    $id = $this->user->notifications()->get()->first(fn ($n) => $n->data['params']['version'] === '1.1.0')->id;
     $this->user->notifications()->update(['read_at' => null]);
     Livewire::actingAs($this->user)->test('pages::notifications')->call('open', $id)
         ->assertRedirect(route('modules.version', ['author' => 'awa-diop', 'module' => 'orange-money-ci', 'number' => '1.1.0']));

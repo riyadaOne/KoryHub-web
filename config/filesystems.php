@@ -30,6 +30,13 @@ return [
 
     'disks' => [
 
+        // Sauvegardes de la base (W08) : zip chiffré ; copie hors du serveur en MEP (TRD §25.3).
+        'backups' => [
+            'driver' => 'local',
+            'root' => storage_path('app/backups'),
+            'throw' => true,
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),

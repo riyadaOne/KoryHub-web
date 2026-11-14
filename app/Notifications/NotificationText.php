@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Enums\BackupKind;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,11 @@ final class NotificationText
             if (is_scalar($value)) {
                 $replace[$key] = (string) $value;
             }
+        }
+
+        // Incident de sauvegarde (W08) : type traduit à l'affichage, dans la langue du lecteur.
+        if (is_string($params['backup_kind'] ?? null)) {
+            $replace['what'] = __('admin.health.incident', ['kind' => BackupKind::tryFrom($params['backup_kind'])?->label() ?? $params['backup_kind']]);
         }
 
         $expires = $params['expires_at'] ?? null;

@@ -121,6 +121,20 @@ return [
     ],
 
     /*
+     * Sauvegardes et supervision (W08, TRD §25.3, §25.4) : base où le test de restauration charge
+     * la dernière sauvegarde (jamais la base de l'application) ; adresses de signal Healthchecks.io
+     * (vides = rien n'est envoyé). Mot de passe des sauvegardes : BACKUP_ARCHIVE_PASSWORD.
+     */
+    'backups' => [
+        'restore_database' => env('BACKUP_RESTORE_DATABASE', 'koryhub_restore'),
+    ],
+
+    'healthchecks' => [
+        'heartbeat' => env('HEALTHCHECKS_HEARTBEAT_URL', ''),
+        'backup' => env('HEALTHCHECKS_BACKUP_URL', ''),
+    ],
+
+    /*
      * Journal d'audit (TRD §21) : champs notés comme modifiés, sans leur valeur,
      * pour qu'aucune donnée personnelle ni aucun secret n'y entre.
      */

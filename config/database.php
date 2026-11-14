@@ -84,6 +84,8 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // Sauvegardes (W08) : dossier de mysqldump et mysql, s'ils ne sont pas dans le PATH.
+            'dump' => ['dump_binary_path' => env('DB_DUMP_BINARY_PATH', '')],
         ],
 
         /*

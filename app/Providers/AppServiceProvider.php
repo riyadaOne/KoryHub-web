@@ -7,6 +7,8 @@ use App\Services\Certification\Reports\ChromeReportRenderer;
 use App\Services\Certification\Reports\ReportRenderer;
 use App\Services\Modules\Secrets\GitleaksScanner;
 use App\Services\Modules\Secrets\SecretScanner;
+use App\Services\Operations\DatabaseBackup;
+use App\Services\Operations\SpatieDatabaseBackup;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
@@ -29,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Rapport de certification PDF (TRD §15) : spatie/laravel-pdf ; faux moteur dans les tests.
         $this->app->bind(ReportRenderer::class, ChromeReportRenderer::class);
+
+        // Sauvegardes de la base (W08) : spatie/laravel-backup ; fausse sauvegarde dans les tests.
+        $this->app->bind(DatabaseBackup::class, SpatieDatabaseBackup::class);
     }
 
     /**

@@ -32,4 +32,6 @@ Route::middleware(['auth', 'verified', EnsureAdmin::class])->group(function () {
     Route::livewire('audit', 'pages::admin.audit')->name('audit.index');
     Route::livewire('audit/{event}', 'pages::admin.audit-event')->name('audit.show');
     Route::livewire('settings', 'pages::admin.settings')->name('settings');
+    // Supervision et sauvegardes (S-72), lecture seule.
+    Route::livewire('health', 'pages::admin.health')->name('health');
 });

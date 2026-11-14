@@ -25,6 +25,16 @@
                 <flux:text>{{ __('certification.admin.to_review_detail', ['requested' => (clone $open)->where('status', \App\Enums\CertificationStatus::Requested)->count(), 'audit' => (clone $open)->where('status', \App\Enums\CertificationStatus::InAudit)->count()]) }}</flux:text>
                 <div><flux:button variant="primary" size="sm" :href="route('admin.certifications.index')" wire:navigate>{{ __('certification.mine.open') }}</flux:button></div>
             </div>
+            {{-- Supervision (W08) : dernière sauvegarde et dernier test de restauration. --}}
+            @php($lastBackup = \App\Models\BackupRun::query()->whereIn('kind', [\App\Enums\BackupKind::Daily, \App\Enums\BackupKind::Monthly])->latest('started_at')->first())
+            @php($lastRestore = \App\Models\BackupRun::query()->where('kind', \App\Enums\BackupKind::RestoreTest)->latest('started_at')->first())
+            @php($healthBorder = $lastBackup?->status === \App\Enums\BackupStatus::Failed ? 'border-red-600' : 'border-zinc-200 dark:border-zinc-700')
+            <div class="grid gap-3 rounded-lg border bg-white p-5 dark:bg-zinc-900 {{ $healthBorder }}" data-test="health-card">
+                <flux:heading>{{ __('admin.health.title') }}</flux:heading>
+                <flux:text>{{ __('admin.health.backup') }} : {{ $lastBackup ? $lastBackup->status->label().' · '.$lastBackup->started_at->diffForHumans() : __('admin.health.none') }}</flux:text>
+                <flux:text>{{ __('admin.health.restore') }} : {{ $lastRestore ? $lastRestore->status->label().' · '.$lastRestore->started_at->diffForHumans() : __('admin.health.none') }}</flux:text>
+                <div><flux:button size="sm" :href="route('admin.health')" wire:navigate>{{ __('certification.mine.open') }}</flux:button></div>
+            </div>
             {{-- Semaine (W08) : nouveaux comptes et modules publics des 7 derniers jours. --}}
             <div class="grid gap-3 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-900" data-test="week-card">
                 <flux:heading>{{ __('admin.home.week') }}</flux:heading>

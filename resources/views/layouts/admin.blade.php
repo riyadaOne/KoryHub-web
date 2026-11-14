@@ -36,6 +36,7 @@
                 <flux:sidebar.group :heading="__('admin.platform')">
                     <flux:sidebar.item icon="tag" :href="route('admin.categories.index')" :current="request()->routeIs('admin.categories.*')" data-test="admin-categories-link">{{ __('admin.categories.title') }}</flux:sidebar.item>
                     <flux:sidebar.item icon="document-magnifying-glass" :href="route('admin.audit.index')" :current="request()->routeIs('admin.audit.*')" data-test="admin-audit-link">{{ __('admin.audit.title') }}</flux:sidebar.item>
+                    <flux:sidebar.item icon="heart" :href="route('admin.health')" :current="request()->routeIs('admin.health')" data-test="admin-health-link">{{ __('admin.health.title') }}</flux:sidebar.item>
                     <flux:sidebar.item icon="cog-6-tooth" :href="route('admin.settings')" :current="request()->routeIs('admin.settings')" data-test="admin-settings-link">{{ __('admin.settings.title') }}</flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>

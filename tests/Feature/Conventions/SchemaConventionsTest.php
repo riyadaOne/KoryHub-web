@@ -50,6 +50,8 @@ const TABLES_WITHOUT_SOFT_DELETES = [
     'certification_messages',
     // Rapport de certification : jamais réécrit (T-35).
     'certification_reports',
+    // Sauvegardes : historique en ajout seul, sans suppression logique (BACKEND-SCHEMA §4.6).
+    'backup_runs',
 ];
 
 /** Tables de liaison : clé primaire composée (BACKEND-SCHEMA §4.2), sans colonne id ni suppression logique. */
