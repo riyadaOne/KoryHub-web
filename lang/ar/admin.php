@@ -72,6 +72,8 @@ return [
         'size' => 'الحجم',
         'note' => 'ملاحظة',
         'seconds' => ':count ث',
+        'size_kb' => ':size ك.ب',
+        'size_mb' => ':size م.ب',
         'incident' => 'فشل :kind',
         'restore_note' => 'استُعيد :tables جدولًا، :rows سطرًا',
         'kind' => [

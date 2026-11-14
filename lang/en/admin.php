@@ -72,6 +72,8 @@ return [
         'size' => 'Size',
         'note' => 'Note',
         'seconds' => ':count s',
+        'size_kb' => ':size KB',
+        'size_mb' => ':size MB',
         'incident' => ':kind failed',
         'restore_note' => ':tables tables restored, :rows rows',
         'kind' => [
