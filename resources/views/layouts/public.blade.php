@@ -66,7 +66,13 @@
 
         <footer class="border-t border-zinc-200 dark:border-zinc-800">
             <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 px-4 py-6 text-sm text-zinc-600 lg:px-6 dark:text-zinc-400">
-                <a href="{{ route('docs.home') }}" class="hover:text-zinc-900 dark:hover:text-zinc-50">{{ __('common.documentation') }}</a>
+                {{-- Pied de page (W09) : documentation et pages publiques S-10 à S-12. --}}
+                <nav class="flex flex-wrap gap-4" aria-label="{{ __('docs.footer') }}" data-test="footer-links">
+                    <a href="{{ route('docs.home') }}" class="hover:text-zinc-900 dark:hover:text-zinc-50">{{ __('common.documentation') }}</a>
+                    <a href="{{ route('governance') }}" class="hover:text-zinc-900 dark:hover:text-zinc-50">{{ __('docs.public.governance') }}</a>
+                    <a href="{{ route('terms') }}" class="hover:text-zinc-900 dark:hover:text-zinc-50">{{ __('docs.public.terms') }}</a>
+                    <a href="{{ route('privacy') }}" class="hover:text-zinc-900 dark:hover:text-zinc-50">{{ __('docs.public.privacy') }}</a>
+                </nav>
 
                 <div class="flex flex-wrap items-center gap-1" role="group" aria-label="{{ __('common.language') }}">
                     @foreach (\App\Enums\Locale::cases() as $locale)

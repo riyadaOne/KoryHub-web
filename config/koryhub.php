@@ -53,9 +53,11 @@ return [
     'cli' => [
         'minimum_version' => env('KORYHUB_CLI_MINIMUM_VERSION', '0.1.0'),
         'latest_version' => env('KORYHUB_CLI_LATEST_VERSION', '0.1.0'),
-        // Commandes d'installation affichées sur l'accueil (TRD §18 ; scripts livrés en K05).
-        'install_windows' => 'irm https://koryhub.dev/install.ps1 | iex',
-        'install_unix' => 'curl -fsSL https://koryhub.dev/install.sh | sh',
+        // Commandes d'installation (TRD §18.1, K05) : scripts servis par le site (/install.ps1, /install.sh).
+        'install_windows' => 'irm '.rtrim((string) env('APP_URL', 'https://koryhub.dev'), '/').'/install.ps1 | iex',
+        'install_unix' => 'curl -fsSL '.rtrim((string) env('APP_URL', 'https://koryhub.dev'), '/').'/install.sh | sh',
+        // Exécutables et checksums.txt : {download_url}/{version}/ ; R2 public en MEP, public/cli/ en local (décision 3a).
+        'download_url' => env('KORYHUB_CLI_DOWNLOAD_URL', rtrim((string) env('APP_URL', 'https://koryhub.dev'), '/').'/cli'),
     ],
 
     /*

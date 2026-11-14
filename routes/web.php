@@ -1,11 +1,20 @@
 <?php
 
 use App\Http\Controllers\DiscoverController;
+use App\Http\Controllers\DocsController;
+use App\Http\Controllers\InstallController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ModulePageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DiscoverController::class, 'home'])->name('home');
+
+// Pages publiques (S-10 à S-12, W09) et scripts d'installation du CLI (K05, TRD §18.1).
+Route::get('governance', [DocsController::class, 'publicPage'])->defaults('page', 'governance')->name('governance');
+Route::get('terms', [DocsController::class, 'publicPage'])->defaults('page', 'terms')->name('terms');
+Route::get('privacy', [DocsController::class, 'publicPage'])->defaults('page', 'privacy')->name('privacy');
+Route::get('install.ps1', [InstallController::class, 'powershell'])->name('install.windows');
+Route::get('install.sh', [InstallController::class, 'shell'])->name('install.unix');
 
 Route::post('locale/{locale}', LocaleController::class)->name('locale.update');
 

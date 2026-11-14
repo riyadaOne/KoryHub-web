@@ -34,7 +34,7 @@ test('S-01 : « Mis en avant » seulement si l\'admin a coché un module ; réce
         ->assertSee('data-test="recent"', false)
         ->assertSee('@moussa/')
         ->assertDontSee('brouillon')
-        ->assertSee('irm https://koryhub.dev/install.ps1 | iex')
+        ->assertSee(config('koryhub.cli.install_windows'))
         ->assertSee('Payments');
 
     $this->public->forceFill(['is_featured' => true, 'featured_at' => now()])->save();
