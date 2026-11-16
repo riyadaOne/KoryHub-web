@@ -42,7 +42,7 @@ class DemoUsersSeeder extends Seeder
 
     public function run(): void
     {
-        $password = env('KORYHUB_DEMO_PASSWORD');
+        $password = config('koryhub.demo.password');
 
         if (blank($password) || app()->isProduction()) {
             throw new RuntimeException('Comptes de démonstration : KORYHUB_DEMO_PASSWORD manquant, ou environnement de production.');
@@ -84,8 +84,9 @@ class DemoUsersSeeder extends Seeder
     /**
      * Jetons du CLI de démonstration (W02) : un de chaque statut sur le compte @moussa, écrits
      * directement pour n'envoyer aucun e-mail. Leurs valeurs en clair ne sont jamais connues.
+     * Repris par ShowcaseSeeder.
      */
-    private function seedTokens(User $user): void
+    public function seedTokens(User $user): void
     {
         $tokens = [
             ['kory · Windows', TokenOrigin::CliLogin, now()->subMinutes(2), now()->addDays(90), null, now()->subMinute()],

@@ -140,6 +140,16 @@ return [
     ],
 
     /*
+     * Données de démonstration (DON-09), jamais en production : mot de passe des comptes, et boîte
+     * réelle du jeu vitrine (ShowcaseSeeder), déclinée en adresses « boite+compte@domaine ». Lues ici
+     * et non par env() dans les seeders, pour fonctionner avec la configuration en cache.
+     */
+    'demo' => [
+        'password' => env('KORYHUB_DEMO_PASSWORD'),
+        'showcase_mailbox' => env('KORYHUB_SHOWCASE_MAILBOX'),
+    ],
+
+    /*
      * Journal d'audit (TRD §21) : champs notés comme modifiés, sans leur valeur,
      * pour qu'aucune donnée personnelle ni aucun secret n'y entre.
      */
