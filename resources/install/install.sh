@@ -2,11 +2,13 @@
 # Installation de kory sous macOS et Linux (K05, TRD §18.1) : curl -fsSL https://koryhub.dev/install.sh | sh
 # Télécharge kory_<os>_<arch> et checksums.txt, vérifie l'empreinte SHA-256, installe dans
 # ~/.local/bin (sans sudo) et explique comment l'ajouter au PATH. Empreinte différente : rien n'est
-# installé. Le site remplace __KORY_VERSION__ et __KORY_DOWNLOAD_URL__ en servant ce fichier.
+# installé. Règle ensuite l'adresse de l'API du site qui sert le script. Le site remplace
+# __KORY_VERSION__, __KORY_DOWNLOAD_URL__ et __KORY_API_URL__ en servant ce fichier.
 set -eu
 
 VERSION='__KORY_VERSION__'
 BASE_URL='__KORY_DOWNLOAD_URL__'
+API_URL='__KORY_API_URL__'
 DIR="${HOME}/.local/bin"
 
 case "${LANG:-en}" in
@@ -64,6 +66,7 @@ mkdir -p "$DIR"
 mv "${TMP}/${NAME}" "${DIR}/kory"
 chmod 755 "${DIR}/kory"
 echo "$T_INSTALLED ${DIR}/kory"
+"${DIR}/kory" config set api-url "$API_URL"
 
 case ":${PATH}:" in
   *":${DIR}:"*) ;;

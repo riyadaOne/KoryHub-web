@@ -1,14 +1,16 @@
 # Installation de kory sous Windows (K05, TRD §18.1) : irm https://koryhub.dev/install.ps1 | iex
 # Télécharge kory_windows_<arch>.exe et checksums.txt, vérifie l'empreinte SHA-256, installe dans
 # %LOCALAPPDATA%\Programs\kory (sans droit d'administrateur) et ajoute ce dossier au PATH de
-# l'utilisateur. Empreinte différente : rien n'est installé. Le site remplace __KORY_VERSION__ et
-# __KORY_DOWNLOAD_URL__ en servant ce fichier. Pas de « exit » : avec « iex », il fermerait la fenêtre.
+# l'utilisateur, puis règle l'adresse de l'API du site qui sert le script. Empreinte différente : rien
+# n'est installé. Le site remplace __KORY_VERSION__, __KORY_DOWNLOAD_URL__ et __KORY_API_URL__ en servant
+# ce fichier. Pas de « exit » : avec « iex », il fermerait la fenêtre.
 
 & {
     $ErrorActionPreference = 'Stop'
     $ProgressPreference = 'SilentlyContinue'
     $Version = '__KORY_VERSION__'
     $BaseUrl = '__KORY_DOWNLOAD_URL__'
+    $ApiUrl = '__KORY_API_URL__'
 
     $texts = @{
         en = @{ download = 'Downloading...'; verified = 'SHA-256 checksum verified'; mismatch = 'Checksum mismatch: the downloaded file is not the published one.'; nothing = 'Nothing was installed.'; installed = 'Installed in'; path = 'Folder added to your PATH.'; next = 'Open a new terminal, then type: kory version'; failed = 'Installation failed:' }
@@ -57,6 +59,7 @@
             [Environment]::SetEnvironmentVariable('Path', (($entries + $dir) | Where-Object { $_ }) -join ';', 'User')
             Write-Host $t.path
         }
+        & $target config set api-url $ApiUrl
         Write-Host $t.next -ForegroundColor Yellow
     } catch {
         Write-Host "$($t.failed) $($_.Exception.Message)" -ForegroundColor Red

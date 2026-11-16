@@ -82,11 +82,14 @@ test('pages publiques S-10 à S-12 et liens du pied de page', function () {
 });
 
 test('scripts d\'installation servis en texte, avec la version publiée et l\'adresse des exécutables', function () {
-    config(['koryhub.cli.latest_version' => '0.7.0', 'koryhub.cli.download_url' => 'https://cli.example.test/kory']);
+    config(['koryhub.cli.latest_version' => '0.7.0', 'koryhub.cli.download_url' => 'https://cli.example.test/kory',
+        'app.url' => 'https://koryhub.site', 'koryhub.domains.api' => 'api.koryhub.site']);
 
     foreach (['install.windows' => '$Version = \'0.7.0\'', 'install.unix' => "VERSION='0.7.0'"] as $route => $line) {
         $response = $this->get(route($route))->assertOk()->assertHeader('Content-Type', 'text/plain; charset=utf-8');
         expect($response->getContent())->toContain($line)->toContain('https://cli.example.test/kory')
-            ->not->toContain('__KORY_')->toContain('SHA');
+            ->not->toContain('__KORY_')->toContain('SHA')
+            // L'adresse de l'API du site qui sert le script est réglée après l'installation.
+            ->toContain('https://api.koryhub.site')->toContain('config set api-url');
     }
 });

@@ -24,9 +24,13 @@ class InstallController extends Controller
 
     private function script(string $name): Response
     {
+        // Adresse de l'API du site qui sert le script : le CLI installé la vise sans réglage (démo CADEV).
+        $scheme = parse_url((string) config('app.url'), PHP_URL_SCHEME) ?: 'https';
+        $apiUrl = $scheme.'://'.config('koryhub.domains.api');
+
         $content = str_replace(
-            ['__KORY_VERSION__', '__KORY_DOWNLOAD_URL__'],
-            [(string) config('koryhub.cli.latest_version'), rtrim((string) config('koryhub.cli.download_url'), '/')],
+            ['__KORY_VERSION__', '__KORY_DOWNLOAD_URL__', '__KORY_API_URL__'],
+            [(string) config('koryhub.cli.latest_version'), rtrim((string) config('koryhub.cli.download_url'), '/'), $apiUrl],
             File::get(resource_path('install/'.$name)),
         );
 
