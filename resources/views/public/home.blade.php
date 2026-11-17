@@ -18,22 +18,26 @@
         </section>
 
         @if ($cadev)
-            {{-- Bloc CADEV 2026 (jury) : petite carte inclinee dans la marge, a cote de la recherche (sous la recherche en dessous de 1280 px) ; se redresse au survol ; masquee apres config('koryhub.cadev.until'). --}}
-            <aside class="mx-auto mt-8 grid w-full max-w-[300px] gap-2 rounded-xl border border-accent/40 bg-white p-2.5 shadow-lg shadow-accent/10 transition-transform duration-300 xl:absolute xl:top-10 xl:-end-12 xl:mt-0 xl:w-[220px] min-[1400px]:-end-20 min-[1400px]:w-[250px] xl:rotate-[12deg] xl:hover:rotate-0 xl:hover:scale-110 xl:focus-within:rotate-0 xl:focus-within:scale-110 dark:bg-zinc-900" data-test="cadev">
-                <div class="flex items-center justify-between gap-1">
+            {{-- Bloc CADEV 2026 (jury) : carte inclinee a 12 degres dans la marge droite, la recherche restant centree (360 px a partir de 1536 px, 240 px de 1280 a 1535 px, sous la recherche en dessous) ; se redresse au survol ; masquee apres config('koryhub.cadev.until'). --}}
+            <aside class="mx-auto mt-8 grid w-full max-w-[420px] gap-3 rounded-2xl border border-accent/40 bg-white p-4 shadow-xl shadow-accent/10 transition-transform duration-300 xl:absolute xl:top-6 xl:-end-12 xl:mt-0 xl:w-[240px] xl:gap-2 xl:p-3 2xl:-end-[130px] 2xl:w-[360px] 2xl:gap-3 2xl:p-4 xl:rotate-[12deg] xl:hover:rotate-0 xl:focus-within:rotate-0 dark:bg-zinc-900" data-test="cadev">
+                <div class="flex items-center justify-between gap-2">
                     <flux:badge color="teal" size="sm">{{ __('discover.cadev_badge') }}</flux:badge>
-                    <span class="text-[11px] font-medium text-zinc-600 dark:text-zinc-300">{{ __('discover.cadev_video') }}</span>
+                    <flux:text class="text-xs">{{ __('discover.cadev_label') }}</flux:text>
                 </div>
-                <video controls preload="none" playsinline class="aspect-video w-full rounded-md bg-black" @if ($cadev['poster_url']) poster="{{ $cadev['poster_url'] }}" @endif data-test="cadev-video">
+                <flux:heading size="lg" level="2">{{ __('discover.cadev_video') }}</flux:heading>
+                <video controls preload="none" playsinline class="aspect-video w-full rounded-lg bg-black" @if ($cadev['poster_url']) poster="{{ $cadev['poster_url'] }}" @endif data-test="cadev-video">
                     <source src="{{ $cadev['video_url'] }}" type="video/mp4" />
                     <a href="{{ $cadev['video_url'] }}">{{ __('discover.cadev_download') }}</a>
                 </video>
-                <div class="grid gap-1">
-                    <span class="text-[10px] font-semibold uppercase text-zinc-500 dark:text-zinc-400">{{ __('discover.cadev_team') }}</span>
+                <div class="grid gap-2">
+                    <flux:text class="text-xs font-semibold uppercase">{{ __('discover.cadev_team') }}</flux:text>
                     @foreach ($cadev['team'] as $member)
-                        <a href="https://github.com/{{ $member['github'] }}" target="_blank" rel="noopener" class="grid rounded-md px-1.5 py-1 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800" title="{{ $member['role'] === 'founder' ? __('discover.cadev_role_founder') : __('discover.cadev_role_frontend') }}" data-test="cadev-member">
-                            <span class="font-medium">{{ $member['name'] }}</span>
-                            <span class="text-[11px] text-accent-content" dir="ltr">{{ 'github.com/'.$member['github'] }}</span>
+                        <a href="https://github.com/{{ $member['github'] }}" target="_blank" rel="noopener" class="flex flex-wrap items-center justify-between gap-x-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm hover:border-accent dark:border-zinc-700" data-test="cadev-member">
+                            <span class="grid">
+                                <span class="font-medium">{{ $member['name'] }}</span>
+                                <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ $member['role'] === 'founder' ? __('discover.cadev_role_founder') : __('discover.cadev_role_frontend') }}</span>
+                            </span>
+                            <span class="text-xs text-accent-content" dir="ltr">{{ 'github.com/'.$member['github'] }}</span>
                         </a>
                     @endforeach
                 </div>
