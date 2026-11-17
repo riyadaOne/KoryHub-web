@@ -13,4 +13,11 @@ return [
     'public_modules' => '{0} aucun kory public|{1} :count kory public|[2,*] :count kory publics',
     'profile_empty' => 'Aucun kory public pour l\'instant',
     'profile_deleted' => 'Le compte :handle n\'existe plus',
+    'cadev_badge' => 'CADEV 2026',
+    'cadev_label' => 'Coupe d\'Afrique des Développeurs',
+    'cadev_video' => 'Vidéo de présentation',
+    'cadev_download' => 'Télécharger la vidéo',
+    'cadev_team' => 'L\'équipe',
+    'cadev_role_founder' => 'Fondateur et développeur',
+    'cadev_role_frontend' => 'Développeuse frontend',
 ];

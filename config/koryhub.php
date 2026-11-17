@@ -150,6 +150,21 @@ return [
     ],
 
     /*
+     * Bloc CADEV 2026 de l'accueil, pour le jury : video de presentation et equipe. Affiche seulement
+     * si video_url est renseignee, et jusqu'a la veille de « until » (fuseau display_timezone) ;
+     * jamais en production tant que KORYHUB_CADEV_VIDEO_URL est vide.
+     */
+    'cadev' => [
+        'video_url' => env('KORYHUB_CADEV_VIDEO_URL'),
+        'poster_url' => env('KORYHUB_CADEV_POSTER_URL'),
+        'until' => env('KORYHUB_CADEV_UNTIL', '2026-11-30'),
+        'team' => [
+            ['name' => 'Skorzeny Kemleyogoto', 'role' => 'founder', 'github' => 'sk0rzeny'],
+            ['name' => 'Koryam Genevieve', 'role' => 'frontend', 'github' => 'koryam004-lgtm'],
+        ],
+    ],
+
+    /*
      * Journal d'audit (TRD §21) : champs notés comme modifiés, sans leur valeur,
      * pour qu'aucune donnée personnelle ni aucun secret n'y entre.
      */

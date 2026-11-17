@@ -9,6 +9,7 @@ use App\Models\ModuleVersion;
 use App\Models\User;
 use App\Services\Accounts\Countries;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
@@ -33,7 +34,33 @@ class DiscoverController extends Controller
             'featured' => $featured,
             'recent' => $recent,
             'categories' => $this->categoriesWithCounts(),
+            'cadev' => $this->cadev(),
         ]);
+    }
+
+    /**
+     * Bloc CADEV 2026 de l'accueil (video et equipe) : seulement si la video est configuree, et
+     * avant le jour « until » a 0 h dans le fuseau d'exploitation.
+     *
+     * @return array{video_url: string, poster_url: ?string, team: list<array{name: string, role: string, github: string}>}|null
+     */
+    private function cadev(): ?array
+    {
+        $config = config('koryhub.cadev');
+        if (blank($config['video_url'] ?? null)) {
+            return null;
+        }
+
+        $timezone = config('koryhub.display_timezone');
+        if (now($timezone)->gte(Carbon::parse($config['until'], $timezone)->startOfDay())) {
+            return null;
+        }
+
+        return [
+            'video_url' => $config['video_url'],
+            'poster_url' => $config['poster_url'] ?: null,
+            'team' => $config['team'],
+        ];
     }
 
     /** S-09 : modules publics d'une catégorie, par score ; filtre de langage. */

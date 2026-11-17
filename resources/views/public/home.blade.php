@@ -4,17 +4,46 @@
     jour, catégories avec leur nombre de modules.
 --}}
 <x-layouts::public>
-    <section class="mx-auto grid max-w-[720px] justify-items-center gap-4 py-12 text-center">
-        <x-app-logo-icon class="size-16 text-accent" />
-        <flux:heading size="xl" level="1" class="text-balance">{{ __('common.home_title') }}</flux:heading>
-        <flux:text size="lg" class="text-balance">{{ __('common.home_lead') }}</flux:text>
-        <form method="GET" action="{{ route('search') }}" class="flex w-full max-w-xl gap-2" role="search">
-            <flux:input name="q" icon="magnifying-glass" :placeholder="__('search.placeholder')" :aria-label="__('search.placeholder')" class="flex-1" data-test="home-search" />
-            <flux:button type="submit" variant="primary">{{ __('search.submit') }}</flux:button>
-        </form>
-        <x-copy-command :command="config('koryhub.cli.install_windows')" class="w-full max-w-xl" data-test="install-command" />
-        <flux:text class="text-sm">{{ __('discover.install_other') }} <code dir="ltr">{{ config('koryhub.cli.install_unix') }}</code></flux:text>
-    </section>
+    <div class="{{ $cadev ? 'grid items-center gap-8 py-12 lg:grid-cols-[minmax(0,1fr)_380px]' : 'py-12' }}">
+        <section class="mx-auto grid w-full max-w-[720px] justify-items-center gap-4 text-center">
+            <x-app-logo-icon class="size-16 text-accent" />
+            <flux:heading size="xl" level="1" class="text-balance">{{ __('common.home_title') }}</flux:heading>
+            <flux:text size="lg" class="text-balance">{{ __('common.home_lead') }}</flux:text>
+            <form method="GET" action="{{ route('search') }}" class="flex w-full max-w-xl gap-2" role="search">
+                <flux:input name="q" icon="magnifying-glass" :placeholder="__('search.placeholder')" :aria-label="__('search.placeholder')" class="flex-1" data-test="home-search" />
+                <flux:button type="submit" variant="primary">{{ __('search.submit') }}</flux:button>
+            </form>
+            <x-copy-command :command="config('koryhub.cli.install_windows')" class="w-full max-w-xl" data-test="install-command" />
+            <flux:text class="text-sm">{{ __('discover.install_other') }} <code dir="ltr">{{ config('koryhub.cli.install_unix') }}</code></flux:text>
+        </section>
+
+        @if ($cadev)
+            {{-- Bloc CADEV 2026 (jury) : vidéo de présentation et équipe, masqué après la date de config('koryhub.cadev.until'). --}}
+            <aside class="mx-auto grid w-full max-w-[420px] gap-3 rounded-2xl border border-accent/40 bg-white p-4 shadow-xl shadow-accent/10 dark:bg-zinc-900" data-test="cadev">
+                <div class="flex items-center justify-between gap-2">
+                    <flux:badge color="teal" size="sm">{{ __('discover.cadev_badge') }}</flux:badge>
+                    <flux:text class="text-xs">{{ __('discover.cadev_label') }}</flux:text>
+                </div>
+                <flux:heading size="lg" level="2">{{ __('discover.cadev_video') }}</flux:heading>
+                <video controls preload="none" playsinline class="aspect-video w-full rounded-lg bg-black" @if ($cadev['poster_url']) poster="{{ $cadev['poster_url'] }}" @endif data-test="cadev-video">
+                    <source src="{{ $cadev['video_url'] }}" type="video/mp4" />
+                    <a href="{{ $cadev['video_url'] }}">{{ __('discover.cadev_download') }}</a>
+                </video>
+                <div class="grid gap-2">
+                    <flux:text class="text-xs font-semibold uppercase">{{ __('discover.cadev_team') }}</flux:text>
+                    @foreach ($cadev['team'] as $member)
+                        <a href="https://github.com/{{ $member['github'] }}" target="_blank" rel="noopener" class="flex items-center justify-between gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm hover:border-accent dark:border-zinc-700" data-test="cadev-member">
+                            <span class="grid">
+                                <span class="font-medium">{{ $member['name'] }}</span>
+                                <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ $member['role'] === 'founder' ? __('discover.cadev_role_founder') : __('discover.cadev_role_frontend') }}</span>
+                            </span>
+                            <span class="text-xs text-accent-content" dir="ltr">{{ 'github.com/'.$member['github'] }}</span>
+                        </a>
+                    @endforeach
+                </div>
+            </aside>
+        @endif
+    </div>
 
     <div class="grid gap-8 pb-12">
         @if ($featured->isNotEmpty())

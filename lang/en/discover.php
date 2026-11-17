@@ -13,4 +13,11 @@ return [
     'public_modules' => '{0} no public kory|{1} :count public kory|[2,*] :count public kory',
     'profile_empty' => 'No public kory yet',
     'profile_deleted' => ':handle no longer exists',
+    'cadev_badge' => 'CADEV 2026',
+    'cadev_label' => 'African Developers Cup',
+    'cadev_video' => 'Presentation video',
+    'cadev_download' => 'Download the video',
+    'cadev_team' => 'The team',
+    'cadev_role_founder' => 'Founder and developer',
+    'cadev_role_frontend' => 'Frontend developer',
 ];

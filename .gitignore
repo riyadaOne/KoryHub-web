@@ -38,3 +38,6 @@ yarn-error.log
 /opencode.json
 /opencode.jsonc
 /public/cli
+
+# Video et apercu du bloc CADEV 2026, deposes seulement sur le serveur de demo
+/public/cadev

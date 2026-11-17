@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Services\Accounts\AccountService;
 use App\Services\Modules\ModuleLifecycle;
 use App\Services\Modules\Secrets\SecretScanner;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Tests\Fakes\FakeSecretScanner;
@@ -42,6 +43,23 @@ test('S-01 : « Mis en avant » seulement si l\'admin a coché un module ; réce
 
     $this->public->forceFill(['reviews_hidden' => true])->save();
     $this->get('/')->assertDontSee('data-test="featured"', false);
+});
+
+test('S-01 : bloc CADEV 2026 (vidéo et équipe) seulement s\'il est configuré, et jusqu\'à la veille de sa date de fin', function () {
+    config(['koryhub.cadev.video_url' => null, 'koryhub.display_timezone' => 'Africa/Ndjamena']);
+    $this->get('/')->assertOk()->assertDontSee('data-test="cadev"', false);
+
+    config(['koryhub.cadev.video_url' => '/cadev/koryhub-cadev-2026.mp4', 'koryhub.cadev.poster_url' => '/cadev/apercu.jpg', 'koryhub.cadev.until' => '2026-11-30']);
+    $this->travelTo(Carbon::parse('2026-11-29 23:59', 'Africa/Ndjamena'));
+    $this->get('/')->assertOk()
+        ->assertSee('data-test="cadev"', false)
+        ->assertSee('/cadev/koryhub-cadev-2026.mp4')
+        ->assertSee('poster="/cadev/apercu.jpg"', false)
+        ->assertSee('https://github.com/sk0rzeny')
+        ->assertSee('https://github.com/koryam004-lgtm');
+
+    $this->travelTo(Carbon::parse('2026-11-30 00:00', 'Africa/Ndjamena'));
+    $this->get('/')->assertOk()->assertDontSee('data-test="cadev"', false);
 });
 
 test('S-09 : modules publics de la catégorie, filtre de langage ; catégorie inconnue : 404', function () {
