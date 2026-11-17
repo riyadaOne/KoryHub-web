@@ -4,7 +4,7 @@
     jour, catégories avec leur nombre de modules.
 --}}
 <x-layouts::public>
-    <div class="{{ $cadev ? 'grid items-center gap-8 py-12 lg:grid-cols-[minmax(0,1fr)_380px]' : 'py-12' }}">
+    <div class="relative py-12">
         <section class="mx-auto grid w-full max-w-[720px] justify-items-center gap-4 text-center">
             <x-app-logo-icon class="size-16 text-accent" />
             <flux:heading size="xl" level="1" class="text-balance">{{ __('common.home_title') }}</flux:heading>
@@ -18,26 +18,22 @@
         </section>
 
         @if ($cadev)
-            {{-- Bloc CADEV 2026 (jury) : vidéo de présentation et équipe, masqué après la date de config('koryhub.cadev.until'). --}}
-            <aside class="mx-auto grid w-full max-w-[420px] gap-3 rounded-2xl border border-accent/40 bg-white p-4 shadow-xl shadow-accent/10 dark:bg-zinc-900" data-test="cadev">
-                <div class="flex items-center justify-between gap-2">
+            {{-- Bloc CADEV 2026 (jury) : petite carte inclinee dans la marge, a cote de la recherche (sous la recherche en dessous de 1280 px) ; se redresse au survol ; masquee apres config('koryhub.cadev.until'). --}}
+            <aside class="mx-auto mt-8 grid w-full max-w-[300px] gap-2 rounded-xl border border-accent/40 bg-white p-2.5 shadow-lg shadow-accent/10 transition-transform duration-300 xl:absolute xl:top-10 xl:-end-12 xl:mt-0 xl:w-[200px] xl:rotate-[30deg] xl:hover:rotate-0 xl:hover:scale-125 xl:focus-within:rotate-0 xl:focus-within:scale-125 dark:bg-zinc-900" data-test="cadev">
+                <div class="flex items-center justify-between gap-1">
                     <flux:badge color="teal" size="sm">{{ __('discover.cadev_badge') }}</flux:badge>
-                    <flux:text class="text-xs">{{ __('discover.cadev_label') }}</flux:text>
+                    <span class="text-[11px] font-medium text-zinc-600 dark:text-zinc-300">{{ __('discover.cadev_video') }}</span>
                 </div>
-                <flux:heading size="lg" level="2">{{ __('discover.cadev_video') }}</flux:heading>
-                <video controls preload="none" playsinline class="aspect-video w-full rounded-lg bg-black" @if ($cadev['poster_url']) poster="{{ $cadev['poster_url'] }}" @endif data-test="cadev-video">
+                <video controls preload="none" playsinline class="aspect-video w-full rounded-md bg-black" @if ($cadev['poster_url']) poster="{{ $cadev['poster_url'] }}" @endif data-test="cadev-video">
                     <source src="{{ $cadev['video_url'] }}" type="video/mp4" />
                     <a href="{{ $cadev['video_url'] }}">{{ __('discover.cadev_download') }}</a>
                 </video>
-                <div class="grid gap-2">
-                    <flux:text class="text-xs font-semibold uppercase">{{ __('discover.cadev_team') }}</flux:text>
+                <div class="grid gap-1">
+                    <span class="text-[10px] font-semibold uppercase text-zinc-500 dark:text-zinc-400">{{ __('discover.cadev_team') }}</span>
                     @foreach ($cadev['team'] as $member)
-                        <a href="https://github.com/{{ $member['github'] }}" target="_blank" rel="noopener" class="flex items-center justify-between gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm hover:border-accent dark:border-zinc-700" data-test="cadev-member">
-                            <span class="grid">
-                                <span class="font-medium">{{ $member['name'] }}</span>
-                                <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ $member['role'] === 'founder' ? __('discover.cadev_role_founder') : __('discover.cadev_role_frontend') }}</span>
-                            </span>
-                            <span class="text-xs text-accent-content" dir="ltr">{{ 'github.com/'.$member['github'] }}</span>
+                        <a href="https://github.com/{{ $member['github'] }}" target="_blank" rel="noopener" class="grid rounded-md px-1.5 py-1 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800" title="{{ $member['role'] === 'founder' ? __('discover.cadev_role_founder') : __('discover.cadev_role_frontend') }}" data-test="cadev-member">
+                            <span class="font-medium">{{ $member['name'] }}</span>
+                            <span class="text-[11px] text-accent-content" dir="ltr">{{ 'github.com/'.$member['github'] }}</span>
                         </a>
                     @endforeach
                 </div>
