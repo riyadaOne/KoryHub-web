@@ -19,7 +19,7 @@
 
         @if ($cadev)
             {{-- Bloc CADEV 2026 (jury) : petite carte inclinee dans la marge, a cote de la recherche (sous la recherche en dessous de 1280 px) ; se redresse au survol ; masquee apres config('koryhub.cadev.until'). --}}
-            <aside class="mx-auto mt-8 grid w-full max-w-[300px] gap-2 rounded-xl border border-accent/40 bg-white p-2.5 shadow-lg shadow-accent/10 transition-transform duration-300 xl:absolute xl:top-10 xl:-end-12 xl:mt-0 xl:w-[200px] xl:rotate-[12deg] xl:hover:rotate-0 xl:hover:scale-125 xl:focus-within:rotate-0 xl:focus-within:scale-125 dark:bg-zinc-900" data-test="cadev">
+            <aside class="mx-auto mt-8 grid w-full max-w-[300px] gap-2 rounded-xl border border-accent/40 bg-white p-2.5 shadow-lg shadow-accent/10 transition-transform duration-300 xl:absolute xl:top-10 xl:-end-12 xl:mt-0 xl:w-[220px] min-[1400px]:-end-20 min-[1400px]:w-[250px] xl:rotate-[12deg] xl:hover:rotate-0 xl:hover:scale-110 xl:focus-within:rotate-0 xl:focus-within:scale-110 dark:bg-zinc-900" data-test="cadev">
                 <div class="flex items-center justify-between gap-1">
                     <flux:badge color="teal" size="sm">{{ __('discover.cadev_badge') }}</flux:badge>
                     <span class="text-[11px] font-medium text-zinc-600 dark:text-zinc-300">{{ __('discover.cadev_video') }}</span>
